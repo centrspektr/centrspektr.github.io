@@ -206,6 +206,25 @@ footer img{height:70px;margin:0 auto 12px}
 .mcard textarea{min-height:80px;resize:vertical}
 .mbar{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap} .mbar .del{margin-right:auto;color:var(--bad)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+/* ---- ученики и заявки ---- */
+.mcard.wide{max-width:780px}
+.stc{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:99px;background:var(--bad,#ef4444);color:#fff;font:800 11.5px var(--fb);margin-left:2px}
+#stp h4{font:700 15px var(--fh);margin:18px 0 8px;display:flex;align-items:center;gap:8px}
+.stchips{display:flex;gap:6px;flex-wrap:wrap}
+.strow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:14px;margin-bottom:6px;background:var(--bg);animation:pop .35s cubic-bezier(.2,.8,.2,1) both}
+.strow .nm b{display:block;font-size:14.5px} .strow small{color:var(--dim);font-size:12.5px}
+.strow .acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end} .strow.hid{opacity:.55}
+.strow input[type=checkbox]{width:18px;height:18px;margin:0;accent-color:var(--c1)}
+.stcode{font:800 12.5px ui-monospace,Consolas,monospace;letter-spacing:.1em;background:var(--bg2);color:var(--text);padding:1px 6px;border-radius:6px;user-select:all}
+.sttool{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:8px;font-size:13.5px;font-weight:700}
+.sttool label{display:flex;gap:6px;align-items:center;margin:0}
+.stpts{border:2px solid var(--c1);border-radius:16px;padding:12px 14px;margin:12px 0;background:var(--bg)}
+.stnone{color:var(--dim);font-size:14px}
+.stdet{margin-top:14px} .stdet summary{cursor:pointer;font-weight:700;font-size:14px;margin-bottom:8px}
+.sttask{font-size:13.5px;padding:6px 0;border-bottom:1px dashed var(--line)} .sttask small{color:var(--dim)}
+.stlinks{margin-top:16px;font-size:12.5px;color:var(--dim);word-break:break-all}
+@media (max-width:520px){header .tr{gap:4px} header .tr .ibtn{min-width:36px;height:38px;padding:0 8px;border-radius:11px}}
+@media (max-width:600px){.strow{grid-template-columns:auto 1fr}.strow .acts{grid-column:1/-1;justify-content:flex-start}}
 #toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,30px);opacity:0;background:var(--text);color:var(--bg);padding:11px 19px;border-radius:13px;font-weight:700;transition:.3s;z-index:950;pointer-events:none} #toast.on{opacity:1;transform:translate(-50%,0)}
 @media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important}#pre{display:none}}
 
@@ -417,7 +436,7 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
 <header id="hdr"><div class="wrap top">
   <a class="brand" id="brand" href="#top"><img src="mark.webp" alt=""><b>СПЕКТР</b></a>
   <nav class="mn"><a href="#dashT">Дашборды</a><a href="#todayT">Сегодня</a><a href="#weekT">Расписание</a><a href="#groupsT">Кружки</a><a href="#newsT">Новости</a></nav>
-  <div class="tr"><button class="ibtn" id="lockBtn" style="display:none" title="Вход для редакторов">✎</button><button class="ibtn" id="themeBtn" title="Тема">🌓</button></div>
+  <div class="tr"><button class="ibtn" id="stBtn" style="display:none" title="Ученики и заявки">👥<b class="stc" id="stCnt" style="display:none"></b></button><button class="ibtn" id="lockBtn" style="display:none" title="Вход для редакторов">✎</button><button class="ibtn" id="themeBtn" title="Тема">🌓</button></div>
 </div></header>
 
 <section class="hero" id="top">
@@ -614,10 +633,10 @@ async function load(){
 /* ---------- вход и правка (тот же PIN-сервер) ---------- */
 let SESS=null;try{SESS=JSON.parse(ss.get('spectr_sess')||'null')}catch(e){}
 const canEdit=()=>SESS&&SESS.user&&(SESS.user.role==='admin'||(SESS.user.clubs||[]).includes('hub:'+HUB));
-function applyUser(){document.body.classList.toggle('editing',!!canEdit());const b=$('#lockBtn');b.style.display=SESS||ls.get('spectr_editor')==='1'?'':'none';b.textContent=SESS?'🔓':'✎';b.title=SESS?'Выйти из режима правки':'Вход для редакторов'}
+function applyUser(){document.body.classList.toggle('editing',!!canEdit());const b=$('#lockBtn');b.style.display=SESS||ls.get('spectr_editor')==='1'?'':'none';b.textContent=SESS?'🔓':'✎';b.title=SESS?'Выйти из режима правки':'Вход для редакторов';if(window.stUpd)stUpd()}
 async function api(q){let j;try{j=await (await fetch(API,{method:'POST',body:JSON.stringify(Object.assign({},q,q.op==='login'?{}:{token:SESS&&SESS.token}))})).json()}catch(e){throw new Error('Нет связи с сервером')}
   if(!j.ok){if(j.auth){SESS=null;try{sessionStorage.removeItem('spectr_sess')}catch(e){}applyUser()}throw new Error(j.error||'Ошибка сервера')}return j}
-function openM(){$('#modal').classList.add('on')} function closeM(){$('#modal').classList.remove('on')}
+function openM(){$('#modal').classList.add('on')} function closeM(){$('#modal').classList.remove('on');$('#mbody').classList.remove('wide')}
 $('#modal').onclick=e=>{if(e.target.id==='modal')closeM()}; addEventListener('keydown',e=>{if(e.key==='Escape'){closeM();$('#soon').style.display='none'}});
 function openLogin(){$('#mbody').innerHTML=`<h3>Вход для редакторов</h3><p style="color:var(--dim);font-size:14px">Введите PIN. Править расписание, кружки и новости могут администратор и редакторы Спектра.</p><label>PIN<input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off"></label><div class="mbar"><button class="ibtn" onclick="closeM()">Отмена</button><button class="ibtn pri" id="pinGo">Войти</button></div>`;openM();setTimeout(()=>$('#pin').focus(),50);
   const go=async()=>{const b=$('#pinGo');b.disabled=true;b.textContent='Проверяю…';try{const j=await api({op:'login',pin:$('#pin').value.trim()});SESS={token:j.token,user:j.user};ss.set('spectr_sess',JSON.stringify(SESS));ls.set('spectr_editor','1');closeM();render();toast(canEdit()?'Режим редактирования включён':'Вход выполнен, но прав на Спектр нет')}catch(e){toast(e.message);b.disabled=false;b.textContent='Войти'}};
@@ -655,6 +674,52 @@ $('#seedBtn').onclick=async()=>{ if(!canEdit())return; if(!confirm('Добави
     for(const n of SEED.news){ if(!D.news.some(x=>x.text===n.text)){ const j=await api({op:'hput',hub:HUB,key:'news',item:Object.assign({},n,{id:''})}); D=j.data; } }
     ls.set('hub_'+HUB,JSON.stringify(D)); render(); toast('Готово: расписание загружено'); }
   catch(e){ toast(e.message); } b.disabled=false; b.textContent='⤓ Примерное расписание'; };
+
+/* ---------- ученики: заявки, личные коды, очки за задания ---------- */
+var ST=null,STF="all",STSEL=new Set(),STPTS=null;
+const STN={vzlet:'Взлёт',studio:'ИИ-студия',agro:'Агрокласс'}, STU={vzlet:'vzlet/#rate',studio:'studio/#rate'};
+function stUpd(){const b=$('#stBtn');if(!b)return;b.style.display=SESS?'':'none';if(!SESS){ST=null;stCount();return}if(!ST&&!stUpd.busy){stUpd.busy=1;stLoad().finally(()=>stUpd.busy=0)}}
+async function stLoad(){try{ST=await api({op:'slist'})}catch(e){ST={list:[],clubs:[],tasks:[],err:e.message}}stCount();if($('#stp'))stRender()}
+function stCount(){const n=ST&&ST.list?ST.list.filter(x=>x.st==='заявка').length:0,c=$('#stCnt');if(c){c.textContent=n||'';c.style.display=n?'':'none'}}
+function stOpen(){$('#mbody').classList.add('wide');$('#mbody').innerHTML='<div id="stp"><h3>👥 Ученики и заявки</h3><p style="color:var(--dim)">Загружаю…</p></div>';openM();STSEL.clear();STPTS=null;stLoad()}
+async function stDo(q,okMsg){try{ST=await api(q);stCount();stRender();if(okMsg)toast(okMsg);return true}catch(e){toast(e.message);return false}}
+function stRender(){const P=$('#stp');if(!P||!ST)return;
+  if(ST.err){P.innerHTML=`<h3>👥 Ученики и заявки</h3><p>${esc(ST.err)}</p><div class="mbar"><button class="ibtn" onclick="closeM()">Закрыть</button></div>`;return}
+  const L=ST.list.filter(x=>STF==='all'||x.club===STF),cn=id=>STN[id]||id,pts=x=>x.site+x.t;
+  const wait=L.filter(x=>x.st==='заявка'),ok=L.filter(x=>x.st==='принят').sort((a,b)=>pts(b)-pts(a)),no=L.filter(x=>x.st==='отклонён');
+  [...STSEL].forEach(id=>{if(!ok.some(x=>x.id===id))STSEL.delete(id)});
+  const who=x=>`<span class="nm"><b>${esc(x.first)} ${esc(x.last)}, ${esc(x.cls)}</b><small>${STF==='all'?cn(x.club)+' · ':''}${esc(x.when)}</small></span>`;
+  const chips=[['all','Все',ST.list.length]].concat(ST.clubs.map(c=>[c.id,c.name,ST.list.filter(x=>x.club===c.id).length])).map(([id,n,k])=>`<button class="ibtn sm ${STF===id?'pri':''}" data-stf="${id}">${esc(n)} ${k?'· '+k:''}</button>`).join('');
+  let h=`<h3>👥 Ученики и заявки</h3><p style="color:var(--dim);font-size:14px;margin-bottom:10px">Ученик оставляет заявку на сайте кружка. После одобрения он сразу видит свой код, и его тесты и значки уходят в рейтинг. Фамилию видите только вы.</p><div class="stchips">${ST.clubs.length>1?chips:''}</div>`;
+  if(STPTS){const n=STPTS.length,nm=n===1?(()=>{const x=ST.list.find(y=>y.id===STPTS[0]);return x?esc(x.first+' '+x.last):''})():n+' '+pl(n,'ученику','ученикам','ученикам');
+    h+=`<div class="stpts"><b>Очки за задание: ${nm}</b><div class="row2"><label>Очки<input id="stP" type="number" inputmode="numeric" value="10" min="-200" max="200"></label><label>За что<input id="stW" maxlength="120" placeholder="например: собрал рамку"></label></div><div class="mbar" style="margin-top:10px"><button class="ibtn sm" data-st="ptsno">Отмена</button><button class="ibtn sm pri" data-st="ptsgo">Начислить</button></div></div>`}
+  h+=`<h4>Новые заявки ${wait.length?'<span class="stc">'+wait.length+'</span>':''}</h4>`;
+  h+=wait.length?wait.map(x=>`<div class="strow"><span class="ic">🆕</span>${who(x)}<span class="acts"><button class="ibtn sm pri" data-st="ok" data-id="${x.id}">✓ Принять</button><button class="ibtn sm" data-st="no" data-id="${x.id}">✕</button></span></div>`).join(''):'<p class="stnone">Новых заявок нет.</p>';
+  h+=`<h4>В рейтинге · ${ok.length}</h4>`;
+  if(ok.length)h+=`<div class="sttool"><label><input type="checkbox" id="stAll" ${STSEL.size&&STSEL.size===ok.length?'checked':''}> выбрать всех</label><button class="ibtn sm" data-st="ptssel" ${STSEL.size?'':'disabled'}>+ очки выбранным${STSEL.size?' ('+STSEL.size+')':''}</button></div>`;
+  h+=ok.length?ok.map((x,i)=>`<div class="strow ${x.hid?'hid':''}"><input type="checkbox" data-sel="${x.id}" ${STSEL.has(x.id)?'checked':''}><span class="nm"><b>${i+1}. ${esc(x.first)} ${esc(x.last)}, ${esc(x.cls)}</b><small>${STF==='all'?cn(x.club)+' · ':''}код <span class="stcode">${esc(x.code)}</span> · ⭐ ${pts(x)} (сайт ${x.site}${x.t?', задания '+x.t:''})${x.hid?' · скрыт':''}</small></span><span class="acts"><button class="ibtn sm" data-st="pts1" data-id="${x.id}" title="Очки за задание">+ очки</button><button class="ibtn sm" data-st="${x.hid?'show':'hide'}" data-id="${x.id}" title="${x.hid?'Показать в рейтинге':'Скрыть из рейтинга'}">${x.hid?'👁':'🙈'}</button><button class="ibtn sm" data-st="newcode" data-id="${x.id}" title="Выдать новый код (старый перестанет работать)">🔑</button><button class="ibtn sm" data-st="del" data-id="${x.id}" title="Удалить ученика">🗑</button></span></div>`).join(''):'<p class="stnone">Пока никого. Примите первую заявку.</p>';
+  if(no.length)h+=`<details class="stdet"><summary>Отклонённые · ${no.length}</summary>${no.map(x=>`<div class="strow"><span class="ic">✕</span>${who(x)}<span class="acts"><button class="ibtn sm" data-st="ok" data-id="${x.id}">Принять</button><button class="ibtn sm" data-st="del" data-id="${x.id}">🗑</button></span></div>`).join('')}</details>`;
+  const T=(ST.tasks||[]).filter(t=>STF==='all'||t.club===STF).slice(0,20);
+  if(T.length)h+=`<details class="stdet"><summary>Последние начисления</summary>${T.map(t=>`<div class="sttask"><b>${t.pts>0?'+':''}${t.pts}</b> ${esc(t.who)} · ${esc(t.why)} <small>${esc(t.when)}</small></div>`).join('')}</details>`;
+  const links=ST.clubs.filter(c=>STU[c.id]).map(c=>`<a href="${STU[c.id]}" target="_blank">${esc(c.name)}: ${location.origin}/${STU[c.id]}</a>`).join('<br>');
+  if(links)h+=`<p class="stlinks">Ссылки на заявку для QR-кода:<br>${links}</p>`;
+  h+=`<div class="mbar"><button class="ibtn" data-st="reload">↻ Обновить</button><button class="ibtn pri" onclick="closeM()">Готово</button></div>`;
+  P.innerHTML=h;
+  P.querySelectorAll('[data-stf]').forEach(b=>b.onclick=()=>{STF=b.dataset.stf;STSEL.clear();STPTS=null;stRender()});
+  P.querySelectorAll('[data-sel]').forEach(c=>c.onchange=()=>{c.checked?STSEL.add(c.dataset.sel):STSEL.delete(c.dataset.sel);stRender()});
+  if($('#stAll'))$('#stAll').onchange=e=>{STSEL.clear();if(e.target.checked)ok.forEach(x=>STSEL.add(x.id));stRender()};
+  P.querySelectorAll('[data-st]').forEach(b=>b.onclick=async()=>{const a=b.dataset.st,id=b.dataset.id,x=id&&ST.list.find(y=>y.id===id),nm=x?x.first+' '+x.last:'';
+    if(a==='reload'){b.disabled=true;await stLoad();return}
+    if(a==='pts1'){STPTS=[id];stRender();P.scrollTop=0;$('#mbody').scrollTop=0;setTimeout(()=>$('#stW')&&$('#stW').focus(),50);return}
+    if(a==='ptssel'){STPTS=[...STSEL];stRender();$('#mbody').scrollTop=0;setTimeout(()=>$('#stW')&&$('#stW').focus(),50);return}
+    if(a==='ptsno'){STPTS=null;stRender();return}
+    if(a==='ptsgo'){const p=Math.round(+$('#stP').value||0),w=$('#stW').value.trim();if(!p)return toast('Укажите очки');if(!w)return toast('Напишите, за что');b.disabled=true;if(await stDo({op:'spts',ids:STPTS,pts:p,why:w},(p>0?'+':'')+p+' '+pl(p,'очко','очка','очков')+' начислено')){STPTS=null;STSEL.clear();stRender()}else b.disabled=false;return}
+    if(a==='del'&&!confirm('Удалить '+nm+' из списка? Очки пропадут.'))return;
+    if(a==='newcode'&&!confirm('Выдать '+nm+' новый код? Старый перестанет работать, ученику нужно будет войти заново.'))return;
+    b.disabled=true;await stDo({op:'sset',id,act:a},{ok:'Принят: '+nm+'. Код появится у ученика на сайте',no:'Заявка отклонена',del:'Удалено',hide:'Скрыт из рейтинга',show:'Снова в рейтинге',newcode:'Новый код выдан'}[a])})}
+$('#stBtn').onclick=stOpen;
+setInterval(()=>{if(SESS&&!document.hidden&&!$('#stp'))stLoad()},3*60e3);
+stUpd();
 
 /* ---------- тема ---------- */
 function setTheme(t){document.documentElement.dataset.theme=t;ls.set('spectr_theme',t)}
