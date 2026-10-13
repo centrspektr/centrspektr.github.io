@@ -208,6 +208,21 @@ footer img{height:70px;margin:0 auto 12px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 #toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,30px);opacity:0;background:var(--text);color:var(--bg);padding:11px 19px;border-radius:13px;font-weight:700;transition:.3s;z-index:950;pointer-events:none} #toast.on{opacity:1;transform:translate(-50%,0)}
 @media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important}#pre{display:none}}
+
+/* ---- облегчённый режим для телефонов: без тяжёлых размытий, всё на transform/opacity ---- */
+html.lite .aur{display:none}
+html.lite body{background:radial-gradient(70% 40% at 0% 10%,color-mix(in srgb,var(--r7) 16%,transparent),transparent 70%),radial-gradient(60% 40% at 100% 60%,color-mix(in srgb,var(--r5) 14%,transparent),transparent 70%),var(--bg);background-attachment:scroll}
+html.lite *{backdrop-filter:none !important;-webkit-backdrop-filter:none !important}
+html.lite header.solid{background:color-mix(in srgb,var(--bg) 94%,transparent)}
+html.lite .lw .ring{filter:none;opacity:.35;animation:none;background:radial-gradient(circle,transparent 52%,var(--r7) 58%,var(--r5) 64%,transparent 72%)}
+html.lite .nxt::before,html.lite .grp .cov::before{animation:none}
+html.lite .dc .ph{inset:0}
+html.lite h1.big{filter:none}
+html.lite h1.big,html.lite h1.big .ch,html.lite .brand b,html.lite h2.sec em,html.lite .mq{animation:none}
+html.lite .mq .tk{animation:mq 28s linear infinite}
+html.lite .orb{animation-duration:60s}
+html.lite .chip,html.lite .dc .lbl span,html.lite .dc .go{background:rgba(20,12,40,.55)}
+html.lite .dc .lbl .soon{background:var(--r3)}
 *{scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--c1) 70%,transparent) transparent}
 </style>
 </head>
@@ -313,6 +328,7 @@ const toMin=t=>{const [h,m]=String(t).split(':').map(Number);return h*60+(m||0)}
 const pad=n=>String(n).padStart(2,'0'), hm=t=>{const [h,m]=String(t).split(':');return pad(+h)+':'+pad(+m||0)};
 const dayName=d=>DAYS[(d.getDay()+6)%7];
 const RED=matchMedia('(prefers-reduced-motion: reduce)').matches, HOVER=matchMedia('(hover:hover) and (pointer:fine)').matches, HAS_GSAP=!!window.gsap&&!RED;
+const LITE=!HOVER||matchMedia('(max-width:860px)').matches; if(LITE) document.documentElement.classList.add('lite');
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),2600)}
 function pl(n,a,b,c){n=Math.abs(n)%100;const n1=n%10;if(n>10&&n<20)return c;if(n1>1&&n1<5)return b;if(n1===1)return a;return c}
 function pDate(s){const m=String(s||'').match(/(\d{1,2})\.(\d{1,2})\.(\d{4})/);return m?new Date(+m[3],+m[2]-1,+m[1]):null}
@@ -472,26 +488,31 @@ if(HOVER&&!RED){const c1=$('.cur'),c2=$('.cur2');let x=-100,y=-100,x2=x,y2=y;add
   (function f(){x2+=(x-x2)*.18;y2+=(y-y2)*.18;c1.style.transform=`translate(${x}px,${y}px)`;c2.style.transform=`translate(${x2}px,${y2}px)`;requestAnimationFrame(f)})()}
 
 /* ---------- спектр на canvas ---------- */
-(function(){const cv=$('#spec'),cx=cv.getContext('2d');if(!cx)return;let W=0,H=0,dpr=Math.min(devicePixelRatio||1,2),mx=.5,my=.5,t=0,vis=true;
+(function(){const cv=$('#spec'),cx=cv.getContext('2d');if(!cx)return;let W=0,H=0,dpr=LITE?.6:Math.min(devicePixelRatio||1,2),mx=.5,my=.5,t=0,vis=true,lastW=0;
   const COL=['#f43f5e','#fb923c','#facc15','#22c55e','#06b6d4','#6366f1','#a855f7'];
-  const P=Array.from({length:70},()=>({x:Math.random(),y:Math.random(),r:Math.random()*2.4+.6,s:Math.random()*.0004+.0001,c:COL[(Math.random()*7)|0],p:Math.random()*6.28}));
-  function size(){const r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;cx.setTransform(dpr,0,0,dpr,0,0)}
+  const P=Array.from({length:LITE?28:70},()=>({x:Math.random(),y:Math.random(),r:Math.random()*2.4+.6,s:Math.random()*.0004+.0001,c:COL[(Math.random()*7)|0],p:Math.random()*6.28}));
+  function size(){const r=cv.getBoundingClientRect();if(LITE&&lastW===r.width&&W)return;lastW=r.width;W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;cx.setTransform(dpr,0,0,dpr,0,0)}
   size();addEventListener('resize',size);
   addEventListener('pointermove',e=>{mx=e.clientX/innerWidth;my=e.clientY/innerHeight});
-  new IntersectionObserver(es=>{vis=es[0].isIntersecting;if(vis&&!RED)loop()}).observe(cv);
+  new IntersectionObserver(es=>{vis=es[0].isIntersecting;if(vis&&!RED&&!run){run=true;requestAnimationFrame(loop)}}).observe(cv);
   function frame(){cx.clearRect(0,0,W,H);cx.globalCompositeOperation='lighter';
     COL.forEach((c,k)=>{cx.beginPath();const amp=H*.05+k*5+(mx-.5)*60,ph=t*(.0006+k*.00006)+k*.7,base=H*(.7+(my-.5)*.06);
-      for(let x=0;x<=W;x+=8){const y=base+Math.sin(x*.005+ph*3)*amp+Math.sin(x*.012+ph*5+k)*amp*.45+(k-3)*15;x?cx.lineTo(x,y):cx.moveTo(x,y)}
-      cx.strokeStyle=c;cx.globalAlpha=.6;cx.lineWidth=5;cx.shadowColor=c;cx.shadowBlur=24;cx.stroke()});
+      for(let x=0;x<=W;x+=LITE?14:8){const y=base+Math.sin(x*.005+ph*3)*amp+Math.sin(x*.012+ph*5+k)*amp*.45+(k-3)*15;x?cx.lineTo(x,y):cx.moveTo(x,y)}
+      cx.strokeStyle=c;if(LITE){cx.globalAlpha=.16;cx.lineWidth=16;cx.stroke();cx.globalAlpha=.7;cx.lineWidth=3.5;cx.stroke()}else{cx.globalAlpha=.6;cx.lineWidth=5;cx.shadowColor=c;cx.shadowBlur=24;cx.stroke()}});
     cx.shadowBlur=0;P.forEach(o=>{const y=((o.y-t*o.s)%1+1)%1;cx.globalAlpha=.3+.4*Math.sin(t*.002+o.p);cx.fillStyle=o.c;cx.beginPath();cx.arc((o.x+Math.sin(t*.0005+o.p)*.02)*W,y*H,o.r,0,6.28);cx.fill()});
     cx.globalAlpha=1;cx.globalCompositeOperation='source-over'}
-  function loop(){if(!vis)return;t+=16;frame();requestAnimationFrame(loop)}
-  frame();if(!RED)loop()})();
+  let scrolling=0,lastF=0,run=false;
+  if(LITE) addEventListener('scroll',()=>{scrolling=performance.now()},{passive:true});
+  function loop(ts){ if(!vis){run=false;return} run=true; requestAnimationFrame(loop);
+    if(LITE){ if(ts-scrolling<180) return; if(ts-lastF<32) return; lastF=ts; t+=32; } else t+=16;
+    frame(); }
+  frame();if(!RED){run=true;requestAnimationFrame(loop)}})();
 
 /* ---------- GSAP: вход и прокрутка ---------- */
 function intro(){
   if(!HAS_GSAP){$('#pre').remove();return}
   gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.config({ignoreMobileResize:true});
   const first=!ss.get('spectr_seen');ss.set('spectr_seen','1');
   const tl=gsap.timeline();
   if(first){tl.to('#pre .pl',{opacity:1,scale:1,duration:.7,ease:'back.out(1.6)'})
@@ -513,22 +534,23 @@ function intro(){
   // магнитные кнопки
   if(HOVER) $$('.mag').forEach(b=>{b.addEventListener('pointermove',e=>{const r=b.getBoundingClientRect();gsap.to(b,{x:(e.clientX-r.left-r.width/2)*.25,y:(e.clientY-r.top-r.height/2)*.35,duration:.4})});b.addEventListener('pointerleave',()=>gsap.to(b,{x:0,y:0,duration:.7,ease:'elastic.out(1,.4)'}))});
   // появление секций
-  $$('.rv').forEach(el=>gsap.from(el,{y:60,opacity:0,duration:1,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 88%'}}));
+  $$('.rv').forEach(el=>gsap.from(el,{y:LITE?36:60,opacity:0,duration:LITE?.7:1,ease:'power3.out',force3D:true,scrollTrigger:{trigger:el,start:'top 92%'}}));
   $$('.sh2 h2').forEach(h=>gsap.from(h,{x:-60,opacity:0,duration:.9,ease:'power3.out',scrollTrigger:{trigger:h,start:'top 90%'}}));
   // карточки дашбордов: въезд и параллакс фото
   gsap.from('.dc',{y:120,opacity:0,scale:.92,duration:1.1,stagger:.12,ease:'expo.out',scrollTrigger:{trigger:'#dash',start:'top 82%'}});
-  $$('.dc .ph').forEach(p=>gsap.fromTo(p,{yPercent:-8},{yPercent:8,ease:'none',scrollTrigger:{trigger:p.parentElement,start:'top bottom',end:'bottom top',scrub:true}}));
-  ScrollTrigger.batch('.grp',{start:'top 90%',onEnter:b=>gsap.from(b,{y:70,opacity:0,rotateX:-25,duration:.9,stagger:.1,ease:'power3.out',transformPerspective:900})});
+  if(!LITE) $$('.dc .ph').forEach(p=>gsap.fromTo(p,{yPercent:-8},{yPercent:8,ease:'none',scrollTrigger:{trigger:p.parentElement,start:'top bottom',end:'bottom top',scrub:true}}));
+  ScrollTrigger.batch('.grp',{start:'top 92%',onEnter:b=>gsap.from(b,LITE?{y:40,opacity:0,duration:.7,stagger:.08,ease:'power2.out'}:{y:70,opacity:0,rotateX:-25,duration:.9,stagger:.1,ease:'power3.out',transformPerspective:900})});
   // бегущая строка ускоряется от прокрутки
-  const tk=$('#tk');let skew=0;ScrollTrigger.create({onUpdate:s=>{const v=gsap.utils.clamp(-14,14,s.getVelocity()/220);if(Math.abs(v)>Math.abs(skew)){skew=v;gsap.to(tk,{skewX:-skew,duration:.2,overwrite:true,onComplete:()=>{skew=0;gsap.to(tk,{skewX:0,duration:.8,ease:'elastic.out(1,.4)'})}})}}});
+  const tk=$('#tk');let skew=0;if(!LITE)ScrollTrigger.create({onUpdate:s=>{const v=gsap.utils.clamp(-14,14,s.getVelocity()/220);if(Math.abs(v)>Math.abs(skew)){skew=v;gsap.to(tk,{skewX:-skew,duration:.2,overwrite:true,onComplete:()=>{skew=0;gsap.to(tk,{skewX:0,duration:.8,ease:'elastic.out(1,.4)'})}})}}});
   // шкала прогресса и смена оттенка фона
   gsap.to('#prog',{scaleX:1,ease:'none',scrollTrigger:{start:0,end:'max',scrub:.3}});
-  ScrollTrigger.create({start:0,end:'max',onUpdate:s=>document.documentElement.style.setProperty('--hue',(s.progress*200)+'deg')});
+  if(!LITE) ScrollTrigger.create({start:0,end:'max',onUpdate:s=>document.documentElement.style.setProperty('--hue',(s.progress*200)+'deg')});
 }
-addEventListener('scroll',()=>$('#hdr').classList.toggle('solid',scrollY>innerHeight*.6),{passive:true});
+{let sol=null,tick=false;addEventListener('scroll',()=>{if(tick)return;tick=true;requestAnimationFrame(()=>{tick=false;const v=scrollY>innerHeight*.6;if(v!==sol){sol=v;$('#hdr').classList.toggle('solid',v)}})},{passive:true})}
 
 renderDash(); render(); applyUser(); intro(); load();
-setInterval(()=>{if(!document.hidden)load()},5*60e3); setInterval(()=>{if(!$('.modal.on'))render()},60e3);
+setInterval(()=>{if(!document.hidden)load()},5*60e3); setInterval(()=>{if(!$('.modal.on')&&!editingFocus())render()},60e3);
+function editingFocus(){return document.activeElement&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)}
 (function hit(page){try{const k='irtysh_hit_'+page;if(ss.get(k)!==null)return;const d=new Date().toDateString(),fresh=!ls.get('irtysh_new_'+page),today=ls.get('irtysh_day_'+page)!==d;
   fetch(API,{method:'POST',body:JSON.stringify({op:'hit',page,fresh,today})}).then(r=>r.json()).then(j=>{if(!j.ok)return;ls.set('irtysh_new_'+page,'1');ls.set('irtysh_day_'+page,d);ss.set(k,String(j.total||''))}).catch(()=>{})}catch(e){}})(HUB);
 </script>
