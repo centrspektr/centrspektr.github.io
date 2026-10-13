@@ -71,7 +71,7 @@ header:not(.solid) .tr .ibtn{background:rgba(255,255,255,.1);border-color:rgba(2
 .hin{position:relative;width:100%;display:grid;grid-template-columns:1.15fr .85fr;gap:30px;align-items:center;padding-top:80px;padding-bottom:70px}
 .kick{display:inline-flex;align-items:center;gap:10px;font-size:12.5px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.75)}
 .kick i{width:34px;height:2px;background:var(--rain)}
-h1.big{font:900 clamp(56px,13vw,150px)/.92 Unbounded,Manrope,sans-serif;letter-spacing:-2px;margin:14px 0 10px;background:var(--rain);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sh 10s linear infinite;filter:drop-shadow(0 10px 40px rgba(168,85,247,.35))}
+h1.big{font:900 clamp(44px,8vw,112px)/.95 Unbounded,Manrope,sans-serif;letter-spacing:-2px;white-space:nowrap;margin:14px 0 10px;background:var(--rain);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sh 10s linear infinite;filter:drop-shadow(0 10px 40px rgba(168,85,247,.35))}
 h1.big .ch{display:inline-block;background:inherit;background-size:inherit;-webkit-background-clip:text;background-clip:text}
 .rot{font:700 clamp(20px,3.6vw,32px)/1.25 Unbounded,Manrope,sans-serif}
 .rw{display:inline-block;color:var(--r3);min-width:2ch}
@@ -91,7 +91,7 @@ h1.big .ch{display:inline-block;background:inherit;background-size:inherit;-webk
 .scr{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:2px;color:rgba(255,255,255,.6);text-decoration:none}
 .scr i{width:24px;height:38px;border:2px solid rgba(255,255,255,.45);border-radius:14px;position:relative} .scr i::after{content:"";position:absolute;left:50%;top:7px;width:4px;height:8px;margin-left:-2px;border-radius:2px;background:#fff;animation:wheel 1.8s infinite}
 @keyframes wheel{60%{transform:translateY(12px);opacity:0}100%{opacity:0}}
-@media(max-width:860px){.hin{grid-template-columns:1fr;text-align:left;padding-top:96px}.lw{width:min(54vw,250px);order:-1;justify-self:start}.scr{display:none}}
+@media(max-width:860px){h1.big{font-size:min(14.5vw,96px)}.hin{grid-template-columns:1fr;text-align:left;padding-top:96px}.lw{width:min(54vw,250px);order:-1;justify-self:start}.scr{display:none}}
 /* ---- бегущая строка ---- */
 .mqw{position:relative;z-index:2;overflow:hidden;padding:24px 0;margin-top:-50px}
 .mq{position:relative;overflow:hidden;padding:18px 0;transform:rotate(-2deg);margin:0 -20px;background:var(--rain);background-size:200% 100%;box-shadow:0 14px 40px rgba(124,58,237,.3);z-index:2}
@@ -104,7 +104,7 @@ section.blk{padding-top:84px}
 .sh2{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:22px}
 .sh2 .num{font:900 15px Unbounded,Manrope,sans-serif;color:transparent;-webkit-text-stroke:1.2px var(--c1);opacity:.8}
 h2.sec{font:900 clamp(28px,5vw,52px)/1 Unbounded,Manrope,sans-serif;letter-spacing:-1px;scroll-margin-top:90px}
-h2.sec em,h2.sec em *{font-style:normal;background:var(--rain);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sh 10s linear infinite}
+h2.sec em{font-style:normal;background:var(--rain);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sh 10s linear infinite}
 .sh2 p{color:var(--dim);max-width:420px;font-size:15px}
 .sh2 .add{margin-left:auto}
 /* ---- дашборды ---- */
@@ -129,8 +129,8 @@ h2.sec em,h2.sec em *{font-style:normal;background:var(--rain);background-size:3
 .dc .glw{position:absolute;inset:0;z-index:-1;opacity:0;transition:opacity .3s;background:radial-gradient(380px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.18),transparent 60%)}
 .dc:hover .glw{opacity:1}
 .dc.site{background:radial-gradient(120% 90% at 80% 0%,#4c1d95,#1a0b33 60%,#0b0914)} .dc.site .ph{inset:0;display:flex;align-items:flex-start;justify-content:flex-end;padding:22px 26px}
-.dc.site .ph::before{content:"";position:absolute;top:26px;right:26px;width:min(52%,250px);aspect-ratio:1.25;border-radius:28px;background:linear-gradient(160deg,#fff,#efeaff);box-shadow:0 20px 50px rgba(0,0,0,.45);transform:rotate(4deg)}
-.dc.site .ph img{position:relative;width:min(44%,214px);height:auto;object-fit:contain;margin:30px 5% 0 0;transform:rotate(4deg)}
+.dc.site .ph::before{content:"";position:absolute;top:26px;right:26px;width:min(38%,190px);aspect-ratio:1.25;border-radius:28px;background:linear-gradient(160deg,#fff,#efeaff);box-shadow:0 20px 50px rgba(0,0,0,.45);transform:rotate(4deg)}
+.dc.site .ph img{position:relative;width:min(32%,160px);height:auto;object-fit:contain;margin:30px 5% 0 0;transform:rotate(4deg)}
 .dc.site:hover .ph img{transform:rotate(0) scale(1.06)}
 .dc.site::before{background:linear-gradient(180deg,rgba(0,0,0,0) 45%,rgba(5,3,15,.7) 100%)}
 /* переход "провалиться" */
@@ -251,7 +251,7 @@ footer img{height:70px;margin:0 auto 12px}
   </section>
 
   <section class="blk" id="weekT">
-    <div class="sh2 rv"><span class="num">03</span><h2 class="sec">Расписание <em>недели</em></h2><button class="ibtn sm pri ed add" data-new="schedule">+ Занятие</button></div>
+    <div class="sh2 rv"><span class="num">03</span><h2 class="sec">Расписание <em>недели</em></h2><button class="ibtn sm ed" id="seedBtn" style="margin-left:auto">⤓ Примерное расписание</button><button class="ibtn sm pri ed" data-new="schedule">+ Занятие</button></div>
     <div class="rv"><div class="days" id="days"></div><div class="tl" id="tl"></div></div>
   </section>
 
@@ -448,6 +448,14 @@ function openForm(key,id){
   if($('#fDel'))$('#fDel').onclick=async()=>{if(!confirm('Удалить запись?'))return;try{const j=await api({op:'hdel',hub:HUB,key,id});D=j.data;ls.set('hub_'+HUB,JSON.stringify(D));closeM();render();toast('Удалено')}catch(e){toast(e.message)}};
 }
 $$('[data-new]').forEach(b=>b.onclick=()=>openForm(b.dataset.new,null));
+$('#seedBtn').onclick=async()=>{ if(!canEdit())return; if(!confirm('Добавить кружки ИИ-студия, Взлёт, Ложкари, Рисование и лепка и примерное расписание (с пометкой "уточняется")? Уже существующие кружки с такими названиями не дублируются.'))return;
+  const b=$('#seedBtn'); b.disabled=true; b.textContent='Загружаю…';
+  try{ const norm=x=>String(x||'').toLowerCase().replace(/[^а-яёa-z0-9]/g,''); const ids={};
+    for(const g of SEED.groups){ let ex=D.groups.find(x=>norm(x.name)===norm(g.name)); if(!ex){ const j=await api({op:'hput',hub:HUB,key:'groups',item:Object.assign({},g,{id:''})}); D=j.data; ex=D.groups.find(x=>norm(x.name)===norm(g.name)); } ids[g.id]=ex&&ex.id; }
+    for(const s of SEED.schedule){ const gid=ids[s.group]; if(!gid||D.schedule.some(x=>x.group===gid&&x.day===s.day))continue; const j=await api({op:'hput',hub:HUB,key:'schedule',item:Object.assign({},s,{id:'',group:gid})}); D=j.data; }
+    for(const n of SEED.news){ if(!D.news.some(x=>x.text===n.text)){ const j=await api({op:'hput',hub:HUB,key:'news',item:Object.assign({},n,{id:''})}); D=j.data; } }
+    ls.set('hub_'+HUB,JSON.stringify(D)); render(); toast('Готово: расписание загружено'); }
+  catch(e){ toast(e.message); } b.disabled=false; b.textContent='⤓ Примерное расписание'; };
 
 /* ---------- тема ---------- */
 function setTheme(t){document.documentElement.dataset.theme=t;ls.set('spectr_theme',t)}
@@ -506,7 +514,7 @@ function intro(){
   if(HOVER) $$('.mag').forEach(b=>{b.addEventListener('pointermove',e=>{const r=b.getBoundingClientRect();gsap.to(b,{x:(e.clientX-r.left-r.width/2)*.25,y:(e.clientY-r.top-r.height/2)*.35,duration:.4})});b.addEventListener('pointerleave',()=>gsap.to(b,{x:0,y:0,duration:.7,ease:'elastic.out(1,.4)'}))});
   // появление секций
   $$('.rv').forEach(el=>gsap.from(el,{y:60,opacity:0,duration:1,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 88%'}}));
-  $$('.sh2 h2').forEach(h=>{if(!window.SplitText)return;try{const s=new SplitText(h,{type:'words'});gsap.from(s.words,{yPercent:100,opacity:0,rotateX:-60,duration:.8,stagger:.08,ease:'back.out(1.7)',scrollTrigger:{trigger:h,start:'top 88%'}})}catch(e){}});
+  $$('.sh2 h2').forEach(h=>gsap.from(h,{x:-60,opacity:0,duration:.9,ease:'power3.out',scrollTrigger:{trigger:h,start:'top 90%'}}));
   // карточки дашбордов: въезд и параллакс фото
   gsap.from('.dc',{y:120,opacity:0,scale:.92,duration:1.1,stagger:.12,ease:'expo.out',scrollTrigger:{trigger:'#dash',start:'top 82%'}});
   $$('.dc .ph').forEach(p=>gsap.fromTo(p,{yPercent:-8},{yPercent:8,ease:'none',scrollTrigger:{trigger:p.parentElement,start:'top bottom',end:'bottom top',scrub:true}}));
