@@ -4,7 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>СПЕКТР - ресурсный центр</title>
-<meta name="description" content="Ресурсный центр СПЕКТР: кружки, дашборды, расписание, новости и объявления.">
+<meta name="description" content="СПЕКТР - кружки ресурсного центра в Иртышском поселении: расписание занятий, запись в кружки, дашборды клуба БПЛА "Взлёт", Агрокласса и ИИ-студии.">
+<link rel="canonical" href="https://centrspektr.github.io/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="СПЕКТР">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://centrspektr.github.io/">
+<meta property="og:title" content="СПЕКТР - кружки и расписание занятий">
+<meta property="og:description" content="Расписание, запись в кружки, дроны, музыка, ИИ, ложкари, рисование и лепка. Иртышское поселение.">
+<meta property="og:image" content="https://centrspektr.github.io/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="СПЕКТР - ресурсный центр">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0b0914">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -184,7 +196,7 @@ h2.sec em{font-style:normal;background:var(--rain);background-size:300% 100%;-we
 .grp .acts{display:flex;gap:6px;margin-top:auto;padding-top:6px;flex-wrap:wrap}
 .glw2{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--gc) 26%,transparent),transparent 70%)} .grp:hover .glw2{opacity:1}
 /* ---- события, ссылки ---- */
-.evs{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:760px){.evs{grid-template-columns:1fr}}
+.evs{display:grid;grid-template-columns:1fr 1fr;gap:16px} #vkCard{grid-column:1/-1} @media(max-width:760px){.evs{grid-template-columns:1fr}}
 .it{display:flex;gap:13px;align-items:center;padding:11px 0;border-bottom:1px dashed var(--line)} .it:last-child{border-bottom:none}
 .it .dd{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;text-align:center;color:#fff;background:linear-gradient(135deg,var(--c1),var(--c2));flex-shrink:0;line-height:1.05} .it .dd b{font-size:19px} .it .dd small{font-size:11px;display:block}
 .it .tx{flex:1} .it small.p{color:var(--dim)}
@@ -194,6 +206,15 @@ h2.sec em{font-style:normal;background:var(--rain);background-size:300% 100%;-we
 .lnk small{display:block;color:var(--dim)}
 footer{margin-top:90px;padding:46px 0 50px;border-top:1px solid var(--line);text-align:center;color:var(--dim);font-size:13px}
 footer img{height:70px;margin:0 auto 12px}
+footer .fl{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:0 0 16px}
+footer .fl a{padding:8px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);text-decoration:none;font-weight:700;font-size:13.5px}
+footer .fl a:hover{border-color:var(--c1)}
+.join{display:grid;grid-template-columns:repeat(3,1fr);gap:14px} @media(max-width:820px){.join{grid-template-columns:1fr}}
+.join .stp{display:flex;gap:14px;align-items:flex-start;font-size:15px}
+.join .stp b{flex-shrink:0;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:#fff;font:800 17px var(--fh);background:linear-gradient(135deg,var(--c1),var(--c2))}
+.jbtn{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+body:not(.editing) .off{display:none !important}
+.lnk.hid{opacity:.5;outline:2px dashed var(--line)}
 /* ---- редактирование ---- */
 .ed{display:none} body.editing .ed{display:inline-flex}
 .ebtn{border:none;background:var(--bg2);color:var(--dim);border-radius:9px;padding:4px 9px;cursor:pointer;font:700 12px var(--fb)} .ebtn:hover{color:var(--c1)}
@@ -434,9 +455,9 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
 <div class="cur"></div><div class="cur2"></div>
 
 <header id="hdr"><div class="wrap top">
-  <a class="brand" id="brand" href="#top"><img src="mark.webp" alt=""><b>СПЕКТР</b></a>
-  <nav class="mn"><a href="#dashT">Дашборды</a><a href="#todayT">Сегодня</a><a href="#weekT">Расписание</a><a href="#groupsT">Кружки</a><a href="#newsT">Новости</a></nav>
-  <div class="tr"><button class="ibtn" id="stBtn" style="display:none" title="Ученики и заявки">👥<b class="stc" id="stCnt" style="display:none"></b></button><button class="ibtn" id="lockBtn" style="display:none" title="Вход для редакторов">✎</button><button class="ibtn" id="themeBtn" title="Тема">🌓</button></div>
+  <a class="brand" id="brand" href="#top" aria-label="СПЕКТР - в начало"><img src="mark.webp" alt="СПЕКТР"><b>СПЕКТР</b></a>
+  <nav class="mn"><a href="#dashT">Дашборды</a><a href="#todayT" id="navToday">Сегодня</a><a href="#weekT">Расписание</a><a href="#groupsT">Кружки</a><a href="#joinT">Записаться</a><a href="#newsT" id="navNews">Новости</a></nav>
+  <div class="tr"><button class="ibtn" id="stBtn" style="display:none" title="Ученики и заявки" aria-label="Ученики и заявки">👥<b class="stc" id="stCnt" style="display:none"></b></button><button class="ibtn" id="lockBtn" style="display:none" title="Вход для редакторов" aria-label="Вход для редакторов">✎</button><button class="ibtn" id="themeBtn" title="Светлая или тёмная тема" aria-label="Светлая или тёмная тема">🌓</button></div>
 </div></header>
 
 <section class="hero" id="top">
@@ -447,7 +468,7 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
       <h1 class="big" id="bigT">СПЕКТР</h1>
       <p class="rot hx">Здесь живут <span id="rotw" class="rw">дроны</span></p>
       <p class="lead hx">Кружки, дашборды, курсы и музыка в одном месте. Выбирай направление и проваливайся внутрь.</p>
-      <div class="cta hx"><a class="ibtn pri lg mag" href="#dashT">Выбрать дашборд ↓</a><a class="ibtn gl lg mag" href="#weekT">Расписание</a></div>
+      <div class="cta hx"><a class="ibtn pri lg mag" href="#dashT">Выбрать дашборд ↓</a><a class="ibtn gl lg mag" href="#weekT">Расписание</a><a class="ibtn gl lg mag" href="#joinT">Записаться</a></div>
       <div class="chips hx" id="heroChips"></div>
     </div>
     <div class="lw" id="lw"><div class="ring"></div><div class="orb"></div><div class="disc"></div><img src="logo.webp" alt="Логотип ресурсного центра СПЕКТР"></div>
@@ -462,35 +483,46 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
     <div class="dash" id="dash"></div>
   </section>
 
+  <section class="blk" id="joinT">
+    <div class="sh2 rv"><span class="num">02</span><h2 class="sec">Как <em>записаться</em></h2><p>Заявку отправляет сам ученик, педагог её принимает.</p></div>
+    <div class="join rv">
+      <div class="card stp"><b>1</b><span>Открой дашборд своего кружка: "Взлёт" или "Гитара и ИИ-студия".</span></div>
+      <div class="card stp"><b>2</b><span>Вкладка "🏆 Рейтинг": впиши имя, фамилию и класс, нажми "Отправить заявку".</span></div>
+      <div class="card stp"><b>3</b><span>Педагог примет заявку, и на том же сайте появится твой личный код. Очки за тесты и задания пойдут в рейтинг.</span></div>
+    </div>
+    <div class="jbtn rv"><a class="ibtn pri" href="vzlet/#rate">🚁 Заявка во "Взлёт"</a><a class="ibtn pri" href="studio/#rate">🎸 Заявка в ИИ-студию</a><a class="ibtn" href="https://centrspektr.fun" target="_blank" rel="noopener">Другие кружки: заявка на сайте Спектр ↗</a></div>
+  </section>
+
   <section class="blk" id="todayT">
-    <div class="sh2 rv"><span class="num">02</span><h2 class="sec">Сегодня <em>в Спектре</em></h2><p id="todayD"></p></div>
+    <div class="sh2 rv"><span class="num">03</span><h2 class="sec">Сегодня <em>в Спектре</em></h2><p id="todayD"></p></div>
     <div class="today rv"><div class="card"><div id="todayL"></div></div><div class="card nxt" id="nextC"></div></div>
   </section>
 
   <section class="blk" id="weekT">
-    <div class="sh2 rv"><span class="num">03</span><h2 class="sec">Расписание <em>недели</em></h2><button class="ibtn sm ed" id="seedBtn" style="margin-left:auto">⤓ Примерное расписание</button><button class="ibtn sm pri ed" data-new="schedule">+ Занятие</button></div>
+    <div class="sh2 rv"><span class="num">04</span><h2 class="sec">Расписание <em>недели</em></h2><button class="ibtn sm ed" id="seedBtn" style="margin-left:auto">⤓ Расписание Спектра</button><button class="ibtn sm pri ed" data-new="schedule">+ Занятие</button></div>
     <div class="rv"><div class="days" id="days"></div><div class="tl" id="tl"></div></div>
   </section>
 
   <section class="blk" id="groupsT">
-    <div class="sh2 rv"><span class="num">04</span><h2 class="sec">Наши <em>кружки</em></h2><p id="gCount"></p><button class="ibtn sm pri ed add" data-new="groups">+ Кружок</button></div>
+    <div class="sh2 rv"><span class="num">05</span><h2 class="sec">Наши <em>кружки</em></h2><p id="gCount"></p><button class="ibtn sm pri ed add" data-new="groups">+ Кружок</button></div>
     <div class="groups" id="groups"></div>
   </section>
 
   <section class="blk" id="newsT">
-    <div class="sh2 rv"><span class="num">05</span><h2 class="sec">Новости и <em>объявления</em></h2></div>
+    <div class="sh2 rv"><span class="num">06</span><h2 class="sec">Новости и <em>объявления</em></h2></div>
     <div class="evs rv">
-      <div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3>Объявления и события</h3><button class="ibtn sm ed" data-new="events">+ Добавить</button></div><div id="events"></div></div>
-      <div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3>Новости</h3><button class="ibtn sm ed" data-new="news">+ Новость</button></div><div id="news"></div></div>
+      <div class="card" id="evCard"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3>Объявления и события</h3><button class="ibtn sm ed" data-new="events">+ Добавить</button></div><div id="events"></div></div>
+      <div class="card" id="newsCard"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3>Новости</h3><button class="ibtn sm ed" data-new="news">+ Новость</button></div><div id="news"></div></div>
+      <div class="card" id="vkCard"><h3>Новости в ВК</h3><div id="vkWall" style="min-height:120px"><a class="ibtn sm" href="https://vk.com/club237916033" target="_blank" rel="noopener">Открыть группу ВК ↗</a></div></div>
     </div>
   </section>
 
   <section class="blk" id="linksT">
-    <div class="sh2 rv"><span class="num">06</span><h2 class="sec">Площадки <em>и ссылки</em></h2><button class="ibtn sm pri ed add" data-new="links">+ Ссылка</button></div>
+    <div class="sh2 rv"><span class="num">07</span><h2 class="sec">Сайт <em>и ссылки</em></h2><button class="ibtn sm pri ed add" data-new="links">+ Ссылка</button></div>
     <div class="links" id="links"></div>
   </section>
 </main>
-<footer><img src="logo.webp" alt="">Ресурсный центр "СПЕКТР" · Иртышское поселение · Черлакский район<span id="upd"></span></footer>
+<footer><img src="logo.webp" alt="Логотип СПЕКТР"><div class="fl" id="footL"></div>Ресурсный центр "СПЕКТР" · Иртышское поселение · Черлакский район<span id="upd"></span></footer>
 
 <div id="dive"></div>
 <div id="soon"></div>
@@ -503,20 +535,37 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
 <script>
 const HUB='spectr', API='https://script.google.com/macros/s/AKfycbwmh9Ksw7lm9pYZCy3ao-mvZ5ogKbFM7E66zJIAa5ZvorA6q7FLH8ZlFZvFK9RKHRM-/exec';
 const LINKS={vzlet:'vzlet/', agro:'agroklass/', site:'https://centrspektr.fun', zan:'https://irtysh-zanyatiya.github.io/'};
+const SOCIAL={vk:'https://vk.com/club237916033', vkId:237916033, max:'https://max.ru/join/vXgGYXzwh0p9R1_CUppOus_9Msui9Annkj4HHpaBHVU',
+ maxVzlet:'https://max.ru/join/v0ZfpDIihnow9hdwq3vpjm0KiPFW7A0WDfkNlIt9JVs', maxStudio:'https://max.ru/join/x7bqQ0ZGLEmvUJso1aof3ylEJv5K-1x_4cbCWCHaf0A'};
+const FIXL=[{name:'Перейти на сайт Спектр',url:LINKS.site,note:'о центре, контакты, заявки'},{name:'ВКонтакте',url:SOCIAL.vk,note:'новости Спектра'},{name:'MAX',url:SOCIAL.max,note:'группа Спектра'},
+ {name:'Клуб "Взлёт"',url:LINKS.vzlet,note:'дашборд клуба БПЛА'},{name:'Агрокласс',url:LINKS.agro,note:'дроны, Python, ИИ'},{name:'Гитара и ИИ-студия',url:'studio/',note:'аккорды, тюнер, музыка с ИИ'},
+ {name:'Расписание занятий Иртыша',url:LINKS.zan,note:'все кружки и секции'},
+ {name:'MAX: клуб "Взлёт"',url:SOCIAL.maxVzlet,note:'группа клуба',nf:1},{name:'MAX: ИИ-студия',url:SOCIAL.maxStudio,note:'группа студии',nf:1}].filter(l=>l.url);
+const MAXG=g=>{const l=String(g.link||'');return /vzlet/.test(l)?SOCIAL.maxVzlet:/studio/.test(l)?SOCIAL.maxStudio:''};
+const JOIN=g=>{const l=String(g.link||'');return /vzlet/.test(l)?'vzlet/#rate':/studio/.test(l)?'studio/#rate':/agroklass/.test(l)?'':LINKS.site};
 const DASH=[
  {id:'vzlet',n:'Клуб "Взлёт"',img:'vzlet.webp',tags:['FPV','БПЛА'],t:'Рейтинг пилотов, шпаргалки, тесты, калькуляторы и тренажёр стиков.',u:LINKS.vzlet},
  {id:'studio',n:'Гитара и ИИ-студия',img:'studio.webp',tags:['Музыка','ИИ'],t:'Аккорды со звуком, тренажёр смены аккордов, тюнер, метроном и создание музыки с ИИ.',u:'studio/'},
  {id:'agro',n:'Агрокласс',art:'agro',tags:['Python','ИИ','Дроны'],t:'Дроны в агросфере, лаборатория Python, ИИ-лаборатория, промпты и рейтинг класса.',u:LINKS.agro},
  {id:'site',n:'Сайт Спектра',logo:1,tags:['О центре'],t:'Направления, проекты, заявки и контакты ресурсного центра.',u:LINKS.site,ext:1}];
 const WORDS=['дроны','музыка','нейросети','гитара','ложкари','рисунки','лепка','творчество'];
+const BUK="Буканова Кулян Канатовна", LANG="Ланглиц Александр Давыдович";
 const SEED={"groups":[
  {"id":"ai","name":"ИИ-студия: музыка будущего","who":"","ages":"5-11 кл","desc":"Гитара плюс нейросети: пишем, аранжируем и сводим свои треки.","color":"#d946ef","art":"music","link":"studio/"},
  {"id":"vzlet","name":"Клуб БПЛА \"Взлёт\"","who":"Наумов Александр Александрович","ages":"1-11 кл","desc":"FPV-пилотирование: симулятор, полёты и гонки дронов.","color":"#06b6d4","art":"drone","link":"vzlet/"},
- {"id":"spoons","name":"Ложкари","who":"","ages":"все возрасты","desc":"Игра на ложках и народных инструментах.","color":"#ca8a04","art":"spoons","link":""},
- {"id":"artclay","name":"Рисование и лепка","who":"","ages":"дети","desc":"Рисунок, живопись, лепка из глины и пластилина.","color":"#16a34a","art":"abstract","link":""}],
- "schedule":[{"id":"s1","group":"ai","day":"Ср","start":"15:00","end":"16:30","place":"","tent":true},{"id":"s2","group":"vzlet","day":"Вт","start":"15:30","end":"17:00","place":"","tent":true},{"id":"s3","group":"vzlet","day":"Сб","start":"11:00","end":"13:00","place":"","tent":true},{"id":"s4","group":"spoons","day":"Чт","start":"16:00","end":"17:00","place":"","tent":true},{"id":"s5","group":"artclay","day":"Пн","start":"15:00","end":"16:00","place":"","tent":true},{"id":"s6","group":"artclay","day":"Пт","start":"15:00","end":"16:00","place":"","tent":true}],
+ {"id":"okol","name":"Ансамбль \"Околица\"","who":BUK+" (руководитель)","ages":"","desc":"","color":"#dc2626","art":"mic","link":""},
+ {"id":"zad","name":"Ложкари \"Задоринки\"","who":BUK,"ages":"","desc":"","color":"#ca8a04","art":"spoons","link":""},
+ {"id":"lad","name":"Ложкари \"Ладушки\"","who":BUK,"ages":"","desc":"","color":"#ea580c","art":"spoons","link":""},
+ {"id":"sculpt","name":"Скульптура","who":LANG,"ages":"","desc":"","color":"#16a34a","art":"abstract","link":""},
+ {"id":"draw","name":"Рисование","who":LANG,"ages":"","desc":"","color":"#2563eb","art":"abstract","link":""}],
+ "schedule":[
+  {"id":"s1","group":"okol","day":"Пн","start":"13:00","end":"15:00","place":"","tent":false},{"id":"s2","group":"zad","day":"Пн","start":"16:00","end":"17:00","place":"","tent":false},{"id":"s3","group":"lad","day":"Пн","start":"17:00","end":"18:00","place":"","tent":false},
+  {"id":"s4","group":"okol","day":"Ср","start":"13:00","end":"15:00","place":"","tent":false},{"id":"s5","group":"zad","day":"Ср","start":"16:00","end":"17:00","place":"","tent":false},{"id":"s6","group":"lad","day":"Ср","start":"17:00","end":"18:00","place":"","tent":false},
+  {"id":"s7","group":"sculpt","day":"Ср","start":"17:00","end":"18:00","place":"","tent":false},
+  {"id":"s8","group":"draw","day":"Сб","start":"12:00","end":"13:00","place":"","tent":true}],
  "events":[],"news":[{"id":"n1","text":"Открываем новый дашборд Спектра: расписание кружков, курсы и игры в одном месте.","date":"13.10.2026"}],
- "links":[{"id":"l1","name":"Сайт Спектра","url":"https://centrspektr.fun","note":"о центре, заявки"},{"id":"l2","name":"Расписание занятий Иртыша","url":"https://irtysh-zanyatiya.github.io/","note":"все кружки и секции"}]};
+ "links":[]};
+const SEED_NEW=["okol","zad","lad","sculpt","draw"], SEED_OLD=["Ложкари","Рисование и лепка"];
 const DAYS=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'], DAYF={Пн:'Понедельник',Вт:'Вторник',Ср:'Среда',Чт:'Четверг',Пт:'Пятница',Сб:'Суббота',Вс:'Воскресенье'};
 const MON=['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'];
 const ART={drone:'🚁',music:'🎵',guitar:'🎸',track:'🏃',abstract:'🎨',ball:'⚽',volley:'🏐',hockey:'🏒',spoons:'🥄',mic:'🎤',star:'⭐',book:'📚',robot:'🤖',theatre:'🎭',sprout:'🌱'};
@@ -603,12 +652,23 @@ function render(){
   $('#groups').innerHTML=D.groups.map(g=>{const sl=slotsOf(g.id),c=gColor(g);return `<div class="grp" style="--gc:${c}" data-g="${esc(g.id)}"><span class="glw2"></span><div class="cov" style="background:linear-gradient(135deg,${c},color-mix(in srgb,${c} 45%,#000))"><span class="e">${ART[g.art]||'⭐'}</span><h3>${esc(g.name)}</h3></div>
     <div class="bd">${g.desc?`<span>${esc(g.desc)}</span>`:''}<span class="meta">${[g.ages&&'👥 '+esc(g.ages),g.who&&'👤 '+esc(g.who),g.place&&'📍 '+esc(g.place)].filter(Boolean).join('<br>')}</span>
     <div class="tms">${sl.length?sl.map(s=>`<span>${s.day} ${hm(s.start)}</span>`).join(''):'<span class="tent">время уточняется</span>'}</div>
-    <div class="acts">${g.link?`<a class="ibtn sm pri" href="${esc(g.link)}" ${ext(g.link)?'target="_blank" rel="noopener"':''}>Открыть →</a>`:''}<button class="ebtn ed" data-edit="groups" data-id="${esc(g.id)}">✎ изменить</button></div></div></div>`}).join('')||'<div class="card"><p class="empty">Кружки скоро появятся.</p></div>';
+    <div class="acts">${g.link?`<a class="ibtn sm pri" href="${esc(g.link)}" ${ext(g.link)?'target="_blank" rel="noopener"':''}>Открыть →</a>`:''}${JOIN(g)?`<a class="ibtn sm" href="${esc(JOIN(g))}" ${ext(JOIN(g))?'target="_blank" rel="noopener"':''}>Записаться${ext(JOIN(g))?' ↗':''}</a>`:''}${MAXG(g)?`<a class="ibtn sm" href="${esc(MAXG(g))}" target="_blank" rel="noopener">MAX ↗</a>`:''}<button class="ebtn ed" data-edit="groups" data-id="${esc(g.id)}">✎ изменить</button></div></div></div>`}).join('')||'<div class="card"><p class="empty">Кружки скоро появятся.</p></div>';
   const ev=upcoming();
   $('#events').innerHTML=ev.length?ev.map(e=>{const d=pDate(e.date),days=d?Math.round((d-today0())/864e5):null;return `<div class="it"><div class="dd">${d?`<b>${d.getDate()}</b><small>${MON[d.getMonth()]}</small>`:'<b>!</b>'}</div><div class="tx"><b>${esc(e.title)}</b><br><small class="p">${esc(e.place||'')}${days!==null?(days===0?' · сегодня':days===1?' · завтра':` · через ${days} ${pl(days,'день','дня','дней')}`):''}</small></div><button class="ebtn ed" data-edit="events" data-id="${esc(e.id)}">✎</button></div>`}).join(''):'<p class="empty">Пока нет объявлений.</p>';
   $('#news').innerHTML=D.news.length?D.news.slice().reverse().map(x=>`<div class="it"><div class="tx"><small class="p">${esc(x.date)}</small><br>${esc(x.text)}</div><button class="ebtn ed" data-edit="news" data-id="${esc(x.id)}">✎</button></div>`).join(''):'<p class="empty">Новостей пока нет.</p>';
-  $('#links').innerHTML=D.links.map(l=>`<a class="lnk" ${l.url?`href="${esc(l.url)}" ${ext(l.url)?'target="_blank" rel="noopener"':''}`:''}><span class="ic">${ext(l.url)?'↗':'→'}</span><span style="flex:1"><b>${esc(l.name)}</b><small>${esc(l.note||'')}</small></span><button class="ebtn ed" data-edit="links" data-id="${esc(l.id)}">✎</button></a>`).join('')||'<p class="empty">Ссылки скоро появятся.</p>';
+  const nu=u=>String(u||'').trim().toLowerCase().replace(/^https?:\/\//,'').replace(/^centrspektr\.github\.io\/?/,'').replace(/[#?].*$/,'').replace(/\/+$/,'');
+  const fixU=new Set(FIXL.map(l=>nu(l.url))), bad=l=>!nu(l.url)||/школ/i.test(l.name||'')||fixU.has(nu(l.url));
+  const lnk=(l,i,h)=>`<a class="lnk ${h?'hid':''}" ${l.url?`href="${esc(l.url)}" ${ext(l.url)?'target="_blank" rel="noopener"':''}`:''}><span class="ic">${ext(l.url)?'↗':'→'}</span><span style="flex:1"><b>${esc(l.name)}</b><small>${h?'не показывается посетителям (дубль или ведёт на этот же сайт) - лучше удалить':esc(l.note||'')}</small></span>${l.id?`<button class="ebtn ed" data-edit="links" data-id="${esc(l.id)}">✎</button>`:''}</a>`;
+  $('#links').innerHTML=FIXL.map(l=>lnk(l)).join('')+D.links.map(l=>{const h=bad(l);return h&&!canEdit()?'':lnk(l,0,h)}).join('');
+  $('#footL').innerHTML=FIXL.filter(l=>!l.nf).map(l=>`<a href="${esc(l.url)}" ${ext(l.url)?'target="_blank" rel="noopener"':''}>${esc(l.name)}</a>`).join('');
+  // пустые блоки посетителям не показываем (в режиме правки видны)
+  const off=(sel,v)=>{const e=$(sel);if(e)e.classList.toggle('off',!!v)};
+  off('#todayT',!D.schedule.some(s=>grp(s.group))); off('#navToday',!D.schedule.some(s=>grp(s.group)));
+  off('#evCard',!ev.length); off('#newsCard',!D.news.length); 
+  off('#groupsT',!D.groups.length);
   wire(); applyUser();
+  // высота страницы поменялась - пересчитать точки появления блоков, иначе нижние разделы остаются невидимыми
+  if(HAS_GSAP&&window.ScrollTrigger){clearTimeout(render._r);render._r=setTimeout(()=>ScrollTrigger.refresh(),150)}
 }
 function renderDay(anim){
   const list=D.schedule.filter(s=>s.day===DAYSEL&&grp(s.group)).sort((a,b)=>toMin(a.start)-toMin(b.start));
@@ -633,7 +693,7 @@ async function load(){
 /* ---------- вход и правка (тот же PIN-сервер) ---------- */
 let SESS=null;try{SESS=JSON.parse(ss.get('spectr_sess')||'null')}catch(e){}
 const canEdit=()=>SESS&&SESS.user&&(SESS.user.role==='admin'||(SESS.user.clubs||[]).includes('hub:'+HUB));
-function applyUser(){document.body.classList.toggle('editing',!!canEdit());const b=$('#lockBtn');b.style.display=SESS||ls.get('spectr_editor')==='1'?'':'none';b.textContent=SESS?'🔓':'✎';b.title=SESS?'Выйти из режима правки':'Вход для редакторов';if(window.stUpd)stUpd()}
+function applyUser(){document.body.classList.toggle('editing',!!canEdit());const b=$('#lockBtn');b.style.display=SESS||ls.get('spectr_editor')==='1'?'':'none';b.textContent=SESS?'🔓':'✎';b.title=SESS?'Выйти из режима правки':'Вход для редакторов';b.setAttribute('aria-label',b.title);if(window.stUpd)stUpd()}
 async function api(q){let j;try{j=await (await fetch(API,{method:'POST',body:JSON.stringify(Object.assign({},q,q.op==='login'?{}:{token:SESS&&SESS.token}))})).json()}catch(e){throw new Error('Нет связи с сервером')}
   if(!j.ok){if(j.auth){SESS=null;try{sessionStorage.removeItem('spectr_sess')}catch(e){}applyUser()}throw new Error(j.error||'Ошибка сервера')}return j}
 function openM(){$('#modal').classList.add('on')} function closeM(){$('#modal').classList.remove('on');$('#mbody').classList.remove('wide')}
@@ -666,14 +726,16 @@ function openForm(key,id){
   if($('#fDel'))$('#fDel').onclick=async()=>{if(!confirm('Удалить запись?'))return;try{const j=await api({op:'hdel',hub:HUB,key,id});D=j.data;ls.set('hub_'+HUB,JSON.stringify(D));closeM();render();toast('Удалено')}catch(e){toast(e.message)}};
 }
 $$('[data-new]').forEach(b=>b.onclick=()=>openForm(b.dataset.new,null));
-$('#seedBtn').onclick=async()=>{ if(!canEdit())return; if(!confirm('Добавить кружки ИИ-студия, Взлёт, Ложкари, Рисование и лепка и примерное расписание (с пометкой "уточняется")? Уже существующие кружки с такими названиями не дублируются.'))return;
+$('#seedBtn').onclick=async()=>{ if(!canEdit())return;
+  const norm=x=>String(x||'').toLowerCase().replace(/[^а-яёa-z0-9]/g,''), olds=D.groups.filter(g=>SEED_OLD.some(n=>norm(n)===norm(g.name)));
+  if(!confirm('Загрузить расписание Спектра?\n\nДобавятся кружки и занятия:\n- ансамбль "Околица" Пн, Ср 13:00-15:00\n- ложкари "Задоринки" Пн, Ср 16:00-17:00\n- ложкари "Ладушки" Пн, Ср 17:00-18:00\n  (руководитель Буканова К.К.)\n- скульптура Ср 17:00-18:00\n- рисование Сб 12:00 (конец "уточняется")\n  (Ланглиц А.Д.)'+(olds.length?'\n\nУдалятся старые примерные кружки с их занятиями: '+olds.map(g=>'"'+g.name+'"').join(', '):'')+'\n\nЗанятия, которые уже есть, не дублируются.'))return;
   const b=$('#seedBtn'); b.disabled=true; b.textContent='Загружаю…';
-  try{ const norm=x=>String(x||'').toLowerCase().replace(/[^а-яёa-z0-9]/g,''); const ids={};
-    for(const g of SEED.groups){ let ex=D.groups.find(x=>norm(x.name)===norm(g.name)); if(!ex){ const j=await api({op:'hput',hub:HUB,key:'groups',item:Object.assign({},g,{id:''})}); D=j.data; ex=D.groups.find(x=>norm(x.name)===norm(g.name)); } ids[g.id]=ex&&ex.id; }
-    for(const s of SEED.schedule){ const gid=ids[s.group]; if(!gid||D.schedule.some(x=>x.group===gid&&x.day===s.day))continue; const j=await api({op:'hput',hub:HUB,key:'schedule',item:Object.assign({},s,{id:'',group:gid})}); D=j.data; }
-    for(const n of SEED.news){ if(!D.news.some(x=>x.text===n.text)){ const j=await api({op:'hput',hub:HUB,key:'news',item:Object.assign({},n,{id:''})}); D=j.data; } }
+  try{ const ids={};
+    for(const g of SEED.groups.filter(g=>SEED_NEW.includes(g.id))){ let ex=D.groups.find(x=>norm(x.name)===norm(g.name)); if(!ex){ const j=await api({op:'hput',hub:HUB,key:'groups',item:Object.assign({},g,{id:''})}); D=j.data; ex=D.groups.find(x=>norm(x.name)===norm(g.name)); } ids[g.id]=ex&&ex.id; }
+    for(const s of SEED.schedule){ const gid=ids[s.group]; if(!gid||D.schedule.some(x=>x.group===gid&&x.day===s.day&&hm(x.start)===hm(s.start)))continue; const j=await api({op:'hput',hub:HUB,key:'schedule',item:Object.assign({},s,{id:'',group:gid})}); D=j.data; }
+    for(const g of olds){ for(const x of D.schedule.filter(x=>x.group===g.id)){ const j=await api({op:'hdel',hub:HUB,key:'schedule',id:x.id}); D=j.data; } const j=await api({op:'hdel',hub:HUB,key:'groups',id:g.id}); D=j.data; }
     ls.set('hub_'+HUB,JSON.stringify(D)); render(); toast('Готово: расписание загружено'); }
-  catch(e){ toast(e.message); } b.disabled=false; b.textContent='⤓ Примерное расписание'; };
+  catch(e){ toast(e.message); } b.disabled=false; b.textContent='⤓ Расписание Спектра'; };
 
 /* ---------- ученики: заявки, личные коды, очки за задания ---------- */
 var ST=null,STF="all",STSEL=new Set(),STPTS=null;
@@ -802,6 +864,10 @@ function intro(){
 mountSkins($('#themeBtn'));
 renderDash(); render(); applyUser(); intro(); load();
 setInterval(()=>{if(!document.hidden)load()},5*60e3); setInterval(()=>{if(!$('.modal.on')&&!editingFocus())render()},60e3);
+/* лента ВК: грузим виджет, только когда раздел новостей рядом */
+(function(){const box=$('#vkWall');if(!box||!SOCIAL.vkId)return;let done=0;
+  const go=()=>{if(done)return;done=1;const sc=document.createElement('script');sc.src='https://vk.com/js/api/openapi.js?169';sc.onload=()=>{try{box.innerHTML='<div id="vk_groups"></div>';VK.Widgets.Group('vk_groups',{mode:4,no_cover:1,wide:1,width:'auto',height:LITE?480:620,color1:'FFFFFF',color2:'1a1730',color3:'7c3aed'},SOCIAL.vkId)}catch(e){}};document.head.appendChild(sc)};
+  if('IntersectionObserver' in window)new IntersectionObserver((es,o)=>{if(es[0].isIntersecting){o.disconnect();go()}},{rootMargin:'600px'}).observe(box);else go()})();
 function editingFocus(){return document.activeElement&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)}
 (function hit(page){try{const k='irtysh_hit_'+page;if(ss.get(k)!==null)return;const d=new Date().toDateString(),fresh=!ls.get('irtysh_new_'+page),today=ls.get('irtysh_day_'+page)!==d;
   fetch(API,{method:'POST',body:JSON.stringify({op:'hit',page,fresh,today})}).then(r=>r.json()).then(j=>{if(!j.ok)return;ls.set('irtysh_new_'+page,'1');ls.set('irtysh_day_'+page,d);ss.set(k,String(j.total||''))}).catch(()=>{})}catch(e){}})(HUB);
