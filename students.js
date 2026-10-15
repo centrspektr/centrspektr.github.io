@@ -149,22 +149,22 @@
         '<div class="spk-stat"><span>⭐ ' + pts + ' ' + pl(+pts || 0, 'очко', 'очка', 'очков') + '</span>' +
         (me.rank ? '<span>🏆 место ' + me.rank + '</span>' : '') +
         (me.teacher ? '<span>📝 задания: ' + me.teacher + '</span>' : '') + '</div></div></div>' +
-        '<p style="margin-top:12px">Твои тесты и значки теперь сами попадают в рейтинг ' + club + '. Очки за задания добавляет педагог.</p>' +
+        '<p style="margin-top:12px">Твои тесты и значки теперь сами попадают в рейтинг ' + club + '. Очки за выполненные задания тоже идут в рейтинг.</p>' +
         '<p>Твой личный код - запиши его, чтобы войти с другого телефона:</p><div class="spk-code">' + esc(S.code) + '</div>' +
         '<div class="spk-row"><button class="spk-btn ghost" data-a="out">Выйти на этом устройстве</button></div>';
       if (S.fresh) { delete S.fresh; this.save(); }
     } else if (S.status === 'заявка') {
       this.view = 'wait';
       h = '<h4><span class="spk-pulse"></span>Заявка отправлена</h4>' +
-        '<p>' + esc(S.first) + ', ' + esc(S.cls) + ' - ждём, когда педагог одобрит заявку. Как только это случится, здесь появится твой личный код.</p>' +
+        '<p>' + esc(S.first) + ', ' + esc(S.cls) + ' - заявка на проверке. Система зарегистрирует тебя после проверки. Как только это случится, здесь появится твой личный код.</p>' +
         '<div class="spk-row"><button class="spk-btn pri" data-a="check">↻ Проверить</button><button class="spk-btn ghost" data-a="code">У меня уже есть код</button><button class="spk-btn ghost" data-a="cancel">Отменить</button></div><div class="spk-msg"></div>';
     } else if (S.status === 'отклонён') {
       this.view = 'no';
-      h = '<h4>Заявку не одобрили</h4><p>Подойди к педагогу, он подскажет, что не так. Можно отправить заявку заново.</p>' +
+      h = '<h4>Заявку не одобрили</h4><p>Проверь, правильно ли указаны имя, фамилия и класс, и отправь заявку заново. Если не получается - спроси на занятии.</p>' +
         '<div class="spk-row"><button class="spk-btn pri" data-a="form">Отправить заново</button><button class="spk-btn ghost" data-a="cancel">Закрыть</button></div>';
     } else if (this.view === 'form') {
       h = '<h4>Заявка в рейтинг ' + club + '</h4>' +
-        '<p>Фамилию видит только педагог. В общем рейтинге будут только имя и класс.</p>' +
+        '<p>Фамилия видна только администратору. В общем рейтинге будут только имя и класс.</p>' +
         '<div class="spk-f"><label>Имя<input name="first" autocomplete="given-name" maxlength="30"></label>' +
         '<label>Фамилия<input name="last" autocomplete="family-name" maxlength="40"></label>' +
         '<label>Класс<input name="cls" placeholder="например 7Б" maxlength="4" autocapitalize="characters"></label></div>' +
@@ -176,7 +176,7 @@
     } else {
       this.view = 'none';
       h = '<h4>Попади в рейтинг ' + club + '</h4>' +
-        '<p>Сейчас твои тесты и значки видны только на этом устройстве. Оставь заявку - педагог её одобрит, и твои очки будут попадать в общий рейтинг.</p>' +
+        '<p>Сейчас твои тесты и значки видны только на этом устройстве. Оставь заявку - после проверки система зарегистрирует тебя, и твои очки будут попадать в общий рейтинг.</p>' +
         '<div class="spk-row"><button class="spk-btn pri" data-a="form">✍ Оставить заявку</button><button class="spk-btn ghost" data-a="code">У меня уже есть код</button></div>';
     }
     this.mine.innerHTML = h;
@@ -221,7 +221,7 @@
 
   Box.prototype.renderTop = function () {
     var T = this.top || [], me = this.me, S = this.S, h = '<h4>🏆 Рейтинг ' + esc(NAMES[this.club] || '') + '</h4>' +
-      '<p><small>Очки за тесты, значки и задания педагога. Показаны только имя и класс.</small></p>';
+      '<p><small>Очки за тесты, значки и задания. Показаны только имя и класс.</small></p>';
     var medal = ['🥇', '🥈', '🥉'];
     if (!T.length) h += '<div class="spk-empty">Пока в рейтинге никого нет. Стань первым!</div>';
     else {
