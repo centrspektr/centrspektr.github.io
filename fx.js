@@ -8,11 +8,15 @@ var RED=matchMedia('(prefers-reduced-motion: reduce)').matches;
 var FINE=matchMedia('(hover:hover) and (pointer:fine)').matches;
 var LITE=!FINE||matchMedia('(max-width:860px)').matches;
 var TAU=Math.PI*2, rnd=Math.random;
+/* на страницах кружков (Взлёт, студия) своего переключателя стилей нет: берём стиль, выбранный на портале */
+var SKINS=[['neon','Неон'],['space','Космос'],['aqua','Акварель'],['pixel','Пиксель']];
+if(!window.SKIN){(function(){var K='spectr_skin',cur=null,subs=[];try{cur=localStorage.getItem(K)}catch(e){}if(!SKINS.some(function(x){return x[0]===cur}))cur='space';R.dataset.skin=cur;
+  window.SKIN={get:function(){return cur},on:function(f){subs.push(f)},set:function(k){cur=k;R.dataset.skin=k;try{localStorage.setItem(K,k)}catch(e){}subs.forEach(function(f){try{f(k)}catch(e){}})}}})()}
 function skin(){return (window.SKIN&&SKIN.get())||R.dataset.skin||'neon'}
 function dark(){return R.dataset.theme!=='light'}
 
 /* ---------- холст ---------- */
-var cv=D.createElement('canvas');cv.id='bgfx';cv.setAttribute('aria-hidden','true');
+var cv=D.createElement('canvas');cv.id='bgfx';cv.setAttribute('aria-hidden','true');cv.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:-1;pointer-events:none';
 var cx=cv.getContext('2d',{alpha:true});if(!cx)return;
 R.classList.add('fx');
 function mount(){D.body.insertBefore(cv,D.body.firstChild)}
@@ -194,7 +198,7 @@ function loop(ts){if(!run)return;requestAnimationFrame(loop);var dt=ts-lt;
 function start(){if(run||RED)return;run=true;lt=performance.now();requestAnimationFrame(loop)}
 function stop(){run=false}
 D.addEventListener('visibilitychange',function(){D.hidden?stop():start()});
-function boot(){size();lastW=innerWidth;if(window.SKIN&&SKIN.on)SKIN.on(function(){S={};});
+function boot(){size();lastW=innerWidth;if(window.SKIN&&SKIN.on)SKIN.on(function(){S={};});D.querySelectorAll('[data-fx-skin]').forEach(skinButton);
   if(RED){frame(performance.now());return}start();}
 if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',boot);else boot();
 // смена светлой/тёмной темы: пересчитать
@@ -203,7 +207,7 @@ new MutationObserver(function(){if(RED)frame(performance.now())}).observe(R,{att
 /* =====================================================================
    ЖИВЫЕ КНОПКИ: при нажатии сжимаются, при отпускании пружинят; круг-волна от пальца
    ===================================================================== */
-var SEL='.ibtn,.dc,.grp,.lnk,.ev,.sko,.wd,.days button,.chip,.day,[data-join],nav.mn a,.brand';
+var SEL='.btn,.cc,.chip,.vt button,nav.tb button,.qopt,.bd1,.pc,.lamp,.strs button,.ibtn,.dc,.grp,.lnk,.ev,.sko,.wd,.days button,.chip,.day,[data-join],nav.mn a,.brand';
 var held=null;
 var tiltR='0 0 1 0deg';
 function squish(el,e){if(!el.animate)return;held=el;var big=el.matches('.dc,.grp,.ev,.lnk');tiltR='0 0 1 0deg';
@@ -217,7 +221,11 @@ function ripple(el,e){var r=el.getBoundingClientRect(),d=Math.max(r.width,r.heig
   s.style.cssText='left:'+(e.clientX-r.left-d/2)+'px;top:'+(e.clientY-r.top-d/2)+'px;width:'+d+'px;height:'+d+'px';
   var host=el;if(getComputedStyle(host).position==='static')host.style.position='relative';host.appendChild(s);
   s.animate([{transform:'scale(0)',opacity:.45},{transform:'scale(1)',opacity:0}],{duration:650,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=function(){s.remove()}}
-D.addEventListener('pointerdown',function(e){if(e.button>0)return;var el=e.target.closest&&e.target.closest(SEL);if(!el||el.disabled)return;squish(el,e);if(!RED&&el.matches('.ibtn,.sko,.lnk,.chip,[data-join],nav.mn a'))ripple(el,e)},{passive:true});
+D.addEventListener('pointerdown',function(e){if(e.button>0)return;var el=e.target.closest&&e.target.closest(SEL);if(!el||el.disabled)return;squish(el,e);if(!RED&&el.matches('.btn,.ibtn,.sko,.lnk,.chip,[data-join],nav.mn a'))ripple(el,e)},{passive:true});
 ['pointerup','pointercancel','dragstart'].forEach(function(n){addEventListener(n,release,{passive:true})});
-window.FX={on:true,size:size};
+/* кнопка 🎨 для страниц кружков: каждое нажатие - следующий стиль фона */
+function skinButton(btn){if(!btn)return;btn.addEventListener('click',function(){var i=SKINS.findIndex(function(x){return x[0]===skin()}),n=SKINS[(i+1)%SKINS.length];if(SKIN.set)SKIN.set(n[0]);
+  var t=D.createElement('div');t.className='fxtip';t.textContent='Фон: '+n[1];D.body.appendChild(t);t.animate([{opacity:0,transform:'translate(-50%,10px)'},{opacity:1,transform:'translate(-50%,0)'},{opacity:1,offset:.8},{opacity:0}],{duration:1500,easing:'ease-out'}).onfinish=function(){t.remove()}})}
+var st=D.createElement('style');st.textContent='.fxtip{position:fixed;left:50%;top:18px;z-index:9999;padding:9px 16px;border-radius:12px;background:rgba(10,8,25,.85);color:#fff;font:700 14px system-ui,sans-serif;pointer-events:none;border:1px solid rgba(255,255,255,.2)}';(D.head||R).appendChild(st);
+window.FX={on:true,size:size,skinButton:skinButton};
 })();
