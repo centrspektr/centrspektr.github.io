@@ -39,6 +39,11 @@
     '.spk-f input{width:100%;box-sizing:border-box;font-weight:600;font-size:16px;font-family:inherit;padding:11px 12px;border-radius:12px;border:1px solid rgba(127,127,160,.4);background:rgba(0,0,0,.18);color:inherit}' +
     '.spk-f input:focus{outline:2px solid var(--spk-a);outline-offset:1px}' +
     '.spk-code{font:800 26px ui-monospace,Consolas,monospace;letter-spacing:.18em;padding:8px 14px;border-radius:12px;background:rgba(0,0,0,.25);display:inline-block;margin:4px 0 8px;user-select:all}' +
+    '.spk-ok{display:flex;gap:10px;align-items:flex-start;margin:0 0 10px;font-size:13.5px;line-height:1.35;cursor:pointer}' +
+    '.spk-ok input{flex-shrink:0;width:20px;height:20px;margin:1px 0 0;accent-color:var(--spk-a)}' +
+    '.spk-pd{margin:0 0 12px;font-size:13px;line-height:1.45;opacity:.9}' +
+    '.spk-pd summary{cursor:pointer;font-weight:700}' +
+    '.spk-pd p{margin:6px 0 0}' +
     '.spk-msg{font-size:14px;font-weight:700;min-height:1em;margin:6px 0 0}' +
     '.spk-msg.bad{color:#f87171} .spk-msg.ok{color:#4ade80}' +
     '.spk-me{display:flex;gap:14px;align-items:center;flex-wrap:wrap}' +
@@ -168,6 +173,11 @@
         '<div class="spk-f"><label>Имя<input name="first" autocomplete="given-name" maxlength="30"></label>' +
         '<label>Фамилия<input name="last" autocomplete="family-name" maxlength="40"></label>' +
         '<label>Класс<input name="cls" placeholder="например 7Б" maxlength="4" autocapitalize="characters"></label></div>' +
+        '<label class="spk-ok"><input type="checkbox" name="pd1"><span>Согласен(на) на обработку имени, фамилии и класса для участия в рейтинге ' + club + '. Если мне меньше 14 лет, согласие дал мой родитель.</span></label>' +
+        '<label class="spk-ok"><input type="checkbox" name="pd2"><span>Согласен(на), чтобы мои имя и класс были видны в рейтинге на сайте. Фамилия не публикуется.</span></label>' +
+        '<details class="spk-pd"><summary>Как используются данные</summary>' +
+        '<p>Данные получает ресурсный центр СПЕКТР, чтобы вести рейтинг кружка и выдать личный код. Публично видны только имя и класс, фамилию видит только администратор. Данные не передаются другим людям и сайтам.</p>' +
+        '<p>Хранятся, пока ты занимаешься в кружке. Чтобы удалить данные и отозвать согласие, скажи педагогу - запись удалят в течение 30 дней.</p></details>' +
         '<div class="spk-row"><button class="spk-btn pri" data-a="send">Отправить заявку</button><button class="spk-btn ghost" data-a="back">Отмена</button></div><div class="spk-msg"></div>';
     } else if (this.view === 'code') {
       h = '<h4>Вход по личному коду</h4><p>Код выдаётся после одобрения заявки. Он одинаковый на всех твоих устройствах.</p>' +
@@ -200,6 +210,9 @@
       if (q.first.length < 2) return this.msg('Напиши имя');
       if (q.last.length < 2) return this.msg('Напиши фамилию');
       if (!/^\d{1,2}\s*[а-яёa-z]?$/i.test(q.cls)) return this.msg('Класс - например 7Б');
+      var c1 = this.mine.querySelector('input[name="pd1"]'), c2 = this.mine.querySelector('input[name="pd2"]');
+      if (!c1 || !c1.checked || !c2 || !c2.checked) return this.msg('Отметь обе галочки согласия - без них заявку принять нельзя');
+      q.consent = 'pd1,pd2 ' + new Date().toISOString().slice(0, 10);
       btn.disabled = true; btn.textContent = 'Отправляю...';
       api(q).then(function (j) {
         if (!j.ok) { btn.disabled = false; btn.textContent = 'Отправить заявку'; return self.msg(j.error || 'Ошибка'); }
