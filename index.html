@@ -107,7 +107,10 @@ h1.big .ch{display:inline-block;background:inherit;background-size:inherit;-webk
 /* ---- бегущая строка ---- */
 .mqw{position:relative;z-index:2;overflow:hidden;padding:24px 0;margin-top:-50px}
 .mq{position:relative;overflow:hidden;padding:18px 0;transform:rotate(-2deg);margin:0 -20px;background:var(--rain);background-size:200% 100%;box-shadow:0 14px 40px rgba(124,58,237,.3);z-index:2}
-.mq .tk{display:flex;width:max-content;animation:mq 28s linear infinite}
+.mq .tk{display:flex;width:max-content;will-change:transform}
+.mq{cursor:grab;touch-action:pan-y;-webkit-user-select:none;user-select:none}.mq.hold{cursor:grabbing}
+.lw{touch-action:none;cursor:grab;-webkit-user-select:none;user-select:none}.lw.hold{cursor:grabbing}.lw img{pointer-events:none;-webkit-user-drag:none}
+.lw .disc{transition:scale .35s cubic-bezier(.2,.9,.3,1.4)}.lw.hold .disc{scale:.95}
 .tked{position:absolute;right:16px;bottom:2px;z-index:3}
 .mq span{font:900 clamp(18px,3vw,28px) var(--fh);color:#fff;white-space:nowrap;padding:0 22px;text-shadow:0 2px 12px rgba(0,0,0,.25)}
 .mq span::after{content:"✦";margin-left:44px;opacity:.85}
@@ -367,7 +370,6 @@ html.lite .nxt::before,html.lite .grp .cov::before{animation:none}
 html.lite .dc .ph{inset:0}
 html.lite h1.big{filter:none}
 html.lite h1.big,html.lite h1.big .ch,html.lite .brand b,html.lite h2.sec em,html.lite .mq{animation:none}
-html.lite .mq .tk{animation:mq 28s linear infinite}
 html.lite .orb{animation-duration:60s}
 html.lite .chip,html.lite .dc .lbl span,html.lite .dc .go{background:rgba(20,12,40,.55)}
 html.lite .dc .lbl .soon{background:var(--r3)}
@@ -809,7 +811,7 @@ $('#themeBtn').onclick=()=>setTheme(document.documentElement.dataset.theme==='da
 /* бегущая строка: слова хранятся на сервере (запись с датой "бегущая строка"), правит администратор */
 const TK_DEF='ДРОНЫ, FPV, ГИТАРА, ИИ-МУЗЫКА, PYTHON, ЛОЖКАРИ, СКУЛЬПТУРА, РИСОВАНИЕ, АГРОКЛАСС, ТВОРЧЕСТВО', TK_TAG='бегущая строка';
 const tkItem=()=>D.news.find(x=>x.date===TK_TAG);
-function renderTicker(){const t=(tkItem()?tkItem().text:TK_DEF),w=t.split(/[,\n]+/).map(x=>x.trim()).filter(Boolean);if(renderTicker._t===t)return;renderTicker._t=t;const h=w.map(x=>`<span>${esc(x)}</span>`).join('');$('#tk').innerHTML=h+h;setTimeout(applySpd,50)}
+function renderTicker(){const t=(tkItem()?tkItem().text:TK_DEF),w=t.split(/[,\n]+/).map(x=>x.trim()).filter(Boolean);if(renderTicker._t===t)return;renderTicker._t=t;const h=w.map(x=>`<span>${esc(x)}</span>`).join('');$('#tk').innerHTML=h+h;setTimeout(()=>window.tkMeas&&tkMeas(),50)}
 $('#tkEdit').onclick=()=>{if(!canEdit())return;const it=tkItem();$('#mbody').innerHTML=`<h3>Бегущая строка</h3><p style="color:var(--dim);font-size:14px">Слова через запятую.</p><label>Слова<textarea id="tkTxt">${esc(it?it.text:TK_DEF)}</textarea></label><div class="mbar"><button class="ibtn" onclick="closeM()">Отмена</button><button class="ibtn pri" id="tkSave">Сохранить</button></div>`;openM();
   $('#tkSave').onclick=async()=>{const b=$('#tkSave');b.disabled=true;b.textContent='Сохраняю…';try{const j=await api({op:'hput',hub:HUB,key:'news',item:{id:it?it.id:'',text:$('#tkTxt').value.trim()||TK_DEF,date:TK_TAG}});D=j.data;ls.set('hub_'+HUB,JSON.stringify(D));closeM();render();toast('Сохранено')}catch(e){toast(e.message);b.disabled=false;b.textContent='Сохранить'}}};
 renderTicker();
@@ -890,6 +892,44 @@ const SPD={a:+(ls.get('spectr_spd_a')??1),t:+(ls.get('spectr_spd_t')??1)};
 function applySpd(){try{document.getAnimations().forEach(x=>{if(!(x instanceof CSSAnimation))return;const el=x.effect&&x.effect.target;if(!el||!el.closest)return;const k=el.closest('.mq')?'t':'a';if(el.closest('.modal,.skp,#toast'))return;x.playbackRate=SPD[k]||0.0001})}catch(e){}}
 $$('[data-spd]').forEach(r=>{r.value=SPD[r.dataset.spd];r.oninput=()=>{SPD[r.dataset.spd]=+r.value;ls.set('spectr_spd_'+r.dataset.spd,r.value);applySpd()}});
 setTimeout(applySpd,300);
+
+/* ---------- шарики и бегущая строка: можно поймать пальцем ---------- */
+/* логотип с шариками: крути пальцем, после отпускания крутится по инерции и плавно замедляется */
+(function(){const lw=$('#lw');if(!lw)return;const parts=[lw.querySelector('.ring'),lw.querySelector('.orb')].filter(Boolean),img=lw.querySelector('img');
+  let A=0,I=0,w=0,held=false,id=null,pa=0,pt=0,run=false,lt=0;
+  const ang=e=>{const r=lw.getBoundingClientRect();return Math.atan2(e.clientY-r.top-r.height/2,e.clientX-r.left-r.width/2)*57.2958};
+  const put=()=>{parts.forEach(p=>p.style.rotate=A.toFixed(2)+'deg');if(img)img.style.rotate=I.toFixed(2)+'deg'};
+  function loop(ts){const dt=Math.min(.05,(ts-lt)/1000||.016);lt=ts;
+    if(held)w*=Math.exp(-dt*8);
+    else{A+=w*dt;I+=w*dt;w*=Math.exp(-dt*1.3);
+      if(Math.abs(w)<60){const g=Math.round(I/360)*360;I+=(g-I)*(1-Math.exp(-dt*4))}
+      if(Math.abs(w)<1&&Math.abs(I-Math.round(I/360)*360)<.1){w=0;A%=360;I=0;put();run=false;return}}
+    put();requestAnimationFrame(loop)}
+  const go=()=>{if(!run){run=true;lt=performance.now();requestAnimationFrame(loop)}};
+  lw.addEventListener('pointerdown',e=>{held=true;id=e.pointerId;try{lw.setPointerCapture(id)}catch(_){}pa=ang(e);pt=e.timeStamp;w*=.3;lw.classList.add('hold');go()});
+  lw.addEventListener('pointermove',e=>{if(!held||e.pointerId!==id)return;const a=ang(e);let d=a-pa;if(d>180)d-=360;if(d<-180)d+=360;pa=a;
+    const dt=Math.max(.008,(e.timeStamp-pt)/1000);pt=e.timeStamp;A+=d;I+=d;w=w*.5+(d/dt)*.5});
+  const up=e=>{if(!held||e.pointerId!==id)return;held=false;lw.classList.remove('hold');w=Math.max(-1500,Math.min(1500,w));go()};
+  lw.addEventListener('pointerup',up);lw.addEventListener('pointercancel',up);lw.addEventListener('lostpointercapture',up)})();
+
+/* бегущая строка: зажми - остановится, тяни - едет за пальцем в любую сторону, отпусти - плавно вернётся к своей скорости */
+(function(){const mq=$('.mq'),tk=$('#tk');if(!mq||!tk)return;
+  const setX=HAS_GSAP?gsap.quickSetter(tk,'x','px'):v=>{tk.style.transform='translate3d('+v+'px,0,0)'};
+  let x=0,v=0,fv=0,half=1,held=false,id=null,px=0,pt=0,vis=true,run=false,lt=0,lastMove=0;
+  const base=()=>RED?0:-(half/28)*SPD.t;
+  const wrap=()=>{while(x<=-half)x+=half;while(x>0)x-=half};
+  window.tkMeas=()=>{half=tk.scrollWidth/2||1;wrap()};tkMeas();v=base();
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(tkMeas);addEventListener('resize',tkMeas);
+  function loop(ts){if(!vis){run=false;return}requestAnimationFrame(loop);const dt=Math.min(.05,(ts-lt)/1000||.016);lt=ts;
+    if(held)v*=Math.exp(-dt*7);else v+=(base()-v)*(1-Math.exp(-dt*1.6));
+    x+=v*dt;wrap();setX(x)}
+  const go=()=>{if(!run){run=true;lt=performance.now();requestAnimationFrame(loop)}};
+  new IntersectionObserver(es=>{vis=es[0].isIntersecting;if(vis)go()}).observe(mq);
+  mq.addEventListener('pointerdown',e=>{if(e.button>0)return;held=true;id=e.pointerId;try{mq.setPointerCapture(id)}catch(_){}px=e.clientX;pt=e.timeStamp;fv=0;mq.classList.add('hold');go()});
+  mq.addEventListener('pointermove',e=>{if(!held||e.pointerId!==id)return;const d=e.clientX-px,dt=Math.max(.008,(e.timeStamp-pt)/1000);px=e.clientX;pt=e.timeStamp;lastMove=performance.now();
+    x+=d;v=0;fv=fv*.5+(d/dt)*.5;wrap();setX(x)});
+  const up=e=>{if(!held||e.pointerId!==id)return;held=false;mq.classList.remove('hold');if(performance.now()-lastMove<90)v=Math.max(-3000,Math.min(3000,fv))};
+  mq.addEventListener('pointerup',up);mq.addEventListener('pointercancel',up);mq.addEventListener('lostpointercapture',up)})();
 renderDash(); render(); applyUser(); intro(); load();
 setInterval(()=>{if(!document.hidden)load()},5*60e3); setInterval(()=>{if(!$('.modal.on')&&!editingFocus())render()},60e3);
 function editingFocus(){return document.activeElement&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)}
