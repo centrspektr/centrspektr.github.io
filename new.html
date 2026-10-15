@@ -381,6 +381,10 @@ html.lite .dc .lbl .soon{background:var(--r3)}
 html.fx .aur,html.fx .hero #spec{display:none}
 html.fx .hero,html.fx[data-skin] .hero{background:transparent}
 html.fx.lite body{background:var(--bg)}
+/* над живым фоном размытие "стекла" пересчитывается каждый кадр - на ПК это главный тормоз, поэтому без него */
+html.fx *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html.fx header.solid{background:color-mix(in srgb,var(--bg) 92%,transparent)}
+html.fx .cur{mix-blend-mode:normal;box-shadow:0 0 0 1.5px rgba(0,0,0,.5)}
 html.fx.lite header.solid{backdrop-filter:none;background:color-mix(in srgb,var(--bg) 94%,transparent)}html.fx.lite .ibtn.gl,html.fx.lite .chip{backdrop-filter:none}
 html.fx .hero .vig{background:radial-gradient(70% 60% at 30% 50%,rgba(5,3,15,.45),transparent 75%)}
 html.fx[data-skin="aqua"][data-theme="light"] .hero .vig{background:radial-gradient(70% 60% at 30% 50%,rgba(251,247,240,.7),transparent 75%)}

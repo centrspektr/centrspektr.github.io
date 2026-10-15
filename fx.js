@@ -22,8 +22,8 @@ R.classList.add('fx');
 function mount(){D.body.insertBefore(cv,D.body.firstChild)}
 if(D.body)mount();else D.addEventListener('DOMContentLoaded',mount);
 
-var W=0,H=0,DPR=1,hero=null,heroH=0;
-function size(){var d=LITE?.5:Math.min(window.devicePixelRatio||1,1.75);DPR=skin()==='pixel'?(LITE?.5:1):d;cv.style.imageRendering=skin()==='pixel'?'pixelated':'auto';W=innerWidth;H=innerHeight;
+var W=0,H=0,DPR=1,hero=null,heroH=0,Q=1; // Q - качество, снижается само, если компьютер не успевает
+function size(){var d=LITE?.5:Math.min(window.devicePixelRatio||1,1.5,Math.sqrt(1.4e6/(innerWidth*innerHeight)))*Q;d=Math.max(.5,d);DPR=skin()==='pixel'?(LITE?.5:1):d;cv.style.imageRendering=skin()==='pixel'?'pixelated':'auto';W=innerWidth;H=innerHeight;
   cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);cx.setTransform(DPR,0,0,DPR,0,0);
   hero=D.querySelector('.hero');heroH=hero?hero.offsetTop+hero.offsetHeight:0;var l=D.getElementById('lw');if(l){var r=l.getBoundingClientRect();LW={x:r.left+r.width/2,y:r.top+scrollY+r.height/2,r:r.width/2}}S={};}
 var LW=null;
@@ -106,11 +106,10 @@ function neon(t,dt,y0,y1,dk){if(!S.sp)neonInit();var sc=scrollY,prog=Math.min(1,
   else{cx.fillStyle='rgba(124,58,237,.05)';cx.fillRect(0,hz,W,H-hz)}
   // сетка: мчимся вперёд (быстрее при прокрутке вниз, назад при прокрутке вверх)
   S.z+=dt*(.00028+vel*.0000035+boost*.002);var zf=((S.z%1)+1)%1,hue=Math.round(prog*200);
-  cx.strokeStyle='hsl('+(300-hue)+',95%,'+(dk?62:55)+'%)';cx.lineWidth=dk?1.6:1.2;cx.shadowColor=dk?cx.strokeStyle:'transparent';cx.shadowBlur=dk&&!LITE?10:0;
+  cx.strokeStyle='hsl('+(300-hue)+',95%,'+(dk?62:55)+'%)';cx.lineWidth=dk?1.6:1.2;var glw=dk&&!LITE;
   var gh=H-hz,cam=gh*.9;
-  var ga=(ph&&sc<H)?.55:1;for(var i=1;i<26;i++){var z=i-zf;if(z<=0.05)continue;var y=hz+cam/z;if(y>H)continue;cx.globalAlpha=Math.min(1,1.6/z)*(dk?.9:.5)*ga;cx.beginPath();cx.moveTo(0,y);cx.lineTo(W,y);cx.stroke()}
-  cx.globalAlpha=(dk?.75:.4)*ga;for(i=-14;i<=14;i++){var bx=cxp+i*W*.16;cx.beginPath();cx.moveTo(cxp+i*W*.008,hz);cx.lineTo(bx+(bx-cxp)*2.2,H+gh*1.2);cx.stroke()}
-  cx.shadowBlur=0;
+  var ga=(ph&&sc<H)?.55:1;for(var i=1;i<26;i++){var z=i-zf;if(z<=0.05)continue;var y=hz+cam/z;if(y>H)continue;cx.globalAlpha=Math.min(1,1.6/z)*(dk?.9:.5)*ga;cx.beginPath();cx.moveTo(0,y);cx.lineTo(W,y);if(glw){var a0=cx.globalAlpha;cx.lineWidth=6;cx.globalAlpha=a0*.18;cx.stroke();cx.lineWidth=1.6;cx.globalAlpha=a0}cx.stroke()}
+  cx.globalAlpha=(dk?.75:.4)*ga;cx.beginPath();for(i=-14;i<=14;i++){var bx=cxp+i*W*.16;cx.moveTo(cxp+i*W*.008,hz);cx.lineTo(bx+(bx-cxp)*2.2,H+gh*1.2)}if(glw){cx.lineWidth=6;cx.globalAlpha*=.18;cx.stroke();cx.lineWidth=1.6;cx.globalAlpha=(dk?.75:.4)*ga}cx.stroke()
   // радужные волны над горизонтом
   cx.globalCompositeOperation=dk&&!LITE?'lighter':'source-over';
   for(k=0;k<7;k++){cx.beginPath();var amp=H*.035+k*3+(mx-.5)*30,ph=t*(.0006+k*.00006)+k*.7+sc*.002,base=hz-H*.32+(k-3)*11-Math.min(sc*.1,H*.15);
@@ -191,9 +190,16 @@ function frame(ts){
   if(b>0){f(ts,dt,0,b,true);if(b<H)f(ts,0,b,H,false)}
   else f(ts,dt,0,H,dk);
 }
+var fa=0,fn=0,fpsEl=null,fq=/[?&]fps\b/.test(location.search);
 function loop(ts){if(!run)return;requestAnimationFrame(loop);var dt=ts-lt;
   if(LITE&&dt<30)return; // телефоны: 30 кадров в секунду
-  if(dt>45&&++slow>40&&!LITE){LITE=true;size();} if(dt<40)slow=Math.max(0,slow-1);
+  if(!LITE&&dt<12)return; // мониторы 120-144 Гц: не больше 60 кадров
+  // компьютер не успевает - плавно снижаем разрешение фона (красота почти та же, а кадры ровные)
+  if(dt<200){fa+=dt;fn++}
+  if(fn>=45){var avg=fa/fn;fa=fn=0;
+    if(avg>21&&Q>.55){Q=Math.max(.5,Q*.8);size()}else if(LITE===false&&avg>40&&Q<=.55){LITE=true;size()}
+    if(fq){if(!fpsEl){fpsEl=D.createElement('div');fpsEl.style.cssText='position:fixed;right:8px;bottom:8px;z-index:99999;padding:6px 10px;border-radius:8px;background:rgba(0,0,0,.75);color:#0f0;font:700 13px monospace;pointer-events:none';D.body.appendChild(fpsEl)}
+      fpsEl.textContent=Math.round(1000/avg)+' fps · кадр '+avg.toFixed(1)+' мс · фон '+cv.width+'x'+cv.height+(LITE?' · лёгкий':'')}}
   frame(ts);lt=ts}
 function start(){if(run||RED)return;run=true;lt=performance.now();requestAnimationFrame(loop)}
 function stop(){run=false}
