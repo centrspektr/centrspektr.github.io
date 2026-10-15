@@ -148,6 +148,7 @@ h2.sec em{font-style:normal;background:var(--rain);background-size:300% 100%;-we
 /* переход "провалиться" */
 #dive{position:fixed;z-index:800;overflow:hidden;pointer-events:none;display:none;background:#000}
 #dive img,#dive canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#dive .fl{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
 #dive .t{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:#fff;font:900 clamp(40px,10vw,120px)/1 var(--fh);text-shadow:0 10px 50px rgba(0,0,0,.6);background:radial-gradient(circle,rgba(0,0,0,.15),rgba(0,0,0,.55))}
 #soon{position:fixed;inset:0;z-index:850;display:none;place-items:center;padding:16px;background:rgba(5,3,15,.75);backdrop-filter:blur(8px)}
 #soon .sc{max-width:520px;background:var(--card);border-radius:28px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.5)}
@@ -615,6 +616,7 @@ function renderDash(){
       if(HAS_GSAP&&HOVER){const x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;gsap.to(c,{rotateY:x*9,rotateX:-y*9,duration:.5,ease:'power2.out',transformPerspective:1000})}});
     c.addEventListener('pointerleave',()=>{if(HAS_GSAP)gsap.to(c,{rotateY:0,rotateX:0,duration:.8,ease:'elastic.out(1,.5)'})});
     c.addEventListener('click',e=>{const d=DASH[+c.dataset.i];if(d.ext)return;e.preventDefault();dive(c,d)});
+    c.addEventListener('pointerdown',()=>{const d=DASH[+c.dataset.i];if(d.ext||!d.u||c._pf)return;c._pf=1;const l=document.createElement('link');l.rel='prefetch';l.href=d.u;document.head.appendChild(l)},{passive:true});
   });
 }
 function dive(card,d){
@@ -623,15 +625,18 @@ function dive(card,d){
   if(!d.img) agroArt(el.querySelector('canvas'));
   const go=()=>{ if(d.soon){openSoon(d);setTimeout(()=>{el.style.display='none'},400)} else location.href=d.u };
   if(!HAS_GSAP){go();return}
-  Object.assign(el.style,{display:'block',left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px',borderRadius:'30px'});
-  const t=el.querySelector('.t'), m=el.querySelector('img,canvas');
+  // плавно и на телефоне: двигаем только clip-path, transform и opacity, без пересчёта размеров и blur
+  const W=innerWidth,H=innerHeight,cl=(t,rr,bb,l,rad)=>`inset(${t}px ${rr}px ${bb}px ${l}px round ${rad}px)`;
+  el.insertAdjacentHTML('beforeend','<i class="fl"></i>');
+  Object.assign(el.style,{display:'block',left:0,top:0,width:W+'px',height:H+'px',borderRadius:0,filter:'',clipPath:cl(r.top,W-r.right,H-r.bottom,r.left,30)});
+  const t=el.querySelector('.t'), m=el.querySelector('img,canvas'), fl=el.querySelector('.fl');
   gsap.timeline({onComplete:go})
-   .to(el,{left:0,top:0,width:innerWidth,height:innerHeight,borderRadius:0,duration:.75,ease:'expo.inOut'})
-   .fromTo(m,{scale:1},{scale:1.35,duration:1.05,ease:'power2.in'},0)
-   .fromTo(t,{opacity:0,scale:.6,letterSpacing:'-8px'},{opacity:1,scale:1,letterSpacing:'0px',duration:.6,ease:'back.out(2)'},.35)
-   .to(el,{filter:'brightness(2.2) blur(6px)',duration:.25},'>-.05');
+   .to(el,{clipPath:cl(0,0,0,0,0),duration:LITE?.6:.75,ease:'expo.inOut'})
+   .fromTo(m,{scale:1},{scale:LITE?1.15:1.35,duration:LITE?.8:1.05,ease:'power2.in',force3D:true},0)
+   .fromTo(t,{opacity:0,scale:.6},{opacity:1,scale:1,duration:.5,ease:'back.out(2)',force3D:true},.3)
+   .to(fl,{opacity:1,duration:.22},'>-.05');
 }
-addEventListener('pageshow',e=>{if(e.persisted){const el=$('#dive');el.style.display='none';el.style.filter=''}});
+addEventListener('pageshow',e=>{if(e.persisted){const el=$('#dive');el.style.display='none';el.style.filter='';el.style.clipPath=''}});
 function openSoon(d){const s=$('#soon');s.innerHTML=`<div class="sc"><img src="${d.img}" alt=""><div><h3>${esc(d.n)}</h3><p style="color:var(--dim)">Дашборд в разработке. Что там будет:</p><ul><li>азы гитары: аккорды, бой и перебор</li><li>тренажёр аккордов и простые песни</li><li>тюнер и метроном прямо в телефоне</li><li>как создавать музыку с помощью ИИ</li></ul><button class="ibtn pri" id="soonX">Понятно, жду!</button></div></div>`;
   s.style.display='grid';if(HAS_GSAP)gsap.from('#soon .sc',{y:60,scale:.9,opacity:0,duration:.6,ease:'back.out(1.6)'});
   const close=()=>{s.style.display='none'};$('#soonX').onclick=close;s.onclick=e=>{if(e.target===s)close()}}
