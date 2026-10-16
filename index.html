@@ -831,13 +831,25 @@ function openSoon(d){const s=$('#soon');s.innerHTML=`<div class="sc"><img src="$
   s.style.display='grid';if(HAS_GSAP)gsap.from('#soon .sc',{y:60,scale:.9,opacity:0,duration:.6,ease:'back.out(1.6)'});
   const close=()=>{s.style.display='none'};$('#soonX').onclick=close;s.onclick=e=>{if(e.target===s)close()}}
 
+/* ---------- занятия Взлёта из его таблицы (лист "Расписание") ---------- */
+const VZ_SHEET='1GNVM7smAVzjOVK77FzJ_HfDQ9lI85DCSt0idMU8GJqk';let VZS=[];try{VZS=JSON.parse(ls.get('vz_sched')||'[]')}catch(e){}
+const VZD={пн:'Пн',понедельник:'Пн',вт:'Вт',вторник:'Вт',ср:'Ср',среда:'Ср',чт:'Чт',четверг:'Чт',пт:'Пт',пятница:'Пт',сб:'Сб',суббота:'Сб',вс:'Вс',воскресенье:'Вс'};
+function vzCsv(t){const rows=[];let row=[],f='',q=false;for(let i=0;i<t.length;i++){const c=t[i];if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++}else q=false}else f+=c}else if(c==='"')q=true;else if(c===','){row.push(f);f=''}else if(c==='\n'){row.push(f);rows.push(row);row=[];f=''}else if(c!=='\r')f+=c}
+  if(f!==''||row.length){row.push(f);rows.push(row)}if(!rows.length)return[];const h=rows[0].map(x=>x.trim());return rows.slice(1).filter(r=>r.some(x=>x.trim())).map(r=>Object.fromEntries(h.map((k,i)=>[k,(r[i]||'').trim()])))}
+async function loadVz(){try{const r=await fetch(`https://docs.google.com/spreadsheets/d/${VZ_SHEET}/gviz/tq?tqx=out:csv&headers=1&sheet=${encodeURIComponent('Расписание')}`,{cache:'no-store'});if(!r.ok)return;const t=await r.text();if(t.trim().startsWith('<'))return;
+  const L=[];vzCsv(t).forEach((x,i)=>{const d=VZD[String(x['День']||'').trim().toLowerCase().replace(/\.$/,'')];const m=String(x['Время']||'').match(/(\d{1,2})[:.](\d{2})(?:\s*[-–—]\s*(\d{1,2})[:.](\d{2}))?/);if(!d||!m)return;
+    const st=m[1].padStart(2,'0')+':'+m[2],e=m[3]?m[3].padStart(2,'0')+':'+m[4]:(()=>{const v=+m[1]*60+ +m[2]+60;return String(Math.floor(v/60)%24).padStart(2,'0')+':'+String(v%60).padStart(2,'0')})();
+    L.push({id:'_vz'+i,day:d,start:st,end:e,place:'',tent:'',note:[x['Занятие'],x['Примечание']].filter(Boolean).join(' · '),_x:1})});
+  VZS=L;ls.set('vz_sched',JSON.stringify(L));render()}catch(e){}}
+function vzMerge(){const g=D.groups.find(x=>/vzlet/.test(x.link||''));D.schedule=D.schedule.filter(x=>!x._x).concat(g?VZS.map(x=>Object.assign({},x,{group:g.id})):[])}
 function render(){
+  vzMerge();
   const n=new Date(),td=dayName(n),nm=n.getHours()*60+n.getMinutes();
   $('#heroChips').innerHTML=`<span class="chip">🎯 ${D.groups.length} ${pl(D.groups.length,'направление','направления','направлений')}</span>${D.schedule.length?`<span class="chip">🗓 ${D.schedule.length} ${pl(D.schedule.length,'занятие','занятия','занятий')} в неделю</span>`:''}<span class="chip">🚀 ${DASH.length} дашборда</span>`;
   const ts=D.schedule.filter(s=>s.day===td&&live(s)).sort((a,b)=>toMin(a.start)-toMin(b.start));
   $('#todayD').textContent=n.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});
   $('#todayL').innerHTML=ts.length?ts.map(s=>{const g=grp(s.group),st=nm>=toMin(s.end)?'past':nm>=toMin(s.start)?'on':'',p=st==='on'?Math.round((nm-toMin(s.start))/(toMin(s.end)-toMin(s.start))*100):0;
-    return `<div class="lrow ${st}" data-g="${esc(s.group)}"><span class="dt" style="background:${gColor(g)};color:${gColor(g)}"></span><span class="tm">${hm(s.start)}-${hm(s.end)}</span><span class="nm"><b>${esc(g.name)}</b><small>${esc(s.place||g.place||g.who||'')}</small></span>${s.tent?'<span class="tent">уточняется</span>':''}${st==='on'?`<span class="tag">идёт</span><div class="bar"><i style="width:${p}%"></i></div>`:''}</div>`}).join(''):'<p class="empty">Сегодня занятий нет. Загляни в расписание недели.</p>';
+    return `<div class="lrow ${st}" data-g="${esc(s.group)}"><span class="dt" style="background:${gColor(g)};color:${gColor(g)}"></span><span class="tm">${hm(s.start)}-${hm(s.end)}</span><span class="nm"><b>${esc(g.name)}</b><small>${esc(s.note||s.place||g.place||g.who||'')}</small></span>${s.tent?'<span class="tent">уточняется</span>':''}${st==='on'?`<span class="tag">идёт</span><div class="bar"><i style="width:${p}%"></i></div>`:''}</div>`}).join(''):'<p class="empty">Сегодня занятий нет. Загляни в расписание недели.</p>';
   let nx=null;for(let k=0;k<=7&&!nx;k++){const d=DAYS[(DAYS.indexOf(td)+k)%7];const a=D.schedule.filter(s=>s.day===d&&live(s)&&(k>0||toMin(s.start)>nm)).sort((x,y)=>toMin(x.start)-toMin(y.start));if(a.length)nx={s:a[0],k}}
   $('#nextC').innerHTML=nx?(()=>{const g=grp(nx.s.group),mins=nx.k===0?toMin(nx.s.start)-nm:null;return `<small class="empty">Ближайшее занятие</small><div class="big">${mins!==null?(mins>=60?Math.floor(mins/60)+' ч '+(mins%60)+' мин':mins+' мин'):DAYF[nx.s.day].toLowerCase()}</div><b>${ART[g.art]||'⭐'} ${esc(g.name)}</b><small class="empty">${hm(nx.s.start)}${mins!==null?' · сегодня':''}</small>`})():'<small class="empty">Расписание скоро появится</small>';
   $('#days').innerHTML='<span class="dind" id="dind"></span>'+DAYS.map(d=>{const c=D.schedule.filter(s=>s.day===d&&live(s)).length;return `<button data-d="${d}" class="${d===DAYSEL?'on':''} ${d===td?'td':''}">${d}<small>${c?c+' зан.':'-'}</small></button>`}).join('');
@@ -869,7 +881,7 @@ function render(){
 $('#wkFold').onclick=()=>{WKOPEN=!WKOPEN;render();if(WKOPEN)moveInd()};
 function renderDay(anim){
   const list=D.schedule.filter(s=>s.day===DAYSEL&&live(s)).sort((a,b)=>toMin(a.start)-toMin(b.start));
-  $('#tl').innerHTML=list.length?list.map(s=>{const g=grp(s.group),c=gColor(g);return `<div class="ev" style="--ec:${c}" data-g="${esc(g.id)}"><div class="t">${hm(s.start)}<small>до ${hm(s.end)}</small></div><div class="i">${ART[g.art]||'⭐'}</div><div class="b"><b>${esc(g.name)}</b><small>${esc([g.who,s.place||g.place].filter(Boolean).join(' · '))||'&nbsp;'}</small>${s.tent?'<br><span class="tent">время уточняется</span>':''}</div><button class="ebtn ed" data-edit="schedule" data-id="${esc(s.id)}">✎</button></div>`}).join(''):`<div class="card"><p class="empty">${D.schedule.some(live)?DAYF[DAYSEL]+': занятий нет.':'Занятий пока нет. Расписание появится здесь после согласования.'}</p></div>`;
+  $('#tl').innerHTML=list.length?list.map(s=>{const g=grp(s.group),c=gColor(g);return `<div class="ev" style="--ec:${c}" data-g="${esc(g.id)}"><div class="t">${hm(s.start)}<small>до ${hm(s.end)}</small></div><div class="i">${ART[g.art]||'⭐'}</div><div class="b"><b>${esc(g.name)}</b><small>${esc([s.note,g.who,s.place||g.place].filter(Boolean).join(' · '))||'&nbsp;'}</small>${s.tent?'<br><span class="tent">время уточняется</span>':''}</div><button class="ebtn ed" data-edit="schedule" data-id="${esc(s.id)}">✎</button></div>`}).join(''):`<div class="card"><p class="empty">${D.schedule.some(live)?DAYF[DAYSEL]+': занятий нет.':'Занятий пока нет. Расписание появится здесь после согласования.'}</p></div>`;
   if(anim&&HAS_GSAP) gsap.from('#tl > *',{x:-40,opacity:0,duration:.5,stagger:.07,ease:'power3.out'});
   wire();
 }
@@ -909,7 +921,8 @@ const FORMS={
   news:{t:'Новость',f:[['text','Текст','area'],['date','Дата (дд.мм.гггг)']]},
   links:{t:'Ссылка',f:[['name','Название'],['url','Адрес (https://...)'],['note','Пояснение']]}};
 function openForm(key,id){
-  if(!canEdit())return;const F=FORMS[key],it=id?D[key].find(x=>x.id===id)||{}:{date:new Date().toLocaleDateString('ru-RU'),color:COLORS[D.groups.length%COLORS.length],art:'star',day:DAYSEL};
+  if(!canEdit())return;if(key==='schedule'&&id&&/^_vz/.test(id)){toast('Это занятие Взлёта: оно правится на сайте Взлёта, в разделе Расписание');return}
+  const F=FORMS[key],it=id?D[key].find(x=>x.id===id)||{}:{date:new Date().toLocaleDateString('ru-RU'),color:COLORS[D.groups.length%COLORS.length],art:'star',day:DAYSEL};
   const ctl=([k,l,t])=>{const v=k==='_fm'?(id?FM().has(id):true):it[k]??'';
     if(t==='area')return `<label>${l}<textarea data-k="${k}">${esc(v)}</textarea></label>`;
     if(t==='group')return `<label>${l}<select data-k="${k}">${D.groups.map(g=>`<option value="${esc(g.id)}" ${g.id===v?'selected':''}>${esc(g.name)}</option>`).join('')}</select></label>`;
@@ -935,7 +948,7 @@ async function addStudio(){if(!canEdit())return;const b=$('#addStudio');b.disabl
 let WKALL=0;
 function renderWeekAll(){const btn=$('#wkAll'),box=$('#wkG');if(!btn)return;const td=dayName(new Date());
   box.innerHTML=DAYS.map(d=>{const L=D.schedule.filter(s=>s.day===d&&live(s)).sort((a,b)=>toMin(a.start)-toMin(b.start));
-    return `<div class="wd2 ${d===td?'td':''} ${L.length?'':'none'}"><h4>${DAYF[d]}${d===td?' <small>сегодня</small>':''}</h4>${L.length?L.map(s=>{const g=grp(s.group);return `<div class="wr" data-g="${esc(g.id)}" style="--ec:${gColor(g)}"><span class="tm">${hm(s.start)}-${hm(s.end)}</span><span class="nm"><b>${esc(g.name)}</b>${g.who?`<small>${esc(g.who)}</small>`:''}${FM().has(g.id)?'<small class="tent">формируется (видно только вам)</small>':''}</span></div>`}).join(''):'<p class="empty">нет занятий</p>'}</div>`}).join('')
+    return `<div class="wd2 ${d===td?'td':''} ${L.length?'':'none'}"><h4>${DAYF[d]}${d===td?' <small>сегодня</small>':''}</h4>${L.length?L.map(s=>{const g=grp(s.group);return `<div class="wr" data-g="${esc(g.id)}" style="--ec:${gColor(g)}"><span class="tm">${hm(s.start)}-${hm(s.end)}</span><span class="nm"><b>${esc(g.name)}</b>${s.note?`<small>${esc(s.note)}</small>`:''}${g.who?`<small>${esc(g.who)}</small>`:''}${FM().has(g.id)?'<small class="tent">формируется (видно только вам)</small>':''}</span></div>`}).join(''):'<p class="empty">нет занятий</p>'}</div>`}).join('')
    +(()=>{const F=GL().filter(forming);return F.length?`<div class="wfm"><b>Расписание формируется:</b> ${F.map(g=>`<span data-g="${esc(g.id)}">${esc(g.name)}</span>`).join('')}</div>`:''})();
   box.classList.toggle('on',!!WKALL);btn.querySelector('b').textContent=WKALL?'Свернуть ▴':'Развернуть ▾'}
 $('#wkAll').onclick=()=>{WKALL=!WKALL;renderWeekAll();wire();if(WKALL&&HAS_GSAP)gsap.from('#wkG > *',{y:24,opacity:0,duration:.45,stagger:.05,ease:'power3.out'});if(HAS_GSAP&&window.ScrollTrigger)setTimeout(()=>ScrollTrigger.refresh(),200)};
@@ -1169,7 +1182,7 @@ setTimeout(applySpd,300);
     x+=d;v=0;fv=fv*.5+(d/dt)*.5;wrap();setX(x)});
   const up=e=>{if(!held||e.pointerId!==id)return;held=false;mq.classList.remove('hold');if(performance.now()-lastMove<90)v=Math.max(-3000,Math.min(3000,fv))};
   mq.addEventListener('pointerup',up);mq.addEventListener('pointercancel',up);mq.addEventListener('lostpointercapture',up)})();
-renderDash(); render(); applyUser(); intro(); load();
+renderDash(); render(); applyUser(); intro(); load(); loadVz();
 setInterval(()=>{if(!document.hidden)load()},5*60e3); setInterval(()=>{if(!$('.modal.on')&&!editingFocus())render()},60e3);
 function editingFocus(){return document.activeElement&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)}
 (function hit(page){try{const k='irtysh_hit_'+page;if(ss.get(k)!==null)return;const d=new Date().toDateString(),fresh=!ls.get('irtysh_new_'+page),today=ls.get('irtysh_day_'+page)!==d;
