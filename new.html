@@ -19,7 +19,11 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0b0914">
 <link rel="icon" type="image/png" href="favicon.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="apple-touch-icon" href="spektr-180.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="СПЕКТР">
 <link rel="preload" as="image" href="logo.webp">
 <script src="fx.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -494,7 +498,7 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
 <header id="hdr"><div class="wrap top">
   <a class="brand" id="brand" href="#top" aria-label="СПЕКТР - в начало"><img src="mark.webp" alt="СПЕКТР"><b>СПЕКТР</b></a>
   <nav class="mn"><a href="#dashT">Дашборды</a><a href="#todayT" id="navToday">Сегодня</a><a href="#weekT">Расписание</a><a href="#groupsT">Кружки</a><a href="#joinT">Записаться</a></nav>
-  <div class="tr"><button class="ibtn" id="stBtn" style="display:none" title="Ученики и заявки" aria-label="Ученики и заявки">👥<b class="stc" id="stCnt" style="display:none"></b></button><button class="ibtn" id="lockBtn" style="display:none" title="Вход для редакторов" aria-label="Вход для редакторов">✎</button><button class="ibtn" id="themeBtn" title="Светлая или тёмная тема" aria-label="Светлая или тёмная тема">🌓</button></div>
+  <div class="tr"><button class="ibtn" id="stBtn" style="display:none" title="Ученики и заявки" aria-label="Ученики и заявки">👥<b class="stc" id="stCnt" style="display:none"></b></button><button class="ibtn" id="lockBtn" style="display:none" title="Вход для редакторов" aria-label="Вход для редакторов">✎</button><button class="ibtn shb" id="shBtn" title="Поделиться, QR-код, установить на экран" aria-label="Поделиться и установить">📲<span>В телефон</span></button><button class="ibtn" id="themeBtn" title="Светлая или тёмная тема" aria-label="Светлая или тёмная тема">🌓</button></div>
 </div></header>
 
 <section class="hero" id="top">
@@ -966,6 +970,70 @@ setInterval(()=>{if(!document.hidden)load()},5*60e3); setInterval(()=>{if(!$('.m
 function editingFocus(){return document.activeElement&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)}
 (function hit(page){try{const k='irtysh_hit_'+page;if(ss.get(k)!==null)return;const d=new Date().toDateString(),fresh=!ls.get('irtysh_new_'+page),today=ls.get('irtysh_day_'+page)!==d;
   fetch(API,{method:'POST',body:JSON.stringify({op:'hit',page,fresh,today})}).then(r=>r.json()).then(j=>{if(!j.ok)return;ls.set('irtysh_new_'+page,'1');ls.set('irtysh_day_'+page,d);ss.set(k,String(j.total||''))}).catch(()=>{})}catch(e){}})(HUB);
+</script>
+<!-- поделиться / QR / установить на экран -->
+<style>
+.shb span{font-weight:800}@media(max-width:560px){.shb span{display:none}}
+.shm{position:fixed;inset:0;z-index:300;display:grid;place-items:center;padding:16px;background:rgba(8,6,20,.55);opacity:0;pointer-events:none;transition:opacity .25s}
+.shm.on{opacity:1;pointer-events:auto}
+.shp{width:min(420px,100%);max-height:calc(100dvh - 32px);overflow:auto;background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:24px;padding:20px;box-shadow:0 30px 80px rgba(0,0,0,.45);transform:translateY(18px) scale(.97);transition:transform .35s cubic-bezier(.3,1.4,.5,1)}
+.shm.on .shp{transform:none}
+.shp h3{font:900 20px var(--fh,inherit);margin:0 0 4px;display:flex;align-items:center;gap:8px}.shp h3 button{margin-left:auto}
+.shp p{color:var(--dim);font-size:14px;margin:0 0 12px;line-height:1.45}
+.shq{display:block;width:min(260px,70vw);margin:4px auto 10px;border-radius:18px;background:#fff;padding:6px;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.shu{display:flex;gap:6px;align-items:center;justify-content:center;font:800 15px var(--fb);margin-bottom:12px;word-break:break-all;text-align:center}
+.shg{display:grid;grid-template-columns:1fr 1fr;gap:8px}.shg .ibtn{width:100%;padding:0 10px}.shg .w{grid-column:1/-1}
+.shi{margin-top:14px;padding:14px;border-radius:16px;border:1px solid var(--line);background:var(--bg2)}
+.shi b{display:block;font-size:15px;margin-bottom:4px}.shi ol{margin:6px 0 0 18px;font-size:14px;line-height:1.6}
+.shi img{width:44px;height:44px;border-radius:11px;flex-shrink:0}.shih{display:flex;gap:10px;align-items:center;margin-bottom:4px}.shih b{margin:0}
+.shbar{position:fixed;left:12px;right:12px;bottom:12px;z-index:250;display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:18px;background:var(--card);color:var(--text);border:1px solid var(--line);box-shadow:0 16px 40px rgba(0,0,0,.35);transform:translateY(140%);transition:transform .45s cubic-bezier(.3,1.3,.5,1)}
+.shbar.on{transform:none}.shbar img{width:40px;height:40px;border-radius:10px}.shbar div{flex:1;font-size:13.5px;line-height:1.3}.shbar b{display:block;font-size:14.5px}
+@media(min-width:700px){.shbar{left:auto;width:380px}}
+@media (prefers-reduced-motion: reduce){.shm,.shp,.shbar{transition:none}}
+</style>
+<div class="shm" id="shM" role="dialog" aria-modal="true" aria-label="СПЕКТР в телефоне"><div class="shp">
+  <h3>📲 СПЕКТР в телефоне <button class="ibtn sm" id="shX" aria-label="Закрыть">✕</button></h3>
+  <p>Наведи камеру телефона на код - откроется СПЕКТР. Оттуда можно перейти в любой кружок.</p>
+  <img class="shq" src="qr-spektr.png" alt="QR-код ссылки на СПЕКТР" width="260" height="260">
+  <div class="shu" id="shU">centrspektr.github.io</div>
+  <div class="shg"><button class="ibtn pri" id="shShare">📤 Поделиться</button><button class="ibtn" id="shCopy">📋 Скопировать</button>
+    <a class="ibtn w" href="qr-spektr.png" download="SPEKTR-QR.png">⬇ Скачать QR-код для печати</a></div>
+  <div class="shi" id="shI"></div>
+</div></div>
+<div class="shbar" id="shBar" role="dialog" aria-label="Установить СПЕКТР"><img src="icon-192.png" alt=""><div><b>СПЕКТР на экран телефона</b>Открывается одним касанием, как приложение</div><button class="ibtn pri sm" id="shBarGo">Установить</button><button class="ibtn sm" id="shBarX" aria-label="Не сейчас">✕</button></div>
+<script>
+(function(){
+  var URL0='https://centrspektr.github.io/', $=function(i){return document.getElementById(i)};
+  var M=$('shM'), dp=null, st={get:function(k){try{return localStorage.getItem(k)}catch(e){return null}},set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+  var ua=navigator.userAgent, IOS=/iPhone|iPad|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1), MOB=/Android|iPhone|iPad|iPod/i.test(ua)||IOS;
+  var APP=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+  if('serviceWorker' in navigator) addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){})});
+  addEventListener('beforeinstallprompt',function(e){e.preventDefault();dp=e;inst();bar()});
+  addEventListener('appinstalled',function(){dp=null;APP=true;inst();hideBar()});
+  function inst(){var el=$('shI');if(!el)return;
+    if(APP){el.innerHTML='<b>✅ СПЕКТР уже на экране</b><span style="font-size:14px;color:var(--dim)">Ты открыл его как приложение.</span>';return}
+    if(dp){el.innerHTML='<div class="shih"><img src="icon-192.png" alt=""><b>Установить на экран</b></div><span style="font-size:14px;color:var(--dim)">Значок СПЕКТР появится рядом с другими приложениями.</span><button class="ibtn pri" id="shGo" style="width:100%;margin-top:10px">📲 Установить</button>';$('shGo').onclick=go;return}
+    if(IOS){el.innerHTML='<div class="shih"><img src="icon-192.png" alt=""><b>Добавить на экран iPhone</b></div><ol><li>Открой эту страницу в Safari</li><li>Нажми кнопку «Поделиться» внизу (квадрат со стрелкой)</li><li>Выбери «На экран "Домой"»</li></ol>';return}
+    el.innerHTML='<div class="shih"><img src="icon-192.png" alt=""><b>Добавить на экран</b></div><ol><li>Открой меню браузера (⋮ или ≡)</li><li>Выбери «Установить приложение» или «Добавить на главный экран»</li></ol>'}
+  function go(){if(!dp)return;dp.prompt();dp.userChoice.then(function(r){if(r&&r.outcome==='accepted'){hideBar()}dp=null;inst()}).catch(function(){})}
+  function open(){inst();M.classList.add('on');$('shX').focus()}
+  function close(){M.classList.remove('on')}
+  $('shBtn').onclick=open; $('shX').onclick=close; M.onclick=function(e){if(e.target===M)close()};
+  addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  $('shShare').onclick=function(){if(navigator.share){navigator.share({title:'СПЕКТР',text:'Кружки, расписание и дашборды СПЕКТРа',url:URL0}).catch(function(){})}else copy()};
+  $('shCopy').onclick=copy;
+  function copy(){var b=$('shCopy'),done=function(){b.textContent='✓ Скопировано';setTimeout(function(){b.textContent='📋 Скопировать'},1800)};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(URL0).then(done,fb);else fb();
+    function fb(){var t=document.createElement('textarea');t.value=URL0;document.body.appendChild(t);t.select();try{document.execCommand('copy');done()}catch(e){}t.remove()}}
+  /* мягкое предложение установить: только на телефоне, не в приложении, не чаще раза в 2 недели */
+  function bar(){if(APP||!MOB)return;var x=+st.get('spk_inst_x')||0;if(Date.now()-x<14*864e5)return;if(!dp&&!IOS)return;
+    clearTimeout(bar._t);bar._t=setTimeout(function(){$('shBar').classList.add('on')},15000)}
+  function hideBar(){$('shBar').classList.remove('on')}
+  $('shBarGo').onclick=function(){hideBar();if(dp)go();else open()};
+  $('shBarX').onclick=function(){hideBar();st.set('spk_inst_x',String(Date.now()))};
+  if(IOS)bar();
+  if(/[?&]share\b/.test(location.search))setTimeout(open,600);
+})();
 </script>
 </body>
 </html>
