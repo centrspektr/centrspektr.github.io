@@ -473,6 +473,73 @@ html.lite .grp .cov .b2,html.lite .grp .cov .b3,html.lite .grp .cov.img .ci{anim
 .wd2 .tm{font:700 13px var(--fb);font-variant-numeric:tabular-nums;white-space:nowrap}.wd2 .nm b{display:block;font-size:14px;line-height:1.3}.wd2 .nm small{display:block;color:var(--dim);font-size:12px}
 .wfm{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:12px 14px;border-radius:16px;border:1px dashed var(--line);color:var(--dim);font-size:14px}.wfm b{color:var(--fg)}.wfm span{padding:4px 10px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--fg);cursor:pointer}
 @media (prefers-reduced-motion: reduce){.spk *,.grp .cov *{animation:none!important}}
+
+/* шестерёнка: кнопки выкатываются столбиком */
+.tr{position:relative;align-items:center}
+.gear .gi{display:inline-block;font-size:17px;line-height:1;transition:transform .7s cubic-bezier(.2,1.4,.4,1)}
+.gear[aria-expanded="true"] .gi{transform:rotate(180deg)}
+.tdr{position:absolute;top:calc(100% + 10px);right:0;display:flex;flex-direction:column;align-items:flex-end;gap:8px;z-index:300;pointer-events:none}
+.tdr>*{opacity:0;transform:translateY(-16px) scale(.6);transform-origin:100% 0;transition:opacity .22s ease,transform .5s cubic-bezier(.2,1.5,.4,1);transition-delay:calc(var(--d,0) * 55ms)}
+.tdr.on{pointer-events:auto}
+.tdr.on>*{opacity:1;transform:none}
+.tdr .ibtn,header:not(.solid) .tr .tdr .ibtn{min-width:178px;justify-content:flex-start;background:var(--card);color:var(--text);border-color:var(--line);box-shadow:0 14px 34px -12px rgba(0,0,0,.55)}
+.tdr .ibtn[data-l]::after{content:attr(data-l);font:700 13.5px var(--fb)}
+.tdr .ibtn{white-space:nowrap;justify-content:flex-start!important;gap:9px}
+.tdr .shb span{display:inline!important;font:700 13.5px var(--fb)}
+.tdr .skw{display:flex;justify-content:flex-end}
+.tdr .skp{top:0;right:calc(100% + 8px)}
+@media (max-width:620px){.tdr .skp{right:0;top:calc(100% + 8px)}}
+/* часы и дата */
+.clk{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;padding:6px 12px;border-radius:14px;line-height:1;position:relative;border:1px solid var(--line);background:var(--card);color:var(--text);flex:none;overflow:hidden;transition:background .4s,border-color .4s,box-shadow .4s,color .4s,border-radius .4s}
+.clk:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
+.clk .cbox{display:grid;gap:4px;position:relative;z-index:1}
+.clk .ct{display:flex;font:800 17px var(--fb);font-variant-numeric:tabular-nums;letter-spacing:.5px}
+.clk .ct i{font-style:normal;display:inline-block}
+.clk .ct i.nw{animation:ckin .6s cubic-bezier(.2,1.4,.4,1)}
+.clk .ct .cl{animation:ckbl 1s steps(1) infinite;padding:0 1px}
+.clk .cd{font:700 10px var(--fb);letter-spacing:.6px;text-transform:uppercase;opacity:.75;white-space:nowrap}
+.clk .cdial{display:none;width:34px;height:34px;flex:none;position:relative;z-index:1}
+@keyframes ckin{from{transform:translateY(-75%) scale(.6);opacity:0;filter:blur(3px)}to{transform:none;opacity:1;filter:none}}
+@keyframes ckbl{50%{opacity:.2}}
+/* Неон */
+.clk.ck-neon{background:rgba(20,6,40,.62);border-color:rgba(255,70,210,.55);box-shadow:0 0 16px -2px rgba(255,60,210,.45),inset 0 0 12px rgba(120,60,255,.25);color:#fff}
+.clk.ck-neon .ct{background:var(--rain);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sh 9s linear infinite;filter:drop-shadow(0 0 5px rgba(255,80,220,.7))}
+.clk.ck-neon .ct i{color:transparent}
+.clk.ck-neon .cd{color:#ffb8f0;text-shadow:0 0 6px rgba(255,80,220,.8)}
+/* Космос */
+.clk.ck-space{background:radial-gradient(circle at 20% 30%,rgba(120,150,255,.35),transparent 45%),radial-gradient(circle at 85% 80%,rgba(200,90,255,.3),transparent 50%),rgba(8,10,32,.78);border-color:rgba(140,170,255,.35);color:#eef2ff}
+.clk.ck-space .ct{font-weight:500;letter-spacing:2px;text-shadow:0 0 10px rgba(130,165,255,.9)}
+.clk.ck-space .cd{color:#aab9ff}
+.clk.ck-space::before{content:"";position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;box-shadow:0 0 6px 2px #9fb4ff;top:6px;left:8%;animation:ckst 6s linear infinite}
+.clk.ck-space::after{content:"";position:absolute;inset:0;background-image:radial-gradient(1px 1px at 30% 70%,#fff,transparent),radial-gradient(1px 1px at 70% 25%,#fff,transparent),radial-gradient(1px 1px at 90% 60%,#cfd8ff,transparent);opacity:.7;animation:cktw 3s ease-in-out infinite alternate}
+@keyframes ckst{0%{left:6%;top:70%;opacity:0}15%{opacity:1}100%{left:96%;top:8%;opacity:0}}
+@keyframes cktw{to{opacity:.2}}
+/* Акварель */
+.clk.ck-aqua{background:radial-gradient(circle at 15% 25%,rgba(255,150,180,.6),transparent 42%),radial-gradient(circle at 80% 30%,rgba(130,190,255,.6),transparent 45%),radial-gradient(circle at 55% 95%,rgba(255,215,120,.6),transparent 45%),#fffaf2;background-size:160% 160%;border-color:#e6d6c3;border-radius:20px 12px 22px 10px;color:#3a2e48;animation:ckaq 9s ease-in-out infinite alternate}
+.clk.ck-aqua .ct{font-family:Comfortaa,Nunito,sans-serif;font-weight:700}
+.clk.ck-aqua .cd{font-family:Nunito,sans-serif;text-transform:none;letter-spacing:.2px;font-size:11px}
+@keyframes ckaq{to{background-position:100% 100%;border-radius:12px 22px 10px 20px}}
+/* Пиксель */
+.clk.ck-pixel{background:#10131c;border:3px solid #f5f5f5;border-radius:0;box-shadow:3px 3px 0 #000;color:#7dff6a;padding:6px 10px}
+.clk.ck-pixel .ct{font:400 12px 'Press Start 2P',monospace;letter-spacing:0;text-shadow:0 0 6px rgba(125,255,106,.55)}
+.clk.ck-pixel .ct i.nw{animation:ckpx .5s steps(4)}
+.clk.ck-pixel .cd{font:400 7px 'Press Start 2P',monospace;color:#ffd84a;letter-spacing:0;opacity:1}
+@keyframes ckpx{from{transform:translateY(-100%);opacity:0}to{transform:none;opacity:1}}
+/* Стрелки */
+.clk.ck-dial{padding:4px 12px 4px 5px;border-radius:24px}
+.clk.ck-dial .cdial{display:block}
+.clk.ck-dial .ct{display:none}
+.clk.ck-dial .cd{font-size:11px;opacity:.9}
+.cdial .cf{fill:color-mix(in srgb,var(--c1) 12%,transparent);stroke:currentColor;stroke-opacity:.55;stroke-width:1.2}
+.cdial .tk line{stroke:currentColor;stroke-width:1.3;stroke-linecap:round;opacity:.7}
+.cdial line.hh,.cdial line.mh,.cdial line.sc{stroke-linecap:round;transform-origin:20px 20px;transition:transform .45s cubic-bezier(.3,1.6,.5,1)}
+.cdial .hh{stroke:currentColor;stroke-width:2.6}
+.cdial .mh{stroke:currentColor;stroke-width:1.8}
+.cdial .sc{stroke:var(--c1);stroke-width:1}
+.cdial .cc{fill:var(--c1)}
+@media (max-width:520px){.top{gap:8px}.clk{padding:5px 8px;gap:6px}.clk .ct{font-size:14px}.clk .cd{font-size:8.5px}.clk.ck-pixel .ct{font-size:9px}.clk.ck-pixel .cd{font-size:6px}.clk .cdial{width:28px;height:28px}.tdr .ibtn,header:not(.solid) .tr .tdr .ibtn{min-width:166px;height:42px}}
+@media (max-width:340px){.brand b{display:none}}
+@media (prefers-reduced-motion: reduce){.clk,.clk *,.clk::before,.clk::after,.tdr>*{animation:none!important;transition:none!important}}
 </style>
 <script>window.SKIN_KEY='spectr_skin';try{document.documentElement.dataset.theme=localStorage.getItem('spectr_theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}
 /* ===== стили интерфейса: переключатель + фоны hero для космоса, акварели и пикселя ===== */
@@ -561,8 +628,9 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
 
 <header id="hdr"><div class="wrap top">
   <a class="brand" id="brand" href="#top" aria-label="СПЕКТР - в начало"><img src="mark.webp" alt="СПЕКТР"><b>ПОРТАЛ</b></a>
+  <div class="clk" id="clk" role="button" tabindex="0" title="Нажмите, чтобы сменить вид часов" aria-label="Часы и дата"></div>
   <nav class="mn"><a href="#groupsT">Кружки</a><a href="#dashT">Дашборды</a><a href="#joinT">Подключиться</a><a href="#todayT" id="navToday">Сегодня</a><a href="#weekT">Расписание</a></nav>
-  <div class="tr"><button class="ibtn" id="stBtn" style="display:none" title="Ученики и заявки" aria-label="Ученики и заявки">👥<b class="stc" id="stCnt" style="display:none"></b></button><button class="ibtn" id="lockBtn" style="display:none" title="Вход для редакторов" aria-label="Вход для редакторов">✎</button><button class="ibtn shb" id="shBtn" title="Поделиться, QR-код, установить на экран" aria-label="Поделиться и установить">📲<span>В телефон</span></button><button class="ibtn" id="themeBtn" title="Светлая или тёмная тема" aria-label="Светлая или тёмная тема">🌓</button></div>
+  <div class="tr" id="tr"><button class="ibtn" id="stBtn" style="display:none" title="Ученики и заявки" aria-label="Ученики и заявки">👥<b class="stc" id="stCnt" style="display:none"></b></button><div class="tdr" id="tdr"><button class="ibtn" id="lockBtn" style="display:none" title="Вход для редакторов" aria-label="Вход для редакторов">✎</button><button class="ibtn shb" id="shBtn" title="Поделиться, QR-код, установить на экран" aria-label="Поделиться и установить">📲<span>В телефон</span></button><button class="ibtn" id="themeBtn" title="Светлая или тёмная тема" aria-label="Светлая или тёмная тема" data-l="Светлая / тёмная">🌓</button></div><button class="ibtn gear" id="gearBtn" type="button" aria-expanded="false" aria-controls="tdr" title="Настройки" aria-label="Настройки"><span class="gi">⚙️</span></button></div>
 </div></header>
 
 <section class="hero" id="top">
@@ -602,7 +670,7 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
     <div class="sh2 rv"><span class="num">04</span><h2 class="sec">Как <em>подключиться</em></h2><p>Заявку отправляет сам ученик, система регистрирует её после проверки.</p></div>
     <div class="join rv">
       <div class="card stp"><b>1</b><span>Открой обучающий дашборд "Взлёт" или "Гитара и ИИ-студия" и перейди во вкладку "🏆 Рейтинг".</span></div>
-      <div class="card stp"><b>2</b><span>Впиши имя, фамилию и класс, отметь согласие и отправь заявку. На остальные кружки записывают на сайте Спектра.</span></div>
+      <div class="card stp"><b>2</b><span>Впиши имя, фамилию и класс, отметь согласие и отправь заявку.</span></div>
       <div class="card stp"><b>3</b><span>Заявку проверят, и система выдаст личный код. По нему входишь с любого телефона, а очки за тесты и задания идут в рейтинг.</span></div>
     </div>
   </section>
@@ -730,7 +798,7 @@ function agroArt(cv){const W=cv.width=900,H=cv.height=700,x=cv.getContext('2d');
 function renderDash(){
   $('#dash').innerHTML=DASH.map((d,i)=>`<a class="dc ${d.logo?'site':''}" data-i="${i}" ${d.u?`href="${esc(d.u)}"`:'href="#"'} ${d.ext?'target="_blank" rel="noopener"':''}>
     <div class="ph">${d.img?`<img src="${d.img}" alt="" loading="lazy">`:d.art?'<canvas></canvas>':`<img src="logo.webp" alt="">`}</div><span class="glw"></span>
-    <div class="lbl">${d.tags.map(t=>`<span>${esc(t)}</span>`).join('')}${d.soon?'<span class="soon">скоро</span>':''}</div>
+    <div class="lbl">${d.soon?'<span class="soon">скоро</span>':''}</div>
     <h3>${esc(d.n)}</h3><p>${esc(d.t)}</p><span class="go">${d.soon?'Заглянуть':'Провалиться'} <b>→</b></span></a>`).join('');
   $$('#dash canvas').forEach(agroArt);
   $$('.dc').forEach(c=>{
@@ -823,7 +891,7 @@ async function load(){
 /* ---------- вход и правка (тот же PIN-сервер) ---------- */
 let SESS=null;try{SESS=JSON.parse(ss.get('spectr_sess')||'null')}catch(e){}
 const canEdit=()=>SESS&&SESS.user&&(SESS.user.role==='admin'||(SESS.user.clubs||[]).includes('hub:'+HUB));
-function applyUser(){document.body.classList.toggle('editing',!!canEdit());const b=$('#lockBtn');b.style.display=SESS||ls.get('spectr_editor')==='1'?'':'none';b.textContent=SESS?'🔓':'✎';b.title=SESS?'Выйти из режима правки':'Вход для редакторов';b.setAttribute('aria-label',b.title);if(window.stUpd)stUpd()}
+function applyUser(){document.body.classList.toggle('editing',!!canEdit());const b=$('#lockBtn');b.style.display=SESS||ls.get('spectr_editor')==='1'?'':'none';b.textContent=SESS?'🔓':'✎';b.dataset.l=SESS?'Выйти из правки':'Вход для правки';b.title=SESS?'Выйти из режима правки':'Вход для редакторов';b.setAttribute('aria-label',b.title);if(window.stUpd)stUpd()}
 async function api(q){let j;try{j=await (await fetch(API,{method:'POST',body:JSON.stringify(Object.assign({},q,q.op==='login'?{}:{token:SESS&&SESS.token}))})).json()}catch(e){throw new Error('Нет связи с сервером')}
   if(!j.ok){if(j.auth){SESS=null;try{sessionStorage.removeItem('spectr_sess')}catch(e){}applyUser()}throw new Error(j.error||'Ошибка сервера')}return j}
 function openM(){$('#modal').classList.add('on')} function closeM(){$('#modal').classList.remove('on');$('#mbody').classList.remove('wide')}
@@ -1026,6 +1094,38 @@ function intro(){
 {let sol=null,tick=false;addEventListener('scroll',()=>{if(tick)return;tick=true;requestAnimationFrame(()=>{tick=false;const v=scrollY>innerHeight*.6;if(v!==sol){sol=v;$('#hdr').classList.toggle('solid',v)}})},{passive:true})}
 
 mountSkins($('#themeBtn'));
+/* ---------- кнопки за шестерёнкой ---------- */
+(()=>{const g=$('#gearBtn'),d=$('#tdr');if(!g||!d)return;const sk=d.querySelector('.skw .ibtn');if(sk)sk.dataset.l='Стиль оформления';
+  [...d.children].forEach((c,i)=>c.style.setProperty('--d',i));
+  const set=on=>{d.classList.toggle('on',on);g.setAttribute('aria-expanded',on?'true':'false');if(!on){const p=d.querySelector('.skp');if(p)p.classList.remove('on')}};
+  g.onclick=e=>{e.stopPropagation();set(!d.classList.contains('on'))};
+  document.addEventListener('click',e=>{if(!d.contains(e.target)&&!g.contains(e.target))set(false)});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')set(false)});
+  d.addEventListener('click',e=>{if(e.target.closest('.sko'))setTimeout(()=>set(false),350);else if(e.target.closest('.ibtn')&&!e.target.closest('.skw'))setTimeout(()=>set(false),200)},true);
+})();
+/* ---------- часы и дата у логотипа ---------- */
+(()=>{const el=$('#clk');if(!el)return;
+  const ST=[['auto','как у темы'],['neon','Неон'],['space','Космос'],['aqua','Акварель'],['pixel','Пиксель'],['dial','Стрелки']];
+  const DW=['вс','пн','вт','ср','чт','пт','сб'],MN=['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'];
+  let k=ls.get('spectr_clk')||'auto';if(!ST.some(x=>x[0]===k))k='auto';
+  const eff=()=>k==='auto'?((window.SKIN&&SKIN.get())||document.documentElement.dataset.skin||'neon'):k;
+  const T=[];for(let i=0;i<12;i++)T.push(`<line x1="20" y1="${i%3?4:3.2}" x2="20" y2="${i%3?5.6:7}" transform="rotate(${i*30} 20 20)"/>`);
+  el.innerHTML=`<svg class="cdial" viewBox="0 0 40 40" aria-hidden="true"><circle class="cf" cx="20" cy="20" r="18.5"/><g class="tk">${T.join('')}</g><line class="hh" x1="20" y1="21.5" x2="20" y2="11"/><line class="mh" x1="20" y1="22" x2="20" y2="6.5"/><line class="sc" x1="20" y1="24" x2="20" y2="5"/><circle class="cc" cx="20" cy="20" r="1.6"/></svg><span class="cbox"><span class="ct"></span><span class="cd"></span></span>`;
+  const ct=el.querySelector('.ct'),cd=el.querySelector('.cd'),hh=el.querySelector('.hh'),mh=el.querySelector('.mh'),sc=el.querySelector('.sc');
+  let last='',lastD='';const s0=Math.floor(Date.now()/1000);const base=s0-s0%60;
+  function tick(){const n=new Date(),t=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+    if(t!==last){const old=last;ct.innerHTML=[...t].map((c,i)=>c===':'?'<i class="cl">:</i>':`<i class="${old&&old[i]!==c?'nw':''}">${c}</i>`).join('');last=t}
+    const dd=`${DW[n.getDay()]}, ${n.getDate()} ${MN[n.getMonth()]}`;if(dd!==lastD){cd.textContent=dd;lastD=dd}
+    if(el.classList.contains('ck-dial')){const sec=Math.floor(Date.now()/1000)-base,m=n.getMinutes()+n.getSeconds()/60,h=(n.getHours()%12)+m/60;
+      sc.style.transform=`rotate(${sec*6}deg)`;mh.style.transform=`rotate(${m*6}deg)`;hh.style.transform=`rotate(${h*30}deg)`}}
+  function paint(anim){const e=eff();el.className='clk ck-'+e;el.dataset.k=k;tick();
+    if(anim&&el.animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches)el.animate([{transform:'perspective(300px) rotateX(85deg) scale(.7)',opacity:0,filter:'blur(4px)'},{transform:'none',opacity:1,filter:'none'}],{duration:520,easing:'cubic-bezier(.2,1.3,.4,1)'})}
+  const next=()=>{const i=ST.findIndex(x=>x[0]===k);k=ST[(i+1)%ST.length][0];ls.set('spectr_clk',k);paint(true);toast('Часы: '+ST.find(x=>x[0]===k)[1])};
+  el.onclick=next;el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();next()}};
+  if(window.SKIN&&SKIN.on)SKIN.on(()=>{if(k==='auto')paint(true)});
+  paint(false);setInterval(()=>{if(!document.hidden)tick()},1000);
+})();
+
 /* скорость анимаций: у каждого посетителя своя, хранится в браузере */
 const SPD={a:+(ls.get('spectr_spd_a')??1),t:+(ls.get('spectr_spd_t')??1)};
 function applySpd(){try{document.getAnimations().forEach(x=>{if(!(x instanceof CSSAnimation))return;const el=x.effect&&x.effect.target;if(!el||!el.closest)return;const k=el.closest('.mq')?'t':'a';if(el.closest('.modal,.skp,#toast'))return;x.playbackRate=SPD[k]||0.0001})}catch(e){}}
