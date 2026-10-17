@@ -2,7 +2,7 @@
    Подключение на сайте кружка:
      <div data-spk-club="vzlet"></div>
      <script src="/students.js" defer></script>
-   Прогресс сайт отдаёт через window.SPK_PROGRESS = () => ({p: очки, b: значки, l: 'уровень'})
+   Прогресс сайт отдаёт через window.SPK_PROGRESS = () => ({p: очки, b: значки, l: 'уровень', t: {тест: [лучший балл, попыток]}})
    и сообщает об изменениях вызовом window.SPK && SPK.sync(). */
 (function () {
   'use strict';
@@ -129,7 +129,7 @@
     clearTimeout(this._t);
     this._t = setTimeout(function () {
       var p = self.progress();
-      api({ op: 'ssync', code: self.S.code, club: self.club, pts: p.p, b: p.b, l: p.l }).then(function (j) {
+      api({ op: 'ssync', code: self.S.code, club: self.club, pts: p.p, b: p.b, l: p.l, t: p.t }).then(function (j) {
         if (j.gone) { self.S = {}; self.save(); self.render(); return; }
         if (j.retry) { self._t = setTimeout(function () { self.sync(true); }, 9000); return; }
         if (!j.ok) { self.loadRate(); return; }
