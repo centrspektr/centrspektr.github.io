@@ -447,7 +447,15 @@ html.fx[data-skin="pixel"] .ibtn:hover{translate:-2px -2px}
 .spk .lbl{display:flex;gap:6px;flex-wrap:wrap}.spk .lbl span{padding:5px 11px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);font:600 12.5px var(--fb)}
 .spk .stx>b{font:800 clamp(32px,5vw,56px)/1 var(--fh);letter-spacing:-.01em;background:linear-gradient(90deg,#fff,#e9d5ff 40%,#f9a8d4 70%,#fde68a);-webkit-background-clip:text;background-clip:text;color:transparent}
 .spk .stx>small{font-size:16px;line-height:1.5;color:rgba(255,255,255,.82);max-width:46ch}
-.spk .go{display:inline-flex;gap:8px;align-items:center;padding:12px 20px;border-radius:999px;background:#fff;color:#3b0f80;font:700 15px var(--fb);box-shadow:0 10px 30px rgba(0,0,0,.3)}.spk .go b{transition:translate .3s}.spk:hover .go b{translate:5px 0}
+.spk .go{position:relative;overflow:hidden;isolation:isolate;display:inline-flex;gap:10px;align-items:center;padding:13px 24px;border-radius:999px;background:linear-gradient(110deg,#fff 0%,#f3e8ff 35%,#fce7f3 60%,#fff 100%);background-size:220% 100%;color:#3b0f80;font:800 16px var(--fb);letter-spacing:.02em;box-shadow:0 10px 30px rgba(0,0,0,.3),0 0 0 0 rgba(196,132,252,.55);animation:goBg 5s ease-in-out infinite,goGlow 2.6s ease-out infinite;transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.spk .go .gsh{position:absolute;inset:0;z-index:-1;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.95) 50%,transparent 65%);transform:translateX(-120%);animation:goSh 3.2s cubic-bezier(.4,0,.2,1) infinite}
+.spk .go b{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#ec4899);color:#fff;animation:goAr 1.6s ease-in-out infinite;transition:transform .3s}
+.spk:hover .go{transform:scale(1.06)}.spk:hover .go b{animation:none;transform:translateX(4px) rotate(-45deg)}
+@keyframes goBg{50%{background-position:100% 0}}
+@keyframes goGlow{0%{box-shadow:0 10px 30px rgba(0,0,0,.3),0 0 0 0 rgba(196,132,252,.55)}100%{box-shadow:0 10px 30px rgba(0,0,0,.3),0 0 0 16px rgba(196,132,252,0)}}
+@keyframes goSh{0%,45%{transform:translateX(-120%)}75%,100%{transform:translateX(120%)}}
+@keyframes goAr{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
+html.lite .spk .go,html.lite .spk .go b,html.lite .spk .go .gsh{animation:none}
 @media(max-width:760px){.spk{grid-template-columns:1fr;padding:26px 22px 24px;gap:18px;min-height:0}.spk .spl{width:min(200px,54vw)}.spk .stx{justify-items:center;text-align:center}.spk .lbl{justify-content:center}}
 html.lite .spk .s2,html.lite .spk .neb{animation:none}
 html[data-skin="pixel"] .spk{border-radius:0;border:3px solid var(--line)}
@@ -683,7 +691,7 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
     <a class="spk rv" id="spk" href="https://centrspektr.fun" target="_blank" rel="noopener">
       <span class="sk s1"></span><span class="sk s2"></span><span class="sk s3"></span><span class="neb"></span><span class="shoot"></span>
       <span class="spl"><span class="sorb"></span><img src="logo.webp" alt="СПЕКТР"></span>
-      <span class="stx"><span class="lbl"><span>О центре</span><span>Новости</span><span>Контакты</span></span><b>Сайт Спектра</b><small>Всё о ресурсном центре: направления, проекты, новости, адрес и контакты.</small><span class="go">Провалиться <b>→</b></span></span>
+      <span class="stx"><span class="lbl"><span>О центре</span><span>Новости</span><span>Контакты</span></span><b>Сайт Спектра</b><small>Всё о ресурсном центре: направления, проекты, новости, адрес и контакты.</small><span class="go"><i class="gsh"></i>Открыть <b>→</b></span></span>
     </a>
   </section>
   <section class="blk" id="groupsT">
@@ -833,7 +841,7 @@ function renderDash(){
   $('#dash').innerHTML=DASH.map((d,i)=>`<a class="dc ${d.logo?'site':''}" data-i="${i}" ${d.u?`href="${esc(d.u)}"`:'href="#"'} ${d.ext?'target="_blank" rel="noopener"':''}>
     <div class="ph">${d.img?`<img src="${d.img}" alt="" loading="lazy">`:d.art?'<canvas></canvas>':`<img src="logo.webp" alt="">`}</div><span class="glw"></span>
     <div class="lbl">${d.soon?'<span class="soon">скоро</span>':''}</div>
-    <h3>${esc(d.n)}</h3><p>${esc(d.t)}</p><span class="go">${d.soon?'Заглянуть':'Провалиться'} <b>→</b></span></a>`).join('');
+    <h3>${esc(d.n)}</h3><p>${esc(d.t)}</p><span class="go">${d.soon?'Заглянуть':'Открыть'} <b>→</b></span></a>`).join('');
   $$('#dash canvas').forEach(agroArt);
   $$('.dc').forEach(c=>{
     c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect();c.style.setProperty('--mx',(e.clientX-r.left)+'px');c.style.setProperty('--my',(e.clientY-r.top)+'px');
