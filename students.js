@@ -3,7 +3,8 @@
      <div data-spk-club="vzlet"></div>
      <script src="/students.js" defer></script>
    Прогресс сайт отдаёт через window.SPK_PROGRESS = () => ({p: очки, b: значки, l: 'уровень', t: {тест: [лучший балл, попыток]}})
-   и сообщает об изменениях вызовом window.SPK && SPK.sync(). */
+   и сообщает об изменениях вызовом window.SPK && SPK.sync().
+   Если педагог обнулил ученика, вызывается window.SPK_RESET(club): сайт стирает свой прогресс на этом устройстве. */
 (function () {
   'use strict';
   var API = 'https://script.google.com/macros/s/AKfycbwmh9Ksw7lm9pYZCy3ao-mvZ5ogKbFM7E66zJIAa5ZvorA6q7FLH8ZlFZvFK9RKHRM-/exec';
@@ -129,9 +130,16 @@
     clearTimeout(this._t);
     this._t = setTimeout(function () {
       var p = self.progress();
-      api({ op: 'ssync', code: self.S.code, club: self.club, pts: p.p, b: p.b, l: p.l, t: p.t }).then(function (j) {
+      api({ op: 'ssync', code: self.S.code, club: self.club, pts: p.p, b: p.b, l: p.l, t: p.t, e: self.S.e || 0 }).then(function (j) {
         if (j.gone) { self.S = {}; self.save(); self.render(); return; }
         if (j.retry) { self._t = setTimeout(function () { self.sync(true); }, 9000); return; }
+        if (j.reset) {   // педагог обнулил результаты: стираем их и на этом устройстве, потом присылаем заново
+          try { if (window.SPK_RESET) window.SPK_RESET(self.club); } catch (e) {}
+          self.S.e = j.reset; self.save();
+          self.me = Object.assign(self.me || {}, { pts: j.pts, site: j.site, teacher: j.teacher });
+          if (self.view === 'in') self.render();
+          self.sync(true); return;
+        }
         if (!j.ok) { self.loadRate(); return; }
         if (j.ok) {
           self.S.first = j.first; self.S.cls = j.cls; self.save();
