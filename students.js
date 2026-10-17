@@ -173,18 +173,17 @@
         '<div class="spk-row"><button class="spk-btn pri" data-a="check">↻ Проверить</button><button class="spk-btn ghost" data-a="code">У меня уже есть код</button><button class="spk-btn ghost" data-a="cancel">Отменить</button></div><div class="spk-msg"></div>';
     } else if (S.status === 'отклонён') {
       this.view = 'no';
-      h = '<h4>Заявку не одобрили</h4><p>Проверь, правильно ли указаны имя, фамилия и класс, и отправь заявку заново. Если не получается - спроси на занятии.</p>' +
+      h = '<h4>Заявку не одобрили</h4><p>Проверь, правильно ли указаны имя и класс, и отправь заявку заново. Если не получается - спроси на занятии.</p>' +
         '<div class="spk-row"><button class="spk-btn pri" data-a="form">Отправить заново</button><button class="spk-btn ghost" data-a="cancel">Закрыть</button></div>';
     } else if (this.view === 'form') {
       h = '<h4>Заявка в рейтинг ' + club + '</h4>' +
-        '<p>Фамилия видна только администратору. В общем рейтинге будут только имя и класс.</p>' +
+        '<p>Нужны только имя и класс - фамилию не пиши.</p>' +
         '<div class="spk-f"><label>Имя<input name="first" autocomplete="given-name" maxlength="30"></label>' +
-        '<label>Фамилия<input name="last" autocomplete="family-name" maxlength="40"></label>' +
         '<label>Класс<input name="cls" placeholder="например 7Б" maxlength="4" autocapitalize="characters"></label></div>' +
-        '<label class="spk-ok"><input type="checkbox" name="pd1"><span>Согласен(на) на обработку имени, фамилии и класса для участия в рейтинге ' + club + '. Если мне меньше 14 лет, согласие дал мой родитель.</span></label>' +
-        '<label class="spk-ok"><input type="checkbox" name="pd2"><span>Согласен(на), чтобы мои имя и класс были видны в рейтинге на сайте. Фамилия не публикуется.</span></label>' +
+        '<label class="spk-ok"><input type="checkbox" name="pd1"><span>Согласен(на) на обработку имени и класса для участия в рейтинге ' + club + '. Если мне меньше 14 лет, согласие дал мой родитель.</span></label>' +
+        '<label class="spk-ok"><input type="checkbox" name="pd2"><span>Согласен(на), чтобы мои имя и класс были видны в рейтинге на сайте.</span></label>' +
         '<details class="spk-pd"><summary>Как используются данные</summary>' +
-        '<p>Данные получает ресурсный центр СПЕКТР, чтобы вести рейтинг кружка и выдать личный код. Публично видны только имя и класс, фамилию видит только администратор. Данные не передаются другим людям и сайтам.</p>' +
+        '<p>Данные получает ресурсный центр СПЕКТР, чтобы вести рейтинг кружка и выдать личный код. Публично видны только имя и класс. Данные не передаются другим людям и сайтам.</p>' +
         '<p>Хранятся, пока ты занимаешься в кружке. Чтобы удалить данные и отозвать согласие, скажи педагогу - запись удалят в течение 30 дней.</p></details>' +
         '<div class="spk-row"><button class="spk-btn pri" data-a="send">Отправить заявку</button><button class="spk-btn ghost" data-a="back">Отмена</button></div><div class="spk-msg"></div>';
     } else if (this.view === 'code') {
@@ -214,9 +213,8 @@
     if (a === 'out') { if (!confirm('Выйти? Чтобы вернуться, понадобится твой код ' + S.code + '.')) return; this.S = {}; this.save(); this.me = null; this.view = ''; this.render(); this.renderTop(); return; }
     if (a === 'check') { btn.disabled = true; this.check(); setTimeout(function () { btn.disabled = false; if (self.view === 'wait') self.msg('Пока ждём одобрения', true); }, 1500); return; }
     if (a === 'send') {
-      var q = { op: 'sapply', club: this.club, first: this.val('first'), last: this.val('last'), cls: this.val('cls') };
+      var q = { op: 'sapply', club: this.club, first: this.val('first'), cls: this.val('cls') };
       if (q.first.length < 2) return this.msg('Напиши имя');
-      if (q.last.length < 2) return this.msg('Напиши фамилию');
       if (!/^\d{1,2}\s*[а-яёa-z]?$/i.test(q.cls)) return this.msg('Класс - например 7Б');
       var c1 = this.mine.querySelector('input[name="pd1"]'), c2 = this.mine.querySelector('input[name="pd2"]');
       if (!c1 || !c1.checked || !c2 || !c2.checked) return this.msg('Отметь обе галочки согласия - без них заявку принять нельзя');
