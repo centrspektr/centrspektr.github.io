@@ -72,6 +72,7 @@ header.solid{backdrop-filter:blur(18px);background:color-mix(in srgb,var(--bg) 7
 .vis{display:flex;align-items:center;gap:4px;font:700 10px var(--fb);letter-spacing:.4px;color:var(--dim);white-space:nowrap;opacity:0;transform:translateY(-4px);transition:opacity .6s,transform .6s}
 .vis.on{opacity:1;transform:none}
 .vis.since{opacity:.85;transform:none;font-size:9px;letter-spacing:.6px;text-transform:uppercase}
+.inl{transform:scaleX(-1)}
 .shb .shico{width:20px;height:20px;flex:none;fill:none;stroke:#e9e4ff;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
 .vis svg{width:12px;height:12px;fill:none;stroke:var(--c1);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .vis i{font-style:normal;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums}
@@ -125,10 +126,8 @@ h1.big .ch{display:inline-block;background:inherit;background-size:inherit;-webk
 .sky>*{position:absolute;left:0;top:0;will-change:transform,opacity}
 .sky .met{height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,rgba(170,195,255,.25) 45%,rgba(220,232,255,.9));transform-origin:100% 50%}
 .sky .met::after{content:"";position:absolute;right:-3px;top:50%;width:5px;height:5px;margin-top:-2.5px;border-radius:50%;background:#fff;box-shadow:0 0 8px 3px rgba(200,215,255,.85),0 0 22px 6px rgba(140,170,255,.35)}
-.sky .ast svg{display:block;filter:drop-shadow(0 0 5px rgba(160,180,255,.35))}
-.sky .sat svg{display:block;filter:drop-shadow(0 0 4px rgba(150,180,255,.4))}
-.sky .sat .lamp{animation:satbl 1.5s steps(1) infinite}.sky .sat .halo{animation:satbl 1.5s steps(1) infinite}
-@keyframes satbl{50%{opacity:.08}}
+.sky .met.com{height:3px;background:linear-gradient(90deg,transparent,rgba(120,150,255,.14) 25%,rgba(190,140,255,.4) 60%,rgba(255,235,250,.95))}
+.sky .met.com::after{width:8px;height:8px;margin-top:-4px;right:-4px;box-shadow:0 0 12px 4px rgba(255,235,250,.8),0 0 30px 10px rgba(150,170,255,.4)}
 html[data-skin="pixel"] .sky svg{shape-rendering:crispEdges}
 .scr{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:2px;color:rgba(255,255,255,.6);text-decoration:none}
 .scr i{width:24px;height:38px;border:2px solid rgba(255,255,255,.45);border-radius:14px;position:relative} .scr i::after{content:"";position:absolute;left:50%;top:7px;width:4px;height:8px;margin-left:-2px;border-radius:2px;background:#fff;animation:wheel 1.8s infinite}
@@ -292,6 +291,14 @@ body:not(.editing) .off{display:none !important}
 @media (max-width:520px){header .tr{gap:4px} header .tr .ibtn{min-width:36px;height:38px;padding:0 8px;border-radius:11px}}
 @media (max-width:600px){.strow{grid-template-columns:auto 1fr}.strow .acts{grid-column:1/-1;justify-content:flex-start}}
 #toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,30px);opacity:0;background:var(--text);color:var(--bg);padding:11px 19px;border-radius:13px;font-weight:700;transition:.3s;z-index:950;pointer-events:none} #toast.on{opacity:1;transform:translate(-50%,0)}
+.tdr.on .shb .shico{animation:nudgeR 1.8s ease-in-out infinite}
+.tdr.on .shb .inl{animation:nudgeL 1.8s ease-in-out infinite}
+@keyframes nudgeR{50%{translate:4px 0}}@keyframes nudgeL{50%{translate:-4px 0}}
+.ibtn:active,.chip:active{transform:scale(.95)}
+.ibtn.pri{position:relative;overflow:hidden}
+.ibtn.pri::before{content:"";position:absolute;top:0;bottom:0;left:0;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:translateX(-120%) skewX(-18deg);animation:shim 4.5s ease-in-out infinite;pointer-events:none}
+@keyframes shim{0%,60%{transform:translateX(-120%) skewX(-18deg)}100%{transform:translateX(330%) skewX(-18deg)}}
+html.lite .ibtn.pri::before{animation:none;display:none}
 @media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important}#pre{display:none}}
 
 /* ===== СТИЛИ: неон (база), космос, акварель, пиксель ===== */
@@ -554,8 +561,14 @@ html.lite .wkc::before{animation-duration:14s}
 
 /* шестерёнка: кнопки выкатываются столбиком */
 .tr{position:relative;align-items:center}
-.gear .gi{display:inline-block;font-size:17px;line-height:1;transition:transform 1.1s cubic-bezier(.45,0,.2,1)}
-.gear[aria-expanded="true"] .gi{transform:rotate(240deg)}
+.gear{position:relative;overflow:visible}
+.gear .gi{display:inline-flex;line-height:0;will-change:transform;animation:gbob 1.5s ease-in-out infinite}
+.gear .gi svg{display:block;filter:drop-shadow(0 0 5px rgba(167,139,250,.75))}
+.gear::after{content:"";position:absolute;inset:-2px;border-radius:15px;border:2px solid rgba(167,139,250,.75);opacity:0;pointer-events:none;animation:gring 2.4s ease-out infinite}
+@keyframes gbob{0%,100%{transform:translateY(-2.5px)}50%{transform:translateY(3px)}}
+@keyframes gring{0%{transform:scale(.92);opacity:.85}70%,100%{transform:scale(1.4);opacity:0}}
+.gear[aria-expanded="true"] .gi{animation:none;transform:rotate(180deg);transition:transform .55s cubic-bezier(.3,1.4,.5,1)}
+.gear[aria-expanded="true"]::after{animation:none}
 .tdr{position:absolute;top:calc(100% + 10px);right:0;display:flex;flex-direction:column;align-items:flex-end;gap:8px;z-index:300;pointer-events:none}
 .tdr>*{opacity:0;transform:translateY(-30px) scale(.4);transform-origin:50% 50%;transition:none!important}
 .tdr.on{pointer-events:auto}
@@ -564,13 +577,14 @@ html.lite .wkc::before{animation-duration:14s}
 .tdr .shb span{display:none!important}
 @media (max-width:520px){.tdr .ibtn,header:not(.solid) .tr .tdr .ibtn{min-width:38px;width:38px;height:38px}}
 .tdr .skw{display:flex;justify-content:flex-end}
+.skw .syn{display:block;will-change:transform}.tdr.on .skw .syn{animation:synspin 7s linear infinite}@keyframes synspin{to{transform:rotate(360deg)}}
 .tdr .skp{top:0;right:calc(100% + 8px)}
 @media (max-width:620px){.tdr .skp{right:0;top:calc(100% + 8px)}}
 /* часы и дата: у каждого стиля свои (Неон - круглые с датой по кругу, Космос - строка "Матрица", Акварель - квадратные, Пиксель - пиксельные) */
 .clk{--ka:var(--c1);--kb:rgba(10,8,24,.55);--kt:#fff;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;padding:6px 12px;line-height:1;position:relative;flex:none;overflow:hidden;color:var(--kt);background:var(--kb);border:1px solid color-mix(in srgb,var(--ka) 60%,transparent);border-radius:14px;transition:background .4s,border-color .4s,box-shadow .4s,color .4s,border-radius .5s,padding .4s}
 .clk:focus-visible{outline:2px solid var(--ka);outline-offset:2px}
 .clk .cbox{display:grid;gap:4px;position:relative;z-index:1}
-.clk .ct{display:flex;font:800 17px var(--fb);font-variant-numeric:tabular-nums;letter-spacing:.5px}
+.clk .ct{display:flex;font:800 19px var(--fb);font-variant-numeric:tabular-nums;letter-spacing:.5px}
 .clk .ct i{font-style:normal;display:inline-block}
 .clk .ct i.nw{animation:ckin .6s cubic-bezier(.2,1.4,.4,1)}
 .clk .ct .cl{animation:ckbl 1s steps(1) infinite;padding:0 1px;color:var(--ka)}
@@ -593,7 +607,7 @@ html.lite .wkc::before{animation-duration:14s}
 /* Строка */
 .clk.sh-line{border-radius:999px;padding:9px 15px}
 .clk.sh-line .cbox{display:flex;align-items:baseline;gap:9px}
-.clk.sh-line .ct{font-size:16px}
+.clk.sh-line .ct{font-size:18px}
 .clk.sh-line .cd{font-size:10.5px}
 /* Круглые: циферблат, дата бежит по кругу */
 .clk.sh-round{border-radius:50%;padding:0;background:none;border:0;box-shadow:none;overflow:visible;animation:none}
@@ -626,14 +640,14 @@ html.lite .wkc::before{animation-duration:14s}
 html[data-skin="pixel"] .clk.sh-line{border-radius:999px!important}
 html[data-skin="pixel"] .clk.sh-round{border-radius:50%!important}
 html[data-skin="pixel"] .clk.sh-square{border-radius:5px!important}
-@media (max-width:520px){.top{gap:8px}.clk{padding:5px 8px;gap:6px}.clk .ct{font-size:14px}.clk .cd{font-size:8.5px}.clk.sh-line{padding:7px 10px}.clk.sh-line .cbox{gap:6px}.clk.sh-line .ct{font-size:13px}.clk.sh-line .cd{font-size:8.5px}.clk.sh-round{padding:0}.clk.sh-square .ct{font-size:15px}.clk.sh-pixel .ct{font-size:9px}.clk.sh-pixel .cd{font-size:6px}.clk .cdial{width:52px;height:52px}}
+@media (max-width:520px){.top{gap:8px}.clk{padding:5px 8px;gap:6px}.clk .ct{font-size:15.5px}.clk .cd{font-size:8.5px}.clk.sh-line{padding:7px 10px}.clk.sh-line .cbox{gap:6px}.clk.sh-line .ct{font-size:14.5px}.clk.sh-line .cd{font-size:8.5px}.clk.sh-round{padding:0}.clk.sh-square .ct{font-size:15px}.clk.sh-pixel .ct{font-size:9px}.clk.sh-pixel .cd{font-size:6px}.clk .cdial{width:52px;height:52px}}
 @media (max-width:400px){.clk.sh-line .cd{display:none}}
 /* дата под часами, секунды и миллисекунды */
 .clkw{display:flex;flex-direction:column;align-items:center;gap:3px;flex:none}
 .clk .cd{display:none!important}
 .clk .ct .cl2{font-style:normal;padding:0 1px;color:var(--ka);opacity:.75}
 .clk .ct .cs{display:inline-block;min-width:2ch}
-.clk .ct .cms{display:inline-block;min-width:3.4ch;font-size:.72em;align-self:flex-end;opacity:.8;margin-left:1px;color:var(--kd,var(--ka))}
+.clk .ct .cms{display:inline-block;min-width:3ch;color:var(--kd,var(--ka))}
 .clkd{font:800 11.5px var(--fb);letter-spacing:.7px;text-transform:uppercase;white-space:nowrap;color:var(--kd,#c4b5fd);transition:color .4s;line-height:1}
 .clkw.ck-neon{--kd:#ffb8f0}.clkw.ck-neon .clkd{text-shadow:0 0 8px rgba(255,79,216,.6)}
 .clkw.ck-space{--kd:#6dff9e}.clkw.ck-space .clkd{font-family:Consolas,'Courier New',monospace;text-shadow:0 0 6px rgba(0,255,102,.8)}
@@ -643,10 +657,11 @@ html[data-skin="pixel"] .clk.sh-square{border-radius:5px!important}
 .cdial .dms{font:800 6.4px var(--fb);fill:var(--kt);opacity:.9;font-variant-numeric:tabular-nums}
 @media (max-width:520px){.clkd{font-size:10px;letter-spacing:.4px}.clkw.ck-pixel .clkd{font-size:7px}.clkw.sh-round .cdial{width:46px;height:46px}.clkw{gap:2px}}
 /* узкие телефоны и крупный шрифт в системе: шапка не должна наезжать (жалоба 17.10) */
-@media (max-width:430px){.top{gap:6px}.brand{gap:7px;min-width:0}.brand img{height:27px}.brand b{font-size:15px;letter-spacing:.5px}.vis.since{font-size:7.5px;letter-spacing:.3px}.clk.sh-line{padding:6px 8px}.clk.sh-line .ct{font-size:12px}.clkd{font-size:9px}.clk .ct .cms{font-size:.62em}}
-html.hd1 .clk .ct .cms{display:none}
+@media (max-width:440px){.top{gap:6px}.brand{gap:7px;min-width:0}.brand img{height:27px}.brand b{font-size:15px;letter-spacing:.5px}.vis.since{font-size:7.5px;letter-spacing:.3px}.clk.sh-line{padding:6px 8px}.clk.sh-line .ct{font-size:13.5px}.clkd{font-size:9px}}
+html.hd1 .vis.since{display:none}
 html.hd2 .brand img{display:none}
-html.hd3 .vis.since,html.hd3 .clkd{display:none}
+html.hd3 .clkd{display:none}
+html.hd4 .clk .ct .cms{display:none}
 @media (prefers-reduced-motion: reduce){.clk,.clk *,.clk::before,.clk::after,.tdr>*{animation:none!important;transition:none!important}}
 </style>
 <script>window.SKIN_KEY='spectr_skin';try{document.documentElement.dataset.theme='dark'}catch(e){}
@@ -667,7 +682,7 @@ function apply(k,ev){
 function mark(){document.querySelectorAll('.sko').forEach(b=>b.classList.toggle('on',b.dataset.k===cur))}
 window.mountSkins=function(anchor){
   const w=document.createElement('div');w.className='skw';
-  w.innerHTML=`<button class="ibtn" type="button" title="Стиль оформления" aria-label="Стиль оформления">🎨</button><div class="skp" role="menu"><b>Стиль оформления</b>${SK.map(s=>`<button class="sko" type="button" data-k="${s[0]}"><i></i><span>${s[1]}<small>${s[2]}</small></span></button>`).join('')}</div>`;
+  w.innerHTML=`<button class="ibtn" type="button" title="Стиль оформления" aria-label="Стиль оформления"><svg class="syn" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><defs><linearGradient id="gSy" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f472b6"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs><g fill="none" stroke="url(#gSy)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19.4 9.5A8 8 0 0 0 5.2 7.4"/><path d="M5.6 3.6v4.2h4.2"/><path d="M4.6 14.5a8 8 0 0 0 14.2 2.1"/><path d="M18.4 20.4v-4.2h-4.2"/></g></svg></button><div class="skp" role="menu"><b>Стиль оформления</b>${SK.map(s=>`<button class="sko" type="button" data-k="${s[0]}"><i></i><span>${s[1]}<small>${s[2]}</small></span></button>`).join('')}</div>`;
   anchor.parentNode.insertBefore(w,anchor);
   const p=w.querySelector('.skp'); w.querySelector('.ibtn').onclick=e=>{e.stopPropagation();p.classList.toggle('on')};
   p.querySelectorAll('.sko').forEach(b=>b.onclick=e=>{e.stopPropagation();p.classList.remove('on');apply(b.dataset.k,e)});
@@ -738,7 +753,7 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
   <a class="brand" id="brand" href="#top" aria-label="СПЕКТР - в начало"><img src="mark.webp" alt="СПЕКТР"><span class="bt"><small class="vis since">стартовал 17.10.2026</small><b>ПОРТАЛ</b><small class="vis" id="visC" hidden title="Посещения сайтов СПЕКТР"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><i>0</i><span class="vl">посещений</span></small></span></a>
   <div class="clkw" id="clkw"><div class="clk" id="clk" role="button" tabindex="0" title="Нажмите, чтобы сменить вид часов" aria-label="Часы и дата"></div><span class="clkd" id="clkd"></span></div>
   <nav class="mn"><a href="#groupsT">Кружки</a><a href="#dashT">Дашборды</a><a href="#joinT">Подключиться</a><a href="#todayT" id="navToday">Сегодня</a><a href="#weekT">Расписание</a></nav>
-  <div class="tr" id="tr"><button class="ibtn" id="stBtn" style="display:none" title="Ученики и заявки" aria-label="Ученики и заявки">👥<b class="stc" id="stCnt" style="display:none"></b></button><button class="ibtn" id="bgBtn" style="display:none" title="Сообщения об ошибках" aria-label="Сообщения об ошибках">⚠<b class="stc" id="bgCnt" style="display:none"></b></button><div class="tdr" id="tdr"><button class="ibtn" id="lockBtn" style="display:none" title="Вход для редакторов" aria-label="Вход для редакторов">✎</button><button class="ibtn shb" id="shBtn" title="Поделиться, QR-код, установить на экран" aria-label="Поделиться и установить"><svg class="shico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4.5 21 11l-7 6.5v-3.8c-5 0-8.3 1.5-11 5.3.9-5.4 3.9-10.4 11-11.3z"/></svg><span>Поделиться</span></button><button class="ibtn" id="inBtn" type="button" title="Установить на телефон как приложение" aria-label="Установить на телефон"><svg class="inico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6.5" y="2.5" width="11" height="19" rx="2.6"/><path d="M12 8.2v5.6M9.2 11h5.6M10.6 18.5h2.8"/></svg></button><button class="ibtn" id="themeBtn" hidden aria-hidden="true" tabindex="-1" style="display:none"></button></div><button class="ibtn gear" id="gearBtn" type="button" aria-expanded="false" aria-controls="tdr" title="Настройки" aria-label="Настройки"><span class="gi">⚙️</span></button></div>
+  <div class="tr" id="tr"><button class="ibtn" id="stBtn" style="display:none" title="Ученики и заявки" aria-label="Ученики и заявки">👥<b class="stc" id="stCnt" style="display:none"></b></button><button class="ibtn" id="bgBtn" style="display:none" title="Сообщения об ошибках" aria-label="Сообщения об ошибках">⚠<b class="stc" id="bgCnt" style="display:none"></b></button><div class="tdr" id="tdr"><button class="ibtn" id="lockBtn" style="display:none" title="Вход для редакторов" aria-label="Вход для редакторов">✎</button><button class="ibtn shb" id="shBtn" title="Поделиться, QR-код, установить на экран" aria-label="Поделиться и установить"><svg class="shico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4.5 21 11l-7 6.5v-3.8c-5 0-8.3 1.5-11 5.3.9-5.4 3.9-10.4 11-11.3z"/></svg><span>Поделиться</span></button><button class="ibtn shb" id="inBtn" type="button" title="Установить на телефон как приложение" aria-label="Установить на телефон"><svg class="shico inl" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4.5 21 11l-7 6.5v-3.8c-5 0-8.3 1.5-11 5.3.9-5.4 3.9-10.4 11-11.3z"/></svg></button><button class="ibtn" id="themeBtn" hidden aria-hidden="true" tabindex="-1" style="display:none"></button></div><button class="ibtn gear" id="gearBtn" type="button" aria-expanded="false" aria-controls="tdr" title="Настройки" aria-label="Настройки"><span class="gi"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><defs><linearGradient id="gAr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset=".5" stop-color="#a78bfa"/><stop offset="1" stop-color="#f472b6"/></linearGradient></defs><path d="M12 3.5v14M5.2 11.2 12 18l6.8-6.8" fill="none" stroke="url(#gAr)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button></div>
 </div></header>
 
 <section class="hero" id="top">
@@ -1318,34 +1333,21 @@ mountSkins($('#themeBtn'));
 
 /* скорость анимаций: у каждого посетителя своя, хранится в браузере */
 /* ---------- шапка: если что-то не помещается (узкий экран, крупный шрифт), по шагам упрощаем ---------- */
-(function(){const H=document.documentElement,K=['hd1','hd2','hd3'];
+(function(){const H=document.documentElement,K=['hd1','hd2','hd3','hd4'];
   function fit(){K.forEach(k=>H.classList.remove(k));const g=(a,b)=>{const x=$(a),y=$(b);if(!x||!y||!x.offsetWidth||!y.offsetWidth)return false;return x.getBoundingClientRect().right>y.getBoundingClientRect().left-4};
     const bad=()=>g('#brand .bt','#clkw')||g('#clkw','#tr')||document.documentElement.scrollWidth>innerWidth+1;
     for(const k of K){if(!bad())break;H.classList.add(k)}}
   fit();addEventListener('resize',fit);addEventListener('load',fit);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);setTimeout(fit,1500)})();
 
-/* ---------- небо: время от времени пролетают метеоры, астероиды и спутник ---------- */
+/* ---------- небо: метеоры и кометы с длинным хвостом ---------- */
 (function(){const hero=$('.hero');if(!hero||RED)return;const sky=document.createElement('div');sky.className='sky';sky.setAttribute('aria-hidden','true');hero.insertBefore(sky,hero.querySelector('.wrap'));
-  const rn=(a,b)=>a+Math.random()*(b-a),on=()=>!document.hidden&&hero.getBoundingClientRect().bottom>60;let uid=0;
+  const rn=(a,b)=>a+Math.random()*(b-a),on=()=>!document.hidden&&hero.getBoundingClientRect().bottom>60;
   const fly=(el,frames,o)=>{sky.appendChild(el);const a=el.animate(frames,o);a.onfinish=()=>el.remove();return a};
-  function meteor(){if(on()){const W=hero.clientWidth,H=hero.clientHeight,m=document.createElement('i');m.className='met';const len=rn(80,160),deg=rn(140,162),rad=deg*Math.PI/180,dist=rn(260,520),x=rn(W*.2,W*1.02),y=rn(-20,H*.4);
+  function meteor(){if(on()){const W=hero.clientWidth,H=hero.clientHeight,m=document.createElement('i'),com=Math.random()<.3;m.className=com?'met com':'met';const len=com?rn(280,460):rn(80,160),deg=rn(140,162),rad=deg*Math.PI/180,dist=com?rn(420,760):rn(260,520),x=rn(W*.2,W*1.02),y=rn(-20,H*.4);
       m.style.width=len+'px';m.style.left=(x-len)+'px';m.style.top=y+'px';const dx=Math.cos(rad)*dist,dy=Math.sin(rad)*dist;
-      fly(m,[{transform:`translate(0,0) rotate(${deg}deg) scaleX(.2)`,opacity:0},{opacity:1,offset:.15},{opacity:1,offset:.7},{transform:`translate(${dx}px,${dy}px) rotate(${deg}deg) scaleX(1)`,opacity:0}],{duration:rn(900,1500),easing:'cubic-bezier(.3,.1,.6,1)'})}
-    setTimeout(meteor,rn(LITE?6000:3500,LITE?12000:8000))}
-  function rock(sz){const n=10,id='ast'+(++uid),c=sz/2,pts=[];for(let i=0;i<n;i++){const a=i/n*6.283,r=rn(.7,1)*c*.92;pts.push((c+Math.cos(a)*r).toFixed(1)+','+(c+Math.sin(a)*r).toFixed(1))}
-    let cr='';for(let i=0;i<3;i++){const a=rn(0,6.28),d=rn(0,c*.45),r=rn(sz*.06,sz*.13);cr+=`<circle cx="${(c+Math.cos(a)*d).toFixed(1)}" cy="${(c+Math.sin(a)*d).toFixed(1)}" r="${r.toFixed(1)}" fill="rgba(0,0,0,.28)" stroke="rgba(255,235,210,.18)" stroke-width=".7"/>`}
-    return `<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}"><defs><radialGradient id="${id}" cx="32%" cy="28%" r="85%"><stop offset="0" stop-color="#d2bba2"/><stop offset=".5" stop-color="#7a6556"/><stop offset="1" stop-color="#2a211c"/></radialGradient></defs><polygon points="${pts.join(' ')}" fill="url(#${id})" stroke="rgba(255,225,190,.3)" stroke-width=".8" stroke-linejoin="round"/>${cr}</svg>`}
-  function asteroid(){if(on()){const W=hero.clientWidth,H=hero.clientHeight,sz=Math.round(rn(16,34)),a=document.createElement('div');a.className='ast';a.innerHTML=rock(sz);const ltr=Math.random()<.5,y=rn(H*.08,H*.62),dy=rn(-H*.18,H*.18),x0=ltr?-sz-20:W+20,x1=ltr?W+20:-sz-20,r0=rn(0,360),r1=r0+rn(120,300)*(Math.random()<.5?-1:1);
-      fly(a,[{transform:`translate(${x0}px,${y}px) rotate(${r0}deg)`,opacity:0},{opacity:.95,offset:.08},{opacity:.95,offset:.92},{transform:`translate(${x1}px,${y+dy}px) rotate(${r1}deg)`,opacity:0}],{duration:rn(22000,34000),easing:'linear'})}
-    setTimeout(asteroid,rn(12000,24000))}
-  const SAT=`<svg width="70" height="34" viewBox="0 0 70 34"><defs><linearGradient id="satg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe7a3"/><stop offset=".5" stop-color="#d9a441"/><stop offset="1" stop-color="#8a5a1c"/></linearGradient><linearGradient id="satp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b6fe0"/><stop offset="1" stop-color="#16307a"/></linearGradient><radialGradient id="sath"><stop offset="0" stop-color="#ff4040" stop-opacity=".9"/><stop offset="1" stop-color="#ff4040" stop-opacity="0"/></radialGradient></defs>
-    <g stroke="#a9bde6" stroke-width=".6"><rect x="2" y="12" width="22" height="13" fill="url(#satp)"/><path d="M7.5 12v13M13 12v13M18.5 12v13M2 18.5h22" fill="none"/><rect x="46" y="12" width="22" height="13" fill="url(#satp)"/><path d="M51.5 12v13M57 12v13M62.5 12v13M46 18.5h22" fill="none"/></g>
-    <path d="M24 18.5h5M41 18.5h5" stroke="#c9d3e8" stroke-width="1.2"/><rect x="29" y="11" width="12" height="15" rx="2" fill="url(#satg)" stroke="#6b4a1a" stroke-width=".6"/><path d="M31 15h8M31 19h8M31 23h8" stroke="rgba(120,80,20,.45)" stroke-width=".6"/>
-    <path d="M30.5 26.5q4.5 5 9 0" fill="none" stroke="#dfe6f5" stroke-width="1"/><path d="M35 11V4" stroke="#dfe6f5" stroke-width=".9"/><circle class="halo" cx="35" cy="3.4" r="4.5" fill="url(#sath)"/><circle class="lamp" cx="35" cy="3.4" r="1.7" fill="#ff5050"/></svg>`;
-  function satellite(){if(on()){const W=hero.clientWidth,H=hero.clientHeight,s=document.createElement('div');s.className='sat';s.innerHTML=SAT;const ltr=Math.random()<.6,y=rn(Math.max(90,H*.1),H*.32),x0=ltr?-80:W+10,x1=ltr?W+10:-80;
-      fly(s,[{transform:`translate(${x0}px,${y}px) rotate(-10deg)`,opacity:0},{opacity:1,offset:.06},{opacity:1,offset:.94},{transform:`translate(${x1}px,${y+rn(-30,40)}px) rotate(12deg)`,opacity:0}],{duration:rn(40000,55000),easing:'linear'})}
-    setTimeout(satellite,rn(50000,80000))}
-  setTimeout(meteor,2500);setTimeout(asteroid,4000);setTimeout(satellite,7000);
+      fly(m,[{transform:`translate(0,0) rotate(${deg}deg) scaleX(.2)`,opacity:0},{opacity:1,offset:.15},{opacity:1,offset:com?.8:.7},{transform:`translate(${dx}px,${dy}px) rotate(${deg}deg) scaleX(1)`,opacity:0}],{duration:com?rn(2200,3400):rn(900,1500),easing:com?'cubic-bezier(.25,.1,.5,1)':'cubic-bezier(.3,.1,.6,1)'})}
+    setTimeout(meteor,rn(LITE?5000:3000,LITE?10000:7000))}
+  setTimeout(meteor,2500);
 })();
 
 /* ползунки скорости убраны (просьба владельца 17.10): всегда обычная скорость, старые настройки стираем */
@@ -1414,7 +1416,9 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
 .shi{margin-top:14px;padding:14px;border-radius:16px;border:1px solid var(--line);background:var(--bg2)}
 .shi b{display:block;font-size:15px;margin-bottom:4px}.shi ol{margin:6px 0 0 18px;font-size:14px;line-height:1.6}
 .shi img{width:44px;height:44px;border-radius:11px;flex-shrink:0}.shih{display:flex;gap:10px;align-items:center;margin-bottom:4px}.shih b{margin:0}
-.stp{margin:12px 0 0}.stp>b{display:block;font-size:15px;margin-bottom:4px}.stp small{display:block;margin-top:8px;font-size:13px;line-height:1.45;color:var(--dim)}
+.stp{display:flex;gap:10px;margin:0 0 12px}.stp>i{flex:none;width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;font:800 14px/26px var(--fb);text-align:center;font-style:normal}.stp>div{flex:1;min-width:0;font-size:14px;line-height:1.5}.stp b{display:block;font-size:15px;margin-bottom:2px}.stp .shg{margin-top:8px}
+.chr{display:inline-block;vertical-align:-5px;width:22px;height:22px;border-radius:50%;background:conic-gradient(from -60deg,#ea4335 0 120deg,#fbbc04 120deg 240deg,#34a853 240deg 360deg);position:relative;margin:0 2px}.chr::before{content:"";position:absolute;inset:6px;border-radius:50%;background:#4285f4;border:2px solid #fff;box-sizing:border-box}
+.shs{margin:8px auto 4px;text-align:center}.shs img{width:min(100%,280px);height:auto;border-radius:16px;border:1px solid var(--line);display:block;margin:0 auto}.shs figcaption{font-size:12.5px;line-height:1.4;color:var(--dim);margin-top:6px}
 .shd{margin-top:14px;border-radius:16px;border:1px solid var(--line);background:var(--bg2);overflow:hidden}
 .shd summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:13px 14px;font:800 15px var(--fb,inherit);-webkit-tap-highlight-color:transparent}
 .shd summary::-webkit-details-marker{display:none}.shd summary::after{content:"▾";margin-left:auto;transition:transform .3s}.shd[open] summary::after{transform:rotate(180deg)}
@@ -1442,12 +1446,9 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
   <div class="shg"><button class="ibtn pri" id="shShare">📤 Поделиться</button><button class="ibtn" id="shCopy">📋 Скопировать</button></div>
 </div></div>
 <div class="shm" id="inM" role="dialog" aria-modal="true" aria-label="Установить СПЕКТР на телефон"><div class="shp">
-  <h3>📲 Установка <button class="ibtn sm" id="inX" aria-label="Закрыть">✕</button></h3>
+  <h3>Установка <button class="ibtn sm" id="inX" aria-label="Закрыть">✕</button></h3>
   <div class="shi" id="shI" style="margin-top:6px"></div>
-  <details class="shd" id="shD"><summary><span>❓</span>Как установить лучше всего</summary><div class="gb">
-    <div class="gi2"><div class="ok"><div class="ic rd"><img src="icon-192.png" alt=""></div><b>✅ Приложение</b>круглый значок, открывается без строки браузера</div><div class="no"><div class="ic sq"><img src="icon-192.png" alt=""><i>Я</i></div><b>Ярлык браузера</b>квадрат с пометкой, строка браузера остаётся</div></div>
-    <ol><li>Откройте портал в <b>Chrome</b>.</li><li>Нажмите ⚙️ → <b>📲</b> → <b>"Установить"</b> (или ⋮ → "Установить приложение").</li><li>Если раньше добавляли ярлык через Яндекс, его можно удалить.</li></ol>
-    <p class="fin">Оба способа работают, но круглый значок и открытие без строки браузера даёт именно установка из Chrome.</p></div></details>
+  <details class="shd" id="shD" open><summary><span>❓</span>Как установить пошагово</summary><div class="gb" id="shDb"></div></details>
 </div></div>
 <div class="shbar" id="shBar" role="dialog" aria-label="Установить СПЕКТР"><img src="icon-192.png" alt=""><div id="shBarT"><b>СПЕКТР на экран телефона</b>Открывается одним касанием, как приложение</div><button class="ibtn pri sm" id="shBarGo">Установить</button><button class="ibtn sm" id="shBarX" aria-label="Не сейчас">✕</button></div>
 <script>
@@ -1472,12 +1473,16 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
     if(IOS)return HEAD+'Добавить на экран iPhone</b></div><ol><li>Нажмите «Поделиться» (квадрат со стрелкой)'+(/CriOS|YaBrowser|EdgiOS|FxiOS/.test(ua)?' в адресной строке или в меню':' внизу (или в меню ⋯)')+'</li><li>Выберите «На экран "Домой"»</li><li>Нажмите «Добавить»</li></ol>';
     if(BR==='samsung')return HEAD+'Установить на экран</b></div><ol><li>Нажмите ≡ внизу справа</li><li>Выберите «Добавить страницу на» → «Главный экран»</li></ol>'+D+'Или нажмите значок установки в адресной строке, если он есть.</span>';
     if(BR==='ff')return HEAD+'Установить на экран</b></div><ol><li>Нажмите ⋮ в меню браузера</li><li>Выберите «Установить» (или «Добавить на домашний экран»)</li></ol>';
-    if(BR==='ya'&&AND)return HEAD+'Установка из Chrome</b></div>'+D+'Из Яндекс Браузера значок получается с пометкой браузера и со строкой внизу. Чтобы было как приложение, ставим из Chrome.</span><div class="stp"><b>Шаг 1. Откройте портал в Chrome</b><div class="shg"><a class="ibtn pri" style="font-size:14px" href="'+intent('com.android.chrome')+'">Открыть в Chrome</a><button class="ibtn" id="shCp2" style="font-size:14px">📋 Скопировать ссылку</button></div><small>Если Chrome сам не открылся, нажмите "Скопировать ссылку", откройте Chrome и вставьте ссылку в адресную строку.</small></div><div class="stp"><b>Шаг 2. В Chrome установите</b><ol style="margin:4px 0 0 18px"><li>Нажмите ⋮ вверху справа</li><li>Выберите "Установить приложение"</li><li>В окошке нажмите "Установить"</li></ol></div>';
+    if(BR==='ya'&&AND)return HEAD+'Лучше установить из Chrome</b></div>'+D+'Яндекс Браузер ставит только ярлык со своей пометкой и строкой браузера. Чтобы был круглый значок и приложение без строки, поставьте из Chrome - шаги ниже.</span>';
     if(BR==='ya')return HEAD+'Установить на экран</b></div><ol><li>Нажмите ⋮ (меню) в Яндекс Браузере</li><li>Выберите "Установить приложение"</li></ol>'+D+'Круглый значок без пометки браузера лучше получается при установке из Chrome.</span>';
-    if(BR==='chrome'||BR==='edge')return HEAD+'Установить на экран</b></div>'+D+'Полистайте страницу несколько секунд: браузер сам предложит установку, и здесь появится синяя кнопка.</span><button class="ibtn" disabled style="width:100%;margin-top:10px;opacity:.75">⏳ Ждём предложение браузера…</button><p style="margin:12px 0 0;font-size:14px;color:var(--dim)">Если кнопка не появилась, установите вручную:</p><ol><li>Нажмите ⋮ вверху справа</li><li>Выберите "Установить приложение" (или "Добавить на гл. экран")</li><li>В окошке нажмите "Установить"</li></ol>'+WARN;
+    if(BR==='chrome'||BR==='edge')return HEAD+'Установить на экран</b></div>'+D+'Полистайте страницу несколько секунд: браузер сам предложит установку, и здесь появится синяя кнопка.</span><button class="ibtn" disabled style="width:100%;margin-top:10px;opacity:.75">⏳ Ждём предложение браузера…</button>';
     return HEAD+'Установить на экран</b></div><ol><li>Откройте меню браузера (⋮ или ≡)</li><li>Выберите «Установить приложение» или «Добавить на главный экран»</li></ol>'+D+'Лучше всего устанавливается из Chrome или Яндекс Браузера.</span>'}
+  function guide(){var shot='<figure class="shs"><img src="install-chrome.webp" alt="Окно установки в Chrome" loading="lazy" width="260" height="402"><figcaption>Так выглядит окно в Chrome. Нажмите "Установить приложение"</figcaption></figure>';
+    var cmp='<div class="gi2"><div class="ok"><div class="ic rd"><img src="icon-192.png" alt=""></div><b>✅ Приложение</b>круглый значок, открывается без строки браузера</div><div class="no"><div class="ic sq"><img src="icon-192.png" alt=""><i>Я</i></div><b>Ярлык браузера</b>квадрат с пометкой, строка браузера остаётся</div></div>';
+    if((BR==='chrome'||BR==='edge')&&!INAPP)return cmp+'<div class="stp"><i>1</i><div><b>Полистайте страницу</b>Несколько секунд: Chrome сам предложит установку.</div></div><div class="stp"><i>2</i><div><b>Нажмите "Установить приложение"</b>Синяя кнопка вверху этого окна. Если её нет: ⋮ вверху справа → "Установить приложение".</div></div>'+shot+'<div class="stp"><i>3</i><div><b>Подтвердите</b>В окошке нажмите "Установить". Круглый значок СПЕКТР появится среди приложений.</div></div>';
+    return cmp+'<div class="stp"><i>1</i><div><b>Скопируйте ссылку</b><div class="shg" style="grid-template-columns:1fr;margin-top:6px"><button class="ibtn pri" id="shCp2" style="font-size:14px;height:auto;min-height:42px;padding:8px 14px;white-space:nowrap">📋 Скопировать ссылку</button></div></div></div><div class="stp"><i>2</i><div><b>Откройте Chrome <span class="chr"></span></b>Значок Chrome на экране телефона.</div></div><div class="stp"><i>3</i><div><b>Вставьте ссылку и откройте</b>В адресную строку Chrome. Через несколько секунд появится окно "Установка" с кнопкой "Установить приложение".</div></div>'+shot+'<div class="stp"><i>4</i><div><b>Нажмите "Установить приложение"</b>Круглый значок СПЕКТР появится среди приложений.</div></div>'}
   function inst(){var el=$('shI');if(!el)return;
-    var gd=$('shD');if(gd)gd.style.display=APP?'none':'';
+    var gd=$('shD');if(gd){gd.style.display=(APP||IOS)?'none':'';var gb=$('shDb');if(gb&&!APP&&!IOS)gb.innerHTML=guide()}
     if(APP){el.innerHTML='<b>✅ СПЕКТР уже на экране</b><span style="font-size:14px;color:var(--dim)">Ты открыл его как приложение.</span>';return}
     if(dp&&!YA){el.innerHTML=HEAD+'Установить на экран</b></div>'+D+'Значок СПЕКТР появится рядом с другими приложениями.</span><button class="ibtn pri" id="shGo" style="width:100%;margin-top:10px">📲 Установить приложение</button>'+(BR==='ya'&&AND?D.replace('">',';margin-top:10px;display:block">')+'В Яндексе значок будет с пометкой браузера. Если хочется круглый - можно <a href="'+intent('com.android.chrome')+'">установить из Chrome</a>.</span>':'');$('shGo').onclick=go;return}
     el.innerHTML=steps();el.querySelectorAll('.shg').forEach(function(g){g.style.marginTop='10px'})}

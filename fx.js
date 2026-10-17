@@ -23,7 +23,7 @@ function mount(){D.body.insertBefore(cv,D.body.firstChild)}
 if(D.body)mount();else D.addEventListener('DOMContentLoaded',mount);
 
 var W=0,H=0,DPR=1,hero=null,heroH=0,Q=1; // Q - качество, снижается само, если компьютер не успевает
-function size(){var d=LITE?.5:Math.min(window.devicePixelRatio||1,1.5,Math.sqrt(1.4e6/(innerWidth*innerHeight)))*Q;d=Math.max(.5,d);DPR=skin()==='pixel'?(LITE?.5:1):d;cv.style.imageRendering=skin()==='pixel'?'pixelated':'auto';W=innerWidth;H=innerHeight;
+function size(){var d=LITE?.75*Q:Math.min(window.devicePixelRatio||1,1.5,Math.sqrt(1.4e6/(innerWidth*innerHeight)))*Q;d=Math.max(.5,d);DPR=skin()==='pixel'?(LITE?.5:1):d;cv.style.imageRendering=skin()==='pixel'?'pixelated':'auto';W=innerWidth;H=innerHeight;
   cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);cx.setTransform(DPR,0,0,DPR,0,0);
   hero=D.querySelector('.hero');heroH=hero?hero.offsetTop+hero.offsetHeight:0;var l=D.getElementById('lw');if(l){var r=l.getBoundingClientRect();LW={x:r.left+r.width/2,y:r.top+scrollY+r.height/2,r:r.width/2}}S={};}
 var LW=null;
@@ -45,21 +45,31 @@ function band(){if(dark())return 0;var k=skin();if(k==='aqua')return 0;return Ma
 /* =====================================================================
    КОСМОС: галактика, туманности, звёзды летят навстречу (быстрее при прокрутке)
    ===================================================================== */
-function galaxy(sz,arms,pal,n){return pre(sz,sz,function(g,w){var c=w/2,Rr=w*.46;
-  var cg=g.createRadialGradient(c,c,0,c,c,Rr*.5);cg.addColorStop(0,'rgba(255,240,215,.95)');cg.addColorStop(.18,'rgba(255,214,170,.5)');cg.addColorStop(.5,'rgba(167,139,250,.14)');cg.addColorStop(1,'rgba(0,0,0,0)');
-  g.fillStyle=cg;g.fillRect(0,0,w,w);g.globalCompositeOperation='lighter';
-  for(var i=0;i<n;i++){var arm=i%arms,r=Math.pow(rnd(),.55),a=arm*TAU/arms+r*4.6+gauss()*.42*(1-r*.55),rr=r*Rr,
-    x=c+Math.cos(a)*rr+gauss()*6,y=c+Math.sin(a)*rr+gauss()*6,col=pal[Math.min(pal.length-1,(r*pal.length)|0)],s=rnd()<.04?2.2:rnd()*1.3+.4;
-    g.globalAlpha=(1-r*.65)*(.35+rnd()*.5);g.fillStyle=col;g.fillRect(x,y,s,s)}
-  // пылевые облака в рукавах
-  for(i=0;i<(n/60|0);i++){r=.2+rnd()*.75;a=(i%arms)*TAU/arms+r*4.6+gauss()*.3;x=c+Math.cos(a)*r*Rr;y=c+Math.sin(a)*r*Rr;var rg=g.createRadialGradient(x,y,0,x,y,18+rnd()*30);
-    rg.addColorStop(0,hexA(pal[(rnd()*pal.length)|0],.10));rg.addColorStop(1,'rgba(0,0,0,0)');g.globalAlpha=1;g.fillStyle=rg;g.fillRect(x-50,y-50,100,100)}
+function galaxy(sz,arms,pal,n){return pre(sz,sz,function(g,w){var c=w/2,Rr=w*.46,k=w/360;
+  // мягкое гало и яркое ядро
+  var hg=g.createRadialGradient(c,c,0,c,c,Rr);hg.addColorStop(0,'rgba(255,225,190,.30)');hg.addColorStop(.35,'rgba(150,130,240,.10)');hg.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=hg;g.fillRect(0,0,w,w);
+  g.globalCompositeOperation='lighter';
+  // звёзды рукавов: узкие рукава, к краю мельче
+  for(var i=0;i<n;i++){var arm=i%arms,r=Math.pow(rnd(),.6),a=arm*TAU/arms+r*5.2+gauss()*.26*(1-r*.5),rr=r*Rr,
+    x=c+Math.cos(a)*rr+gauss()*3*k,y=c+Math.sin(a)*rr+gauss()*3*k,col=pal[Math.min(pal.length-1,(r*pal.length)|0)],s=(rnd()<.03?2.4:rnd()*1.0+.35)*Math.max(.8,k*.9);
+    g.globalAlpha=(1-r*.6)*(.3+rnd()*.6);g.fillStyle=col;g.fillRect(x,y,s,s)}
+  // балдж: плотное жёлтое облако звёзд у ядра
+  for(i=0;i<n/5;i++){var rb=Math.abs(gauss())*Rr*.22,ab=rnd()*TAU;g.globalAlpha=.25+rnd()*.5;g.fillStyle=rnd()<.6?'#fde7c2':'#ffffff';g.fillRect(c+Math.cos(ab)*rb,c+Math.sin(ab)*rb,Math.max(.8,k*.9),Math.max(.8,k*.9))}
+  // розовые области звездообразования вдоль рукавов
+  for(i=0;i<(n/300|0)+4;i++){r=.25+rnd()*.7;a=(i%arms)*TAU/arms+r*5.2+gauss()*.15;x=c+Math.cos(a)*r*Rr;y=c+Math.sin(a)*r*Rr;var pg=g.createRadialGradient(x,y,0,x,y,(5+rnd()*9)*k);
+    pg.addColorStop(0,'rgba(255,120,200,.35)');pg.addColorStop(1,'rgba(0,0,0,0)');g.globalAlpha=1;g.fillStyle=pg;g.fillRect(x-20*k,y-20*k,40*k,40*k)}
+  // пылевые полосы: тёмные пятна на внутренней кромке рукавов
+  g.globalCompositeOperation='source-over';
+  for(i=0;i<(n/45|0)+6;i++){r=.18+rnd()*.6;a=(i%arms)*TAU/arms+r*5.2-.16+gauss()*.08;x=c+Math.cos(a)*r*Rr;y=c+Math.sin(a)*r*Rr;var dg=g.createRadialGradient(x,y,0,x,y,(6+rnd()*12)*k);
+    dg.addColorStop(0,'rgba(6,4,18,.42)');dg.addColorStop(1,'rgba(6,4,18,0)');g.globalAlpha=1;g.fillStyle=dg;g.fillRect(x-24*k,y-24*k,48*k,48*k)}
+  // ядро
+  g.globalCompositeOperation='lighter';var cg=g.createRadialGradient(c,c,0,c,c,Rr*.2);cg.addColorStop(0,'rgba(255,248,230,1)');cg.addColorStop(.25,'rgba(255,214,160,.7)');cg.addColorStop(1,'rgba(0,0,0,0)');g.globalAlpha=1;g.fillStyle=cg;g.fillRect(0,0,w,w);
 })}
 function nebula(sz,cols){return pre(sz,sz,function(g,w){for(var i=0;i<14;i++){var x=w*(.2+rnd()*.6),y=w*(.2+rnd()*.6),r=w*(.12+rnd()*.25),rg=g.createRadialGradient(x,y,0,x,y,r);
   rg.addColorStop(0,hexA(cols[i%cols.length],.16));rg.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=rg;g.fillRect(0,0,w,w)}})}
 function spaceInit(){var n=LITE?150:640;S.st=[];for(var i=0;i<n;i++)S.st.push({x:(rnd()*2-1),y:(rnd()*2-1),z:rnd()+.02,c:rnd()<.12?'#c7d2fe':rnd()<.08?'#fde68a':'#ffffff'});
-  var gs=LITE?360:900;S.g1=galaxy(gs,2,['#fff7ed','#fde68a','#c4b5fd','#93c5fd','#67e8f9','#f0abfc'],LITE?4500:16000);
-  S.g2=galaxy(LITE?160:340,3,['#fef3c7','#fbcfe8','#a5b4fc','#99f6e4'],LITE?1200:2600);
+  var gs=LITE?640:1200;S.g1=galaxy(gs,2,['#fff7ed','#fde68a','#c4b5fd','#93c5fd','#67e8f9','#f0abfc'],LITE?9000:30000);
+  S.g2=galaxy(LITE?220:420,3,['#fef3c7','#fbcfe8','#a5b4fc','#99f6e4'],LITE?1800:3600);
   S.nb=nebula(LITE?256:640,['#7c3aed','#2563eb','#db2777','#0891b2']);S.ga=0;S.shoot=null;S.far=[];
   for(i=0;i<(LITE?50:260);i++)S.far.push({x:rnd(),y:rnd()*3,s:rnd()*1.2+.3,p:rnd()*TAU})}
 function space(t,dt,y0,y1,dk){if(!S.st)spaceInit();var sc=scrollY,cxp=W*(.5+(mx-.5)*.12),cyp=H*(.45+(my-.5)*.12),f=Math.max(W,H)*.55;
