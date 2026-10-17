@@ -1432,6 +1432,20 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
 .shi{margin-top:14px;padding:14px;border-radius:16px;border:1px solid var(--line);background:var(--bg2)}
 .shi b{display:block;font-size:15px;margin-bottom:4px}.shi ol{margin:6px 0 0 18px;font-size:14px;line-height:1.6}
 .shi img{width:44px;height:44px;border-radius:11px;flex-shrink:0}.shih{display:flex;gap:10px;align-items:center;margin-bottom:4px}.shih b{margin:0}
+.shd{margin-top:14px;border-radius:16px;border:1px solid var(--line);background:var(--bg2);overflow:hidden}
+.shd summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:13px 14px;font:800 15px var(--fb,inherit);-webkit-tap-highlight-color:transparent}
+.shd summary::-webkit-details-marker{display:none}.shd summary::after{content:"▾";margin-left:auto;transition:transform .3s}.shd[open] summary::after{transform:rotate(180deg)}
+.shd .gb{padding:0 14px 14px}
+.shd .gi2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:2px 0 12px}
+.shd .gi2>div{text-align:center;padding:12px 6px 10px;border-radius:14px;border:1px solid var(--line);font-size:12.5px;line-height:1.3;color:var(--dim)}
+.shd .gi2>div b{display:block;font-size:13.5px;color:var(--text);margin-top:8px}
+.shd .gi2>div.ok{border-color:#22c55e;background:rgba(34,197,94,.1)}.shd .gi2>div.no{border-color:#ef4444;background:rgba(239,68,68,.08)}
+.shd .ic{position:relative;width:64px;height:64px;margin:0 auto}
+.shd .ic img{width:64px;height:64px;display:block;object-fit:cover;background:#fff}
+.shd .ic.rd img{border-radius:50%}.shd .ic.sq img{border-radius:14px}
+.shd .ic i{position:absolute;right:-6px;bottom:-4px;width:24px;height:24px;border-radius:50%;background:#fc3f1d;color:#fff;font:800 14px/24px system-ui,sans-serif;text-align:center;font-style:normal;border:2px solid var(--bg2)}
+.shd ol{margin:0 0 0 18px;padding:0;font-size:14px;line-height:1.6}.shd ol b{font-weight:800}
+.shd .fin{margin:8px 0 0;font-size:13.5px;color:var(--dim)}
 .shbar{position:fixed;left:12px;right:12px;bottom:12px;z-index:250;display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:18px;background:var(--card);color:var(--text);border:1px solid var(--line);box-shadow:0 16px 40px rgba(0,0,0,.35);transform:translateY(140%);transition:transform .45s cubic-bezier(.3,1.3,.5,1)}
 .shbar.on{transform:none}.shbar img{width:40px;height:40px;border-radius:10px}.shbar div{flex:1;font-size:13.5px;line-height:1.3}.shbar b{display:block;font-size:14.5px}
 @media(min-width:700px){.shbar{left:auto;width:380px}}
@@ -1445,6 +1459,10 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
   <div class="shg"><button class="ibtn pri" id="shShare">📤 Поделиться</button><button class="ibtn" id="shCopy">📋 Скопировать</button>
     <a class="ibtn w" href="qr-spektr.png" download="SPEKTR-QR.png">⬇ Скачать QR-код для печати</a></div>
   <div class="shi" id="shI"></div>
+  <details class="shd" id="shD"><summary><span>❓</span>Как установить правильно</summary><div class="gb">
+    <div class="gi2"><div class="ok"><div class="ic rd"><img src="icon-192.png" alt=""></div><b>✅ Так нужно</b>круглый значок, приложение без строки браузера</div><div class="no"><div class="ic sq"><img src="icon-192.png" alt=""><i>Я</i></div><b>❌ Так не надо</b>квадрат с буквой Я - это ярлык браузера</div></div>
+    <ol><li>Откройте портал в <b>Chrome</b>.</li><li>Нажмите ⚙️ → 📲 → <b>"Установить"</b> (или ⋮ → "Установить приложение").</li><li>Старый значок с буквой Я удалите.</li></ol>
+    <p class="fin">Не выбирайте "Добавить ярлык" - получится квадрат с Я и строкой браузера.</p></div></details>
 </div></div>
 <div class="shbar" id="shBar" role="dialog" aria-label="Установить СПЕКТР"><img src="icon-192.png" alt=""><div><b>СПЕКТР на экран телефона</b>Открывается одним касанием, как приложение</div><button class="ibtn pri sm" id="shBarGo">Установить</button><button class="ibtn sm" id="shBarX" aria-label="Не сейчас">✕</button></div>
 <script>
@@ -1468,11 +1486,12 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
     if(IOS)return HEAD+'Добавить на экран iPhone</b></div><ol><li>Нажмите «Поделиться» (квадрат со стрелкой)'+(/CriOS|YaBrowser|EdgiOS|FxiOS/.test(ua)?' в адресной строке или в меню':' внизу (или в меню ⋯)')+'</li><li>Выберите «На экран "Домой"»</li><li>Нажмите «Добавить»</li></ol>';
     if(BR==='samsung')return HEAD+'Установить на экран</b></div><ol><li>Нажмите ≡ внизу справа</li><li>Выберите «Добавить страницу на» → «Главный экран»</li></ol>'+D+'Или нажмите значок установки в адресной строке, если он есть.</span>';
     if(BR==='ff')return HEAD+'Установить на экран</b></div><ol><li>Нажмите ⋮ в меню браузера</li><li>Выберите «Установить» (или «Добавить на домашний экран»)</li></ol>';
-    if(BR==='ya'&&AND)return HEAD+'Установить как приложение</b></div>'+D+'Яндекс Браузер ставит значок с буквой Я и открывает портал со своей строкой внизу. Чтобы был круглый значок СПЕКТР и окно без браузера, установите из Chrome:</span><div class="shg" style="margin-top:10px"><a class="ibtn pri" style="font-size:14px" href="'+intent('com.android.chrome')+'">Открыть в Chrome</a></div><ol><li>В Chrome нажмите ⚙️ → 📲 и кнопку "Установить" (или ⋮ → "Установить приложение")</li><li>Если значок с буквой Я уже есть - удалите его</li></ol>';
+    if(BR==='ya'&&AND)return HEAD+'Лучше установить из Chrome</b></div>'+D+'Из Яндекс Браузера получится только ярлык с буквой Я и строкой браузера. Подробнее - в подсказке ниже.</span><div class="shg" style="margin-top:10px"><a class="ibtn pri w" style="font-size:14px" href="'+intent('com.android.chrome')+'">Открыть в Chrome</a></div>';
     if(BR==='ya')return HEAD+'Установить на экран</b></div><ol><li>Нажмите ⋮ (меню) в Яндекс Браузере</li><li>Выберите "Установить приложение"</li></ol>'+D+'Лучше всего устанавливать из Chrome: тогда значок без буквы Я.</span>';
     if(BR==='chrome'||BR==='edge')return HEAD+'Установить на экран</b></div><ol><li>Нажмите ⋮ вверху справа</li><li>Выберите «Добавить на гл. экран» (или «Установить приложение»)</li><li>В окошке нажмите «Установить»</li></ol>'+WARN+'<p style="margin:6px 0 0;font-size:13.5px;color:var(--dim)">Кнопка «Установить» может появиться здесь сама через полминуты - Chrome предлагает её, когда страницу немного полистали.</p>';
     return HEAD+'Установить на экран</b></div><ol><li>Откройте меню браузера (⋮ или ≡)</li><li>Выберите «Установить приложение» или «Добавить на главный экран»</li></ol>'+D+'Лучше всего устанавливается из Chrome или Яндекс Браузера.</span>'}
   function inst(){var el=$('shI');if(!el)return;
+    var gd=$('shD');if(gd)gd.style.display=APP?'none':'';
     if(APP){el.innerHTML='<b>✅ СПЕКТР уже на экране</b><span style="font-size:14px;color:var(--dim)">Ты открыл его как приложение.</span>';return}
     if(dp){el.innerHTML=HEAD+'Установить на экран</b></div>'+D+'Значок СПЕКТР появится рядом с другими приложениями.</span><button class="ibtn pri" id="shGo" style="width:100%;margin-top:10px">📲 Установить приложение</button>'+(BR==='ya'&&AND?D.replace('">',';margin-top:10px;display:block">')+'В Яндекс Браузере значок будет с буквой Я. Без неё - <a href="'+intent('com.android.chrome')+'">установить из Chrome</a>.</span>':'');$('shGo').onclick=go;return}
     el.innerHTML=steps();el.querySelectorAll('.shg').forEach(function(g){g.style.marginTop='10px'})}
