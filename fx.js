@@ -125,22 +125,24 @@ function neon(t,dt,y0,y1,dk){if(!S.sp)neonInit();var sc=scrollY,prog=Math.min(1,
    АКВАРЕЛЬ: бумага, слои пятен краски на разной глубине (параллакс), капли и пузырьки
    ===================================================================== */
 var AC=['#f9a8b8','#fdba8c','#fcd97d','#9be3b0','#8dd8ee','#a9b4fb','#e6a8f5'];
+// на тёмном фоне краски сочнее (просьба владельца 17.10: Акварель была слишком тусклой)
+var ACD=['#ff4f9a','#ff8a3d','#ffd23f','#2fe08a','#29c6f5','#6f7dff','#d35cff'];
 function blob(col){return pre(320,320,function(g,w){var c=w/2;for(var i=0;i<26;i++){var a=rnd()*TAU,d=rnd()*w*.16,x=c+Math.cos(a)*d,y=c+Math.sin(a)*d,r=w*(.16+rnd()*.17),rg=g.createRadialGradient(x,y,r*.2,x,y,r);
   rg.addColorStop(0,hexA(col,.10));rg.addColorStop(.82,hexA(col,.13));rg.addColorStop(.92,hexA(col,.22));rg.addColorStop(1,hexA(col,0));g.fillStyle=rg;g.beginPath();g.arc(x,y,r,0,TAU);g.fill()}})}
-function aquaInit(){S.bl=[];for(var i=0;i<(LITE?6:14);i++){var d=[.15,.35,.7][i%3];S.bl.push({img:blob(AC[i%7]),x:rnd(),y:rnd()*3,d:d,s:(.35+rnd()*.45)*(.6+d),p:rnd()*TAU})}
+function aquaInit(){S.bl=[];S.bdk=dark();var PAL=S.bdk?ACD:AC;for(var i=0;i<(LITE?7:16);i++){var d=[.15,.35,.7][i%3];S.bl.push({img:blob(PAL[i%7]),x:rnd(),y:rnd()*3,d:d,s:(.35+rnd()*.45)*(.6+d),p:rnd()*TAU})}
   S.paper=pre(160,160,function(g,w){var im=g.createImageData(w,w);for(var i=0;i<im.data.length;i+=4){var v=200+rnd()*55|0;im.data[i]=im.data[i+1]=im.data[i+2]=v;im.data[i+3]=rnd()*22|0}g.putImageData(im,0,0)});
-  S.pat=cx.createPattern(S.paper,'repeat');S.dr=[];for(i=0;i<(LITE?8:30);i++)S.dr.push({x:rnd(),y:rnd(),z:.3+rnd()*.7,c:AC[(rnd()*7)|0],p:rnd()*TAU,b:rnd()<.4})}
-function aqua(t,dt,y0,y1,dk){if(!S.bl)aquaInit();var sc=scrollY,M=Math.max(W,H);
+  S.pat=cx.createPattern(S.paper,'repeat');S.dr=[];for(i=0;i<(LITE?8:30);i++)S.dr.push({x:rnd(),y:rnd(),z:.3+rnd()*.7,c:PAL[(rnd()*7)|0],p:rnd()*TAU,b:rnd()<.4})}
+function aqua(t,dt,y0,y1,dk){if(!S.bl||S.bdk!==dark())aquaInit();var sc=scrollY,M=Math.max(W,H);
   cx.save();cx.beginPath();cx.rect(0,y0,W,y1-y0);cx.clip();
   if(!LITE)cx.globalCompositeOperation=dk?'screen':'multiply';
   for(var i=0;i<S.bl.length;i++){var b=S.bl[i],span=H*3,yy=((b.y*H-sc*b.d)%span+span)%span-H*.6,x=(b.x+Math.sin(t*.00007+b.p)*.05)*W+(mx-.5)*-80*b.d,sz=M*b.s*(1+Math.sin(t*.0004+b.p)*.05);
-    if(yy<-sz||yy>H+sz)continue;cx.globalAlpha=dk?(LITE?.22:.32):(LITE?.6:.9);cx.drawImage(b.img,x-sz/2,yy-sz/2+(my-.5)*-60*b.d,sz,sz)}
+    if(yy<-sz||yy>H+sz)continue;cx.globalAlpha=dk?(LITE?.46:.5):(LITE?.6:.9);cx.drawImage(b.img,x-sz/2,yy-sz/2+(my-.5)*-60*b.d,sz,sz)}
   cx.globalCompositeOperation='source-over';
   // капли краски и мыльные пузырьки поднимаются
   for(i=0;i<S.dr.length;i++){var d=S.dr[i];d.y-=dt*.00003*d.z*(1+Math.abs(vel)*.002);if(d.y<-.1){d.y=1.1;d.x=rnd()}
     var px=(d.x+Math.sin(t*.0008+d.p)*.02)*W,py=((d.y*H-sc*d.z*.3)%H+H)%H,r=(d.b?10:4)*d.z+2;
     if(d.b){cx.globalAlpha=dk?.35:.5;cx.strokeStyle=d.c;cx.lineWidth=1.4;cx.beginPath();cx.arc(px,py,r,0,TAU);cx.stroke();cx.globalAlpha=dk?.5:.7;cx.fillStyle='#fff';cx.beginPath();cx.arc(px-r*.35,py-r*.35,r*.2,0,TAU);cx.fill()}
-    else{cx.globalAlpha=dk?.5:.55;cx.fillStyle=d.c;cx.beginPath();cx.arc(px,py,r,0,TAU);cx.fill()}}
+    else{cx.globalAlpha=dk?.75:.55;cx.fillStyle=d.c;cx.beginPath();cx.arc(px,py,r,0,TAU);cx.fill()}}
   if(!LITE){cx.globalAlpha=dk?.06:.9;cx.fillStyle=S.pat;cx.fillRect(0,y0,W,y1-y0)}
   cx.restore();cx.globalAlpha=1}
 

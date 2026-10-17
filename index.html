@@ -114,11 +114,22 @@ h1.big .ch{display:inline-block;background:inherit;background-size:inherit;-webk
 .lw{position:relative;justify-self:center;width:min(100%,430px);aspect-ratio:1;display:grid;place-items:center}
 .lw .ring{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,var(--r1),var(--r2),var(--r3),var(--r4),var(--r5),var(--r6),var(--r7),var(--r1));filter:blur(46px);opacity:.42;animation:spin 16s linear infinite}
 .lw .disc{position:absolute;inset:9%;border-radius:50%;background:radial-gradient(circle at 50% 40%,rgba(255,255,255,.98),rgba(240,236,255,.92) 62%,rgba(220,210,255,.85));box-shadow:0 30px 80px rgba(0,0,0,.45),inset 0 -12px 40px rgba(124,58,237,.18)}
-.lw .orb{position:absolute;inset:-4%;border-radius:50%;border:1.5px dashed rgba(255,255,255,.28);animation:spin 40s linear infinite reverse}
-.lw .orb::before,.lw .orb::after{content:"";position:absolute;width:14px;height:14px;border-radius:50%;background:var(--r3);top:-7px;left:50%;box-shadow:0 0 18px var(--r3)}
-.lw .orb::after{background:var(--r5);box-shadow:0 0 18px var(--r5);top:auto;bottom:-7px}
-.lw img{position:relative;width:72%;filter:drop-shadow(0 10px 18px rgba(60,20,120,.25))}
+.lw .orb{position:absolute;inset:-3%;z-index:3;border-radius:50%;border:1.5px dashed rgba(255,255,255,.32);animation:spin 18s linear infinite;pointer-events:none}
+.lw .orb::before,.lw .orb::after{content:"";position:absolute;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff,var(--r3) 55%);top:-8px;left:50%;box-shadow:0 0 18px var(--r3),0 0 4px #fff;animation:orbp 2.4s ease-in-out infinite}
+@keyframes orbp{50%{box-shadow:0 0 28px var(--r3),0 0 6px #fff}}
+.lw .orb::after{background:radial-gradient(circle at 35% 35%,#fff,var(--r5) 55%);box-shadow:0 0 18px var(--r5),0 0 4px #fff;top:auto;bottom:-8px;width:11px;height:11px;margin-left:-5.5px;animation-delay:-1.2s}
+.lw img{position:relative;z-index:2;width:72%;filter:drop-shadow(0 10px 18px rgba(60,20,120,.25))}
 @keyframes spin{to{transform:rotate(360deg)}}
+/* небо героя: метеоры, астероиды, спутник с сигнальной лампой */
+.sky{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.sky>*{position:absolute;left:0;top:0;will-change:transform,opacity}
+.sky .met{height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,rgba(170,195,255,.25) 45%,rgba(220,232,255,.9));transform-origin:100% 50%}
+.sky .met::after{content:"";position:absolute;right:-3px;top:50%;width:5px;height:5px;margin-top:-2.5px;border-radius:50%;background:#fff;box-shadow:0 0 8px 3px rgba(200,215,255,.85),0 0 22px 6px rgba(140,170,255,.35)}
+.sky .ast svg{display:block;filter:drop-shadow(0 0 5px rgba(160,180,255,.35))}
+.sky .sat svg{display:block;filter:drop-shadow(0 0 4px rgba(150,180,255,.4))}
+.sky .sat .lamp{animation:satbl 1.5s steps(1) infinite}.sky .sat .halo{animation:satbl 1.5s steps(1) infinite}
+@keyframes satbl{50%{opacity:.08}}
+html[data-skin="pixel"] .sky svg{shape-rendering:crispEdges}
 .scr{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:2px;color:rgba(255,255,255,.6);text-decoration:none}
 .scr i{width:24px;height:38px;border:2px solid rgba(255,255,255,.45);border-radius:14px;position:relative} .scr i::after{content:"";position:absolute;left:50%;top:7px;width:4px;height:8px;margin-left:-2px;border-radius:2px;background:#fff;animation:wheel 1.8s infinite}
 @keyframes wheel{60%{transform:translateY(12px);opacity:0}100%{opacity:0}}
@@ -292,7 +303,7 @@ html[data-skin="space"][data-theme="dark"]{--bg:#060918;--bg2:#10163a;--card:#0c
 html[data-skin="space"][data-theme="light"]{--bg:#eef1ff;--bg2:#e0e6ff;--card:#fff;--line:#d6ddf7;--text:#141a3a;--dim:#5d6690}
 html[data-skin="space"] .hero{background:radial-gradient(90% 80% at 75% 30%,#1b2a6b 0%,#0a1033 45%,#03050f 100%)}
 html[data-skin="space"] .lw .ring{background:radial-gradient(circle,rgba(99,102,241,.7),rgba(6,182,212,.35) 55%,transparent 72%)}
-html[data-skin="space"] .lw .orb{border:1.5px solid rgba(147,197,253,.35);transform:rotateX(70deg)}
+html[data-skin="space"] .lw .orb{border:1.5px solid rgba(147,197,253,.35)}
 html[data-skin="space"] .lw .disc{background:radial-gradient(circle at 35% 30%,#fff,#e9ecff 55%,#b8c2ff);box-shadow:0 0 0 10px rgba(99,102,241,.12),0 0 90px rgba(99,102,241,.6),inset -18px -22px 50px rgba(60,70,180,.25)}
 html[data-skin="space"] .mq{background:linear-gradient(90deg,#1e1b4b,#312e81,#0e7490,#312e81,#1e1b4b);background-size:200% 100%}
 /* ---------- АКВАРЕЛЬ ---------- */
@@ -300,11 +311,11 @@ html[data-skin="aqua"]{--fh:Comfortaa,Nunito,sans-serif;--fb:Nunito,'Segoe UI',s
  --r1:#f9a8b8;--r2:#fdba8c;--r3:#fcd97d;--r4:#9be3b0;--r5:#8dd8ee;--r6:#a9b4fb;--r7:#e6a8f5;
  --rain:linear-gradient(90deg,#f472b6,#fb923c,#eab308,#22c55e,#06b6d4,#8b5cf6,#f472b6)}
 html[data-skin="aqua"][data-theme="light"]{--bg:#fbf7f0;--bg2:#f3ece0;--card:#fffdf9;--line:#ecdfcc;--text:#2c2535;--dim:#7a6f80;--shadow:0 14px 34px rgba(150,110,80,.12);--hero-fg:#2c2535;--hero-dim:#5c5265}
-html[data-skin="aqua"][data-theme="dark"]{--bg:#17141f;--bg2:#221d2e;--card:#1f1a2b;--line:#342c44;--text:#f3edf8;--dim:#b1a6c0}
+html[data-skin="aqua"][data-theme="dark"]{--bg:#1c1236;--bg2:#2a1c4a;--card:rgba(40,26,70,.78);--line:#4a3570;--text:#fbf5ff;--dim:#cbbde0}
 html[data-skin="aqua"] .hero{background:#fbf7f0}
-html[data-skin="aqua"][data-theme="dark"] .hero{background:#1b1726}
+html[data-skin="aqua"][data-theme="dark"] .hero{background:radial-gradient(60% 55% at 15% 25%,rgba(255,79,154,.35),transparent 70%),radial-gradient(55% 50% at 85% 30%,rgba(41,198,245,.32),transparent 70%),radial-gradient(60% 55% at 60% 95%,rgba(255,210,63,.25),transparent 70%),#211541}
 html[data-skin="aqua"] .hero .vig{background:radial-gradient(70% 60% at 30% 50%,rgba(251,247,240,.55),transparent 70%)}
-html[data-skin="aqua"][data-theme="dark"] .hero .vig{background:radial-gradient(70% 60% at 30% 50%,rgba(27,23,38,.6),transparent 70%)}
+html[data-skin="aqua"][data-theme="dark"] .hero .vig{background:radial-gradient(70% 60% at 30% 50%,rgba(33,21,65,.45),transparent 70%)}
 html[data-skin="aqua"] .hero{color:var(--hero-fg)}
 html[data-skin="aqua"] .kick,html[data-skin="aqua"] .lead{color:var(--hero-dim)}
 html[data-skin="aqua"][data-theme="light"] .chip{background:rgba(255,255,255,.7);border-color:#ecdfcc;color:#2c2535}
@@ -398,7 +409,7 @@ html.lite .nxt::before,html.lite .grp .cov::before{animation:none}
 html.lite .dc .ph{inset:0}
 html.lite h1.big{filter:none}
 html.lite h1.big,html.lite h1.big .ch,html.lite .brand b,html.lite h2.sec em,html.lite .mq{animation:none}
-html.lite .orb{animation-duration:60s}
+html.lite .orb{animation-duration:22s}
 html.lite .chip,html.lite .dc .lbl span,html.lite .dc .go{background:rgba(20,12,40,.55)}
 html.lite .dc .lbl .soon{background:var(--r3)}
 *{scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--c1) 70%,transparent) transparent}
@@ -652,7 +663,7 @@ function apply(k,ev){
 function mark(){document.querySelectorAll('.sko').forEach(b=>b.classList.toggle('on',b.dataset.k===cur))}
 window.mountSkins=function(anchor){
   const w=document.createElement('div');w.className='skw';
-  w.innerHTML=`<button class="ibtn" type="button" title="Стиль оформления" aria-label="Стиль оформления">🎨</button><div class="skp" role="menu"><b>Стиль оформления</b>${SK.map(s=>`<button class="sko" type="button" data-k="${s[0]}"><i></i><span>${s[1]}<small>${s[2]}</small></span></button>`).join('')}<b style="padding-top:12px">Скорость</b><label class="spd">Вращение и фон<input type="range" min="0" max="2.5" step="0.25" data-spd="a"></label><label class="spd">Бегущая строка<input type="range" min="0" max="2.5" step="0.25" data-spd="t"></label></div>`;
+  w.innerHTML=`<button class="ibtn" type="button" title="Стиль оформления" aria-label="Стиль оформления">🎨</button><div class="skp" role="menu"><b>Стиль оформления</b>${SK.map(s=>`<button class="sko" type="button" data-k="${s[0]}"><i></i><span>${s[1]}<small>${s[2]}</small></span></button>`).join('')}</div>`;
   anchor.parentNode.insertBefore(w,anchor);
   const p=w.querySelector('.skp'); w.querySelector('.ibtn').onclick=e=>{e.stopPropagation();p.classList.toggle('on')};
   p.querySelectorAll('.sko').forEach(b=>b.onclick=e=>{e.stopPropagation();p.classList.remove('on');apply(b.dataset.k,e)});
@@ -1302,7 +1313,32 @@ mountSkins($('#themeBtn'));
 })();
 
 /* скорость анимаций: у каждого посетителя своя, хранится в браузере */
-const SPD={a:+(ls.get('spectr_spd_a')??1),t:+(ls.get('spectr_spd_t')??1)};
+/* ---------- небо: время от времени пролетают метеоры, астероиды и спутник ---------- */
+(function(){const hero=$('.hero');if(!hero||RED)return;const sky=document.createElement('div');sky.className='sky';sky.setAttribute('aria-hidden','true');hero.insertBefore(sky,hero.querySelector('.wrap'));
+  const rn=(a,b)=>a+Math.random()*(b-a),on=()=>!document.hidden&&hero.getBoundingClientRect().bottom>60;let uid=0;
+  const fly=(el,frames,o)=>{sky.appendChild(el);const a=el.animate(frames,o);a.onfinish=()=>el.remove();return a};
+  function meteor(){if(on()){const W=hero.clientWidth,H=hero.clientHeight,m=document.createElement('i');m.className='met';const len=rn(80,160),deg=rn(140,162),rad=deg*Math.PI/180,dist=rn(260,520),x=rn(W*.2,W*1.02),y=rn(-20,H*.4);
+      m.style.width=len+'px';m.style.left=(x-len)+'px';m.style.top=y+'px';const dx=Math.cos(rad)*dist,dy=Math.sin(rad)*dist;
+      fly(m,[{transform:`translate(0,0) rotate(${deg}deg) scaleX(.2)`,opacity:0},{opacity:1,offset:.15},{opacity:1,offset:.7},{transform:`translate(${dx}px,${dy}px) rotate(${deg}deg) scaleX(1)`,opacity:0}],{duration:rn(900,1500),easing:'cubic-bezier(.3,.1,.6,1)'})}
+    setTimeout(meteor,rn(LITE?6000:3500,LITE?12000:8000))}
+  function rock(sz){const n=10,id='ast'+(++uid),c=sz/2,pts=[];for(let i=0;i<n;i++){const a=i/n*6.283,r=rn(.7,1)*c*.92;pts.push((c+Math.cos(a)*r).toFixed(1)+','+(c+Math.sin(a)*r).toFixed(1))}
+    let cr='';for(let i=0;i<3;i++){const a=rn(0,6.28),d=rn(0,c*.45),r=rn(sz*.06,sz*.13);cr+=`<circle cx="${(c+Math.cos(a)*d).toFixed(1)}" cy="${(c+Math.sin(a)*d).toFixed(1)}" r="${r.toFixed(1)}" fill="rgba(0,0,0,.28)" stroke="rgba(255,235,210,.18)" stroke-width=".7"/>`}
+    return `<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}"><defs><radialGradient id="${id}" cx="32%" cy="28%" r="85%"><stop offset="0" stop-color="#d2bba2"/><stop offset=".5" stop-color="#7a6556"/><stop offset="1" stop-color="#2a211c"/></radialGradient></defs><polygon points="${pts.join(' ')}" fill="url(#${id})" stroke="rgba(255,225,190,.3)" stroke-width=".8" stroke-linejoin="round"/>${cr}</svg>`}
+  function asteroid(){if(on()){const W=hero.clientWidth,H=hero.clientHeight,sz=Math.round(rn(16,34)),a=document.createElement('div');a.className='ast';a.innerHTML=rock(sz);const ltr=Math.random()<.5,y=rn(H*.08,H*.62),dy=rn(-H*.18,H*.18),x0=ltr?-sz-20:W+20,x1=ltr?W+20:-sz-20,r0=rn(0,360),r1=r0+rn(120,300)*(Math.random()<.5?-1:1);
+      fly(a,[{transform:`translate(${x0}px,${y}px) rotate(${r0}deg)`,opacity:0},{opacity:.95,offset:.08},{opacity:.95,offset:.92},{transform:`translate(${x1}px,${y+dy}px) rotate(${r1}deg)`,opacity:0}],{duration:rn(22000,34000),easing:'linear'})}
+    setTimeout(asteroid,rn(12000,24000))}
+  const SAT=`<svg width="70" height="34" viewBox="0 0 70 34"><defs><linearGradient id="satg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe7a3"/><stop offset=".5" stop-color="#d9a441"/><stop offset="1" stop-color="#8a5a1c"/></linearGradient><linearGradient id="satp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b6fe0"/><stop offset="1" stop-color="#16307a"/></linearGradient><radialGradient id="sath"><stop offset="0" stop-color="#ff4040" stop-opacity=".9"/><stop offset="1" stop-color="#ff4040" stop-opacity="0"/></radialGradient></defs>
+    <g stroke="#a9bde6" stroke-width=".6"><rect x="2" y="12" width="22" height="13" fill="url(#satp)"/><path d="M7.5 12v13M13 12v13M18.5 12v13M2 18.5h22" fill="none"/><rect x="46" y="12" width="22" height="13" fill="url(#satp)"/><path d="M51.5 12v13M57 12v13M62.5 12v13M46 18.5h22" fill="none"/></g>
+    <path d="M24 18.5h5M41 18.5h5" stroke="#c9d3e8" stroke-width="1.2"/><rect x="29" y="11" width="12" height="15" rx="2" fill="url(#satg)" stroke="#6b4a1a" stroke-width=".6"/><path d="M31 15h8M31 19h8M31 23h8" stroke="rgba(120,80,20,.45)" stroke-width=".6"/>
+    <path d="M30.5 26.5q4.5 5 9 0" fill="none" stroke="#dfe6f5" stroke-width="1"/><path d="M35 11V4" stroke="#dfe6f5" stroke-width=".9"/><circle class="halo" cx="35" cy="3.4" r="4.5" fill="url(#sath)"/><circle class="lamp" cx="35" cy="3.4" r="1.7" fill="#ff5050"/></svg>`;
+  function satellite(){if(on()){const W=hero.clientWidth,H=hero.clientHeight,s=document.createElement('div');s.className='sat';s.innerHTML=SAT;const ltr=Math.random()<.6,y=rn(Math.max(90,H*.1),H*.32),x0=ltr?-80:W+10,x1=ltr?W+10:-80;
+      fly(s,[{transform:`translate(${x0}px,${y}px) rotate(-10deg)`,opacity:0},{opacity:1,offset:.06},{opacity:1,offset:.94},{transform:`translate(${x1}px,${y+rn(-30,40)}px) rotate(12deg)`,opacity:0}],{duration:rn(40000,55000),easing:'linear'})}
+    setTimeout(satellite,rn(50000,80000))}
+  setTimeout(meteor,2500);setTimeout(asteroid,4000);setTimeout(satellite,7000);
+})();
+
+/* ползунки скорости убраны (просьба владельца 17.10): всегда обычная скорость, старые настройки стираем */
+const SPD={a:1,t:1};try{localStorage.removeItem('spectr_spd_a');localStorage.removeItem('spectr_spd_t')}catch(e){}
 function applySpd(){try{document.getAnimations().forEach(x=>{if(!(x instanceof CSSAnimation))return;const el=x.effect&&x.effect.target;if(!el||!el.closest)return;const k=el.closest('.mq')?'t':'a';if(el.closest('.modal,.skp,#toast'))return;x.playbackRate=SPD[k]||0.0001})}catch(e){}}
 $$('[data-spd]').forEach(r=>{r.value=SPD[r.dataset.spd];r.oninput=()=>{SPD[r.dataset.spd]=+r.value;ls.set('spectr_spd_'+r.dataset.spd,r.value);applySpd()}});
 setTimeout(applySpd,300);
