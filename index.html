@@ -751,12 +751,14 @@ const HUB='spectr', API='https://script.google.com/macros/s/AKfycbwmh9Ksw7lm9pYZ
 const LINKS={vzlet:'vzlet/', agro:'agroklass/', site:'https://centrspektr.fun', zan:'https://irtysh-zanyatiya.github.io/'};
 const SOCIAL={vkVideo:'https://vkvideo.ru/@club237916033', vkVzlet:'https://vk.ru/klubbplavzlet', max:'https://max.ru/join/vXgGYXzwh0p9R1_CUppOus_9Msui9Annkj4HHpaBHVU',
  maxVzlet:'https://max.ru/join/v0ZfpDIihnow9hdwq3vpjm0KiPFW7A0WDfkNlIt9JVs', maxStudio:'https://max.ru/join/x7bqQ0ZGLEmvUJso1aof3ylEJv5K-1x_4cbCWCHaf0A',
+ maxZad:'https://max.ru/join/kbsZa2PtRYEwK3ZyDq2WHbf9LNJpv5Wayfh5aRuNz6Y', maxLad:'https://max.ru/join/ssNE1a7VgnRlJd58qOwncUx_051PJLlzmEa6thFGnss', maxOkol:'https://max.ru/join/uw3jH6J-8shUP7GjDbO5fN5dxa_JRXdWENsB-3H2Bhc',
  maxArt:'https://max.ru/join/pq0ncW5RYELwUYepWf2aHc0raWDuSQmAPBvz-QWSY1k', maxLit:'https://max.ru/join/ldqhCvTAPLmr3day76zgXI3tuteI9LcbEms4PrhGhEM'};
 const JOIN_PHONE=''; // телефон для записи в кружки; пока пусто - пишем "на согласовании"
 const FIXL=[{name:'Перейти на сайт Спектр',url:LINKS.site,note:'о центре, контакты'},{name:'ВК Видео',url:SOCIAL.vkVideo,note:'видео Спектра'},{name:'MAX',url:SOCIAL.max,note:'группа Спектра'},
  {name:'Клуб "Взлёт"',url:LINKS.vzlet,note:'дашборд клуба БПЛА'},{name:'ВК: клуб "Взлёт"',url:SOCIAL.vkVzlet,note:'группа клуба',nf:1},{name:'MAX: клуб "Взлёт"',url:SOCIAL.maxVzlet,note:'группа клуба',nf:1},
  {name:'Агрокласс',url:LINKS.agro,note:'дроны, Python, ИИ'},{name:'Гитара и ИИ-студия',url:'studio/',note:'аккорды, тюнер, музыка с ИИ'},{name:'MAX: ИИ-студия',url:SOCIAL.maxStudio,note:'группа студии',nf:1},
  {name:'MAX: скульптура и рисование',url:SOCIAL.maxArt,note:'группа кружков',nf:1},{name:'MAX: Лит.ra',url:SOCIAL.maxLit,note:'группа кружка',nf:1},
+ {name:'MAX: ансамбль "Околица"',url:SOCIAL.maxOkol,note:'группа ансамбля',nf:1},{name:'MAX: ложкари "Задоринки"',url:SOCIAL.maxZad,note:'группа кружка',nf:1},{name:'MAX: ложкари "Ладушки"',url:SOCIAL.maxLad,note:'группа кружка',nf:1},
  {name:'Расписание дополнительных занятий',url:LINKS.zan,note:'кружки и секции Иртыша',nf:1,sk:'zan'}];
 const ST_TAG='статусы', DV_TAG='девиз', DEVIZ='Время - главная ценность. Мы идём с ним в ногу: дроны, нейросети, музыка и творчество рядом с домом.';
 const stMap=()=>{const it=D.news.find(x=>x.date===ST_TAG),m={};String(it?it.text:'').split(/\n+/).forEach(r=>{const q=r.indexOf('=');if(q>0)m[r.slice(0,q).trim()]=r.slice(q+1).trim()});return m};
@@ -764,7 +766,7 @@ const ST_L={open:'Открыто - ссылка работает',agree:'Зак�
 const ST_N={agree:'на согласовании',time:'время занятий уточняется'};
 const stKey=l=>l.sk||l.id||'';
 const stApply=(l,m)=>{const v=m[stKey(l)];return ST_N[v]?{...l,url:'',note:ST_N[v],_st:v}:{...l,_st:v||''}};
-const MAXG=g=>{const l=String(g.link||''),n=String(g.name||'');return /vzlet/.test(l)?SOCIAL.maxVzlet:/studio/.test(l)?SOCIAL.maxStudio:/скульпт|рисов/i.test(n)?SOCIAL.maxArt:/лит\.?\s*ra/i.test(n)?SOCIAL.maxLit:''};
+const MAXG=g=>{const l=String(g.link||''),n=String(g.name||'');return /vzlet/.test(l)?SOCIAL.maxVzlet:/studio/.test(l)?SOCIAL.maxStudio:/скульпт|рисов/i.test(n)?SOCIAL.maxArt:/лит\.?\s*ra/i.test(n)?SOCIAL.maxLit:/задорин/i.test(n)?SOCIAL.maxZad:/ладушк/i.test(n)?SOCIAL.maxLad:/околиц/i.test(n)?SOCIAL.maxOkol:''};
 const VKG=g=>/vzlet/.test(String(g.link||''))?SOCIAL.vkVzlet:'';
 const JOIN=g=>{const l=String(g.link||'');return /vzlet/.test(l)?'vzlet/#rate':/studio/.test(l)?'studio/#rate':/agroklass/.test(l)?'':'#'};
 const DASH=[
@@ -827,8 +829,8 @@ const VIRT={_studio:STUDIO_G,_lit:LIT_G};
 const isStu=g=>/studio/.test(g.link||'')||/гитар/i.test(g.name||'');
 const GL=()=>{const S=D.groups.filter(isStu),a=D.groups.filter(g=>!isStu(g)),i=a.findIndex(g=>/vzlet/.test(g.link||''));a.splice(i<0?0:i+1,0,...(S.length?S:[STUDIO_G]));if(!D.groups.some(isLit))a.push(LIT_G);return a};
 /* обложки кружков: картинки дашбордов, потом можно добавить фото (файл в репозиторий + строка сюда) */
-const PHOTOS={};
-const covImg=g=>PHOTOS[g.name]||(/vzlet/.test(g.link||'')?'vzlet.webp':/studio/.test(g.link||'')?'studio.webp':'');
+const PHOTOS=[[/задорин/i,'zadorinki.webp'],[/ладушк/i,'ladushki.webp'],[/околиц/i,'okolica.webp']];
+const covImg=g=>(PHOTOS.find(p=>p[0].test(g.name||''))||[])[1]||(/vzlet/.test(g.link||'')?'vzlet.webp':/studio/.test(g.link||'')?'studio.webp':'');
 const gColor=g=>g.color||COLORS[D.groups.indexOf(g)%COLORS.length];
 const slotsOf=id=>D.schedule.filter(s=>s.group===id).sort((a,b)=>DAYS.indexOf(a.day)-DAYS.indexOf(b.day)||toMin(a.start)-toMin(b.start));
 
