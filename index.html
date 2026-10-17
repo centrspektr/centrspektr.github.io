@@ -153,6 +153,9 @@ h2.sec em{font-style:normal;background:var(--rain);background-size:300% 100%;-we
 .dc:hover::after{transform:translateX(120%)}
 .dc .lbl{position:absolute;top:22px;left:22px;display:flex;gap:8px}
 .dc .lbl span{font-size:11.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:6px 12px;border-radius:99px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);backdrop-filter:blur(10px)}
+.dc .lbl .bt{background:rgba(250,204,21,.18);border-color:rgba(250,204,21,.55);color:#fde68a}
+.sh2 .beta{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin-top:10px;font-size:13.5px;color:var(--dim);line-height:1.45}
+.sh2 .beta i{font-style:normal;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:99px;background:rgba(250,204,21,.15);border:1px solid rgba(250,204,21,.5);color:#fde68a}
 .dc .lbl .soon{background:var(--r3);color:#111;border-color:transparent}
 .dc h3{font:900 clamp(28px,4vw,44px)/1.02 var(--fh);letter-spacing:-1px;text-shadow:0 6px 30px rgba(0,0,0,.4)}
 .dc p{max-width:460px;opacity:.88;margin-top:8px;font-size:15px}
@@ -699,7 +702,7 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
     <div class="groups" id="groups"></div>
   </section>
   <section class="blk" id="dashT">
-    <div class="sh2 rv"><span class="num">03</span><h2 class="sec">Обучающие <em>дашборды</em></h2><p>Интерактивные: тесты, тренажёры и рейтинг. Нажми на карточку - и окажешься внутри.</p></div>
+    <div class="sh2 rv"><span class="num">03</span><h2 class="sec">Обучающие <em>дашборды</em></h2><p>Интерактивные: тесты, тренажёры и рейтинг. Нажми на карточку - и окажешься внутри.</p><p class="beta"><i>тестовая версия</i>Дашборды работают в тестовом режиме: мы их проверяем и дорабатываем. Если что-то работает не так, напиши педагогу кружка.</p></div>
     <div class="dash" id="dash"></div>
   </section>
   <section class="blk" id="joinT">
@@ -829,7 +832,7 @@ const VIRT={_studio:STUDIO_G,_lit:LIT_G};
 const isStu=g=>/studio/.test(g.link||'')||/гитар/i.test(g.name||'');
 const GL=()=>{const S=D.groups.filter(isStu),a=D.groups.filter(g=>!isStu(g)),i=a.findIndex(g=>/vzlet/.test(g.link||''));a.splice(i<0?0:i+1,0,...(S.length?S:[STUDIO_G]));if(!D.groups.some(isLit))a.push(LIT_G);return a};
 /* обложки кружков: картинки дашбордов, потом можно добавить фото (файл в репозиторий + строка сюда) */
-const PHOTOS=[[/задорин/i,'zadorinki.webp'],[/ладушк/i,'ladushki.webp'],[/околиц/i,'okolica.webp']];
+const PHOTOS=[[/задорин/i,'zadorinki.webp'],[/ладушк/i,'ladushki.webp'],[/околиц/i,'okolica.webp'],[/скульпт/i,'skulptura.webp']];
 const covImg=g=>(PHOTOS.find(p=>p[0].test(g.name||''))||[])[1]||(/vzlet/.test(g.link||'')?'vzlet.webp':/studio/.test(g.link||'')?'studio.webp':'');
 const gColor=g=>g.color||COLORS[D.groups.indexOf(g)%COLORS.length];
 const slotsOf=id=>D.schedule.filter(s=>s.group===id).sort((a,b)=>DAYS.indexOf(a.day)-DAYS.indexOf(b.day)||toMin(a.start)-toMin(b.start));
@@ -848,7 +851,7 @@ function agroArt(cv){const W=cv.width=900,H=cv.height=700,x=cv.getContext('2d');
 function renderDash(){
   $('#dash').innerHTML=DASH.map((d,i)=>`<a class="dc ${d.logo?'site':''}" data-i="${i}" ${d.u?`href="${esc(d.u)}"`:'href="#"'} ${d.ext?'target="_blank" rel="noopener"':''}>
     <div class="ph">${d.img?`<img src="${d.img}" alt="" loading="lazy">`:d.art?'<canvas></canvas>':`<img src="logo.webp" alt="">`}</div><span class="glw"></span>
-    <div class="lbl">${d.soon?'<span class="soon">скоро</span>':''}</div>
+    <div class="lbl">${d.soon?'<span class="soon">скоро</span>':d.logo?'':'<span class="bt">тест-версия</span>'}</div>
     <h3>${esc(d.n)}</h3><p>${esc(d.t)}</p><span class="go">${d.soon?'Заглянуть':'Открыть'} <b>→</b></span></a>`).join('');
   $$('#dash canvas').forEach(agroArt);
   $$('.dc').forEach(c=>{

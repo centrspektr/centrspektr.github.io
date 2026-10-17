@@ -577,7 +577,7 @@ html[data-skin="pixel"] .clk.sh-square{border-radius:5px!important}
 @media (max-width:340px){.brand b{display:none}.brand .bt{justify-content:center}}
 @media (prefers-reduced-motion: reduce){.clk,.clk *,.clk::before,.clk::after,.tdr>*{animation:none!important;transition:none!important}}
 </style>
-<script>window.SKIN_KEY='spectr_skin';try{document.documentElement.dataset.theme=localStorage.getItem('spectr_theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}
+<script>window.SKIN_KEY='spectr_skin';try{document.documentElement.dataset.theme='dark'}catch(e){}
 /* ===== стили интерфейса: переключатель + фоны hero для космоса, акварели и пикселя ===== */
 (function(){
 const SK=[['neon','Неон','яркие волны и радуга'],['space','Космос','звёзды, планеты, орбиты'],['aqua','Акварель','мягкие краски на бумаге'],['pixel','Пиксель','ретро-игра 8 бит']];
@@ -666,7 +666,7 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
   <a class="brand" id="brand" href="#top" aria-label="СПЕКТР - в начало"><img src="mark.webp" alt="СПЕКТР"><span class="bt"><b>ПОРТАЛ</b><small class="vis" id="visC" hidden title="Посещения сайтов СПЕКТР"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><i>0</i><span class="vl">посещений</span></small></span></a>
   <div class="clk" id="clk" role="button" tabindex="0" title="Нажмите, чтобы сменить вид часов" aria-label="Часы и дата"></div>
   <nav class="mn"><a href="#groupsT">Кружки</a><a href="#dashT">Дашборды</a><a href="#joinT">Подключиться</a><a href="#todayT" id="navToday">Сегодня</a><a href="#weekT">Расписание</a></nav>
-  <div class="tr" id="tr"><button class="ibtn" id="stBtn" style="display:none" title="Ученики и заявки" aria-label="Ученики и заявки">👥<b class="stc" id="stCnt" style="display:none"></b></button><div class="tdr" id="tdr"><button class="ibtn" id="lockBtn" style="display:none" title="Вход для редакторов" aria-label="Вход для редакторов">✎</button><button class="ibtn shb" id="shBtn" title="Поделиться, QR-код, установить на экран" aria-label="Поделиться и установить">📲<span>В телефон</span></button><button class="ibtn" id="themeBtn" title="Светлая или тёмная тема" aria-label="Светлая или тёмная тема" data-l="Светлая / тёмная">🌓</button></div><button class="ibtn gear" id="gearBtn" type="button" aria-expanded="false" aria-controls="tdr" title="Настройки" aria-label="Настройки"><span class="gi">⚙️</span></button></div>
+  <div class="tr" id="tr"><button class="ibtn" id="stBtn" style="display:none" title="Ученики и заявки" aria-label="Ученики и заявки">👥<b class="stc" id="stCnt" style="display:none"></b></button><div class="tdr" id="tdr"><button class="ibtn" id="lockBtn" style="display:none" title="Вход для редакторов" aria-label="Вход для редакторов">✎</button><button class="ibtn shb" id="shBtn" title="Поделиться, QR-код, установить на экран" aria-label="Поделиться и установить">📲<span>В телефон</span></button><button class="ibtn" id="themeBtn" hidden aria-hidden="true" tabindex="-1" style="display:none"></button></div><button class="ibtn gear" id="gearBtn" type="button" aria-expanded="false" aria-controls="tdr" title="Настройки" aria-label="Настройки"><span class="gi">⚙️</span></button></div>
 </div></header>
 
 <section class="hero" id="top">
@@ -1070,9 +1070,8 @@ setInterval(()=>{if(SESS&&!document.hidden&&!$('#stp'))stLoad()},3*60e3);
 stUpd();
 
 /* ---------- тема ---------- */
-function setTheme(t){document.documentElement.dataset.theme=t;ls.set('spectr_theme',t)}
-setTheme(ls.get('spectr_theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));
-$('#themeBtn').onclick=()=>setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark');
+/* всегда тёмная (просьба владельца 17.10): светлую тему и кнопку 🌓 убрали */
+document.documentElement.dataset.theme='dark';try{localStorage.removeItem('spectr_theme')}catch(e){}
 
 /* ---------- бегущая строка и смена слов ---------- */
 /* бегущая строка: слова хранятся на сервере (запись с датой "бегущая строка"), правит администратор */
