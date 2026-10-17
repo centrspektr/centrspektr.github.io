@@ -1321,20 +1321,37 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
 .sup .shg{grid-template-columns:1fr}
 .sup small.nt{display:block;color:var(--dim);font-size:13px;line-height:1.45;margin-top:10px;text-align:center}
 .sup .pur{font-weight:800;color:var(--text)}
+.sup .shg{gap:8px}
+.rq{margin-top:12px;border:1px solid var(--line);border-radius:16px;background:var(--bg2);font-size:13.5px}
+.rq summary{cursor:pointer;padding:10px 14px;font-weight:800;list-style:none}.rq summary::-webkit-details-marker{display:none}
+.rq summary::after{content:"▾";float:right;transition:transform .25s}.rq[open] summary::after{transform:rotate(180deg)}
+.rq dl{margin:0;padding:0 14px 12px;display:grid;grid-template-columns:auto 1fr;gap:4px 10px}
+.rq dt{color:var(--dim)}.rq dd{margin:0;font-weight:700;word-break:break-word;user-select:all}
 </style>
 <div class="shm sup" id="supM" role="dialog" aria-modal="true" aria-label="Поддержать СПЕКТР"><div class="shp">
   <h3>💛 Поддержать СПЕКТР <button class="ibtn sm" id="supX" aria-label="Закрыть">✕</button></h3>
   <p>Каждое пожертвование идёт на занятия для детей и молодёжи села: оборудование для кружков, материалы, поездки на соревнования.</p>
   <img class="shq supq" src="qr-podderzhka.png" alt="QR-код для перевода в приложении банка" width="240" height="240">
   <p style="text-align:center;margin-bottom:12px">Отсканируйте в приложении банка (раздел "Оплата по QR") - откроется перевод на счёт организации, сумму указываете сами. Назначение уже заполнено: <span class="pur">"Добровольное пожертвование на уставную деятельность"</span>.</p>
-  <div class="shg"><a class="ibtn pri" href="qr-podderzhka.png" download="SPEKTR-podderzhka-QR.png">⬇ Сохранить QR-код</a></div>
-  <small class="nt" id="supMob">Открыли с телефона? Сохраните QR-код, затем в приложении банка выберите "Оплата по QR" и загрузите картинку из галереи.</small>
+  <div class="shg"><a class="ibtn pri" id="supSbp" target="_blank" rel="noopener" style="display:none">⚡ Оплатить с телефона (СБП)</a><button class="ibtn pri" id="supCopy" type="button">📋 Скопировать реквизиты</button><a class="ibtn" href="qr-podderzhka.png" download="SPEKTR-podderzhka-QR.png">⬇ Сохранить QR-код</a></div>
+  <small class="nt" id="supMob">С телефона проще так: скопируйте реквизиты, откройте приложение банка, выберите "Перевод по реквизитам" (или "Платёж организации") и вставьте.</small>
+  <details class="rq"><summary>Реквизиты</summary><dl id="supRq"></dl></details>
   <small class="nt"><a href="https://centrspektr.fun" target="_blank" rel="noopener" style="color:inherit">Подробнее на сайте Спектра ↗</a></small>
 </div></div>
 <script>
 (function(){
   var $=function(i){return document.getElementById(i)},M=$('supM'),B=$('fSup');if(!M||!B)return;
   if(!/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)&&!(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1))$('supMob').style.display='none';
+  // ссылка СБП из банка организации (вида https://qr.nspk.ru/...); пока пусто - кнопка скрыта
+  var SBP_URL='';
+  if(SBP_URL){var sb=$('supSbp');sb.href=SBP_URL;sb.style.display='';$('supCopy').classList.remove('pri')}
+  // реквизиты те же, что зашиты в QR-код на centrspektr.fun
+  var RQ=[['Получатель','МОО "Ресурсный центр "СПЕКТР"'],['ИНН','5539015528'],['КПП','553901001'],['Счёт','40703810245000000385'],['Банк','Омское отделение N 8634 ПАО Сбербанк'],['БИК','045209673'],['Корр. счёт','30101810900000000673'],['Назначение','Добровольное пожертвование на уставную деятельность']];
+  $('supRq').innerHTML=RQ.map(function(r){return '<dt>'+r[0]+'</dt><dd>'+r[1].replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</dd>'}).join('');
+  var TXT=RQ.map(function(r){return r[0]+': '+r[1]}).join('\n');
+  $('supCopy').onclick=function(){var b=this,done=function(){b.textContent='✓ Реквизиты скопированы';setTimeout(function(){b.textContent='📋 Скопировать реквизиты'},2200)};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(TXT).then(done,fb);else fb();
+    function fb(){var t=document.createElement('textarea');t.value=TXT;document.body.appendChild(t);t.select();try{document.execCommand('copy');done()}catch(e){}t.remove()}};
   function open(){M.classList.add('on');$('supX').focus()}
   function close(){M.classList.remove('on');if(location.hash==='#podderzhka')history.replaceState(null,'',location.pathname+location.search)}
   B.onclick=function(e){e.preventDefault();open()};
