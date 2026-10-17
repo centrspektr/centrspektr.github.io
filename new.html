@@ -596,6 +596,16 @@ html.lite .rw{animation:none}
 html[data-skin="pixel"] .rw{background:none;-webkit-text-fill-color:#ffec27;color:#ffec27;animation:none}
 h1.big{background:linear-gradient(90deg,rgba(255,79,216,.45),rgba(34,211,238,.45),rgba(167,139,250,.45),rgba(253,224,71,.35),rgba(52,211,153,.45),rgba(255,79,216,.45)),var(--rain);background-size:300% 100%;-webkit-background-clip:text;background-clip:text}
 html[data-skin="pixel"] h1.big{background:none}
+.dc .go.pw,.dc:hover .go.pw,html.lite .dc .go.pw{background:none!important;border:0;backdrop-filter:none;padding:0;margin-top:16px;gap:12px;color:#fff;width:auto;align-items:center}
+.dc .go.pw em{font-style:normal;font-weight:800;letter-spacing:.2px;opacity:.9}
+.dc .pwb{position:relative;display:grid;place-items:center;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.28),rgba(20,16,40,.72) 70%);border:2px solid rgba(255,255,255,.55);box-shadow:0 6px 18px rgba(0,0,0,.4),inset 0 -6px 12px rgba(0,0,0,.35);transition:background .35s,border-color .35s,box-shadow .35s,transform .25s}
+.dc .pwb svg{width:28px;height:28px;fill:none;stroke:#fff;stroke-width:2.6;stroke-linecap:round;transition:stroke .35s,filter .35s}
+.dc:hover .pwb{transform:scale(1.07);border-color:#fff}
+.dc:active .pwb{transform:scale(.94)}
+.dc.lit .pwb{background:radial-gradient(circle at 35% 30%,#b9ffd9,#22c55e 62%,#15803d);border-color:#bbf7d0;box-shadow:0 0 0 6px rgba(52,211,153,.25),0 0 34px 8px rgba(52,211,153,.75),0 0 70px 18px rgba(52,211,153,.4);transform:scale(1.08)}
+.dc.lit .pwb svg{stroke:#fff;filter:drop-shadow(0 0 6px #fff)}
+.dc.lit .go.pw em{color:#bbf7d0;opacity:1}
+html[data-skin="pixel"] .dc .pwb{border-radius:0}
 @media (prefers-reduced-motion: reduce){.spk *,.grp .cov *{animation:none!important}}
 
 /* шестерёнка: кнопки выкатываются столбиком */
@@ -911,13 +921,13 @@ function renderDash(){
   $('#dash').innerHTML=DASH.map((d,i)=>`<a class="dc ${d.logo?'site':''}" data-i="${i}" ${d.u?`href="${esc(d.u)}"`:'href="#"'} ${d.ext?'target="_blank" rel="noopener"':''}>
     <div class="ph">${d.img?`<img src="${d.img}" alt="" loading="lazy">`:d.art?'<canvas></canvas>':`<img src="logo.webp" alt="">`}</div><span class="glw"></span>
     <div class="lbl">${d.soon?'<span class="soon">скоро</span>':d.logo?'':'<span class="bt">тест-версия</span>'}</div>
-    <h3>${esc(d.n)}</h3><p>${esc(d.t)}</p><span class="go">${d.soon?'Заглянуть':'Открыть'} <b>→</b></span></a>`).join('');
+    <h3>${esc(d.n)}</h3><p>${esc(d.t)}</p><span class="go pw"><span class="pwb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5v8.5"/><path d="M7.05 6.4a7.5 7.5 0 1 0 9.9 0"/></svg></span><em>${d.soon?'Заглянуть':'Включить'}</em></span></a>`).join('');
   $$('#dash canvas').forEach(agroArt);
   $$('.dc').forEach(c=>{
     c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect();c.style.setProperty('--mx',(e.clientX-r.left)+'px');c.style.setProperty('--my',(e.clientY-r.top)+'px');
       if(HAS_GSAP&&HOVER){const x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;gsap.to(c,{rotateY:x*9,rotateX:-y*9,duration:.5,ease:'power2.out',transformPerspective:1000})}});
     c.addEventListener('pointerleave',()=>{if(HAS_GSAP)gsap.to(c,{rotateY:0,rotateX:0,duration:.8,ease:'elastic.out(1,.5)'})});
-    c.addEventListener('click',e=>{const d=DASH[+c.dataset.i];if(d.ext)return;e.preventDefault();dive(c,d)});
+    c.addEventListener('click',e=>{const d=DASH[+c.dataset.i];c.classList.add('lit');if(d.ext){setTimeout(()=>c.classList.remove('lit'),1500);return}e.preventDefault();clearTimeout(c._lt);c._lt=setTimeout(()=>{dive(c,d);setTimeout(()=>c.classList.remove('lit'),900)},RED?0:520)});
     c.addEventListener('pointerdown',()=>{const d=DASH[+c.dataset.i];if(d.ext||!d.u||c._pf)return;c._pf=1;const l=document.createElement('link');l.rel='prefetch';l.href=d.u;document.head.appendChild(l)},{passive:true});
   });
 }
@@ -1070,7 +1080,7 @@ $('#wkT').onclick=()=>wkToggle();$('#wkT').onkeydown=e=>{if(e.key==='Enter'||e.k
 document.querySelectorAll('a[href="#weekT"]').forEach(a=>a.addEventListener('click',()=>wkToggle(true)));
 
 /* кружок раскрывается на весь экран */
-let GDO=0;
+let GDO=0,GDXY=null;
 function openGroup(id,ev){const g=GL().find(x=>x.id===id);if(!g)return;const sl=slotsOf(g.id),c=gColor(g),im=covImg(g),fm=forming(g);
   let o=$('#gdv');if(!o){o=document.createElement('div');o.id='gdv';o.setAttribute('role','dialog');o.setAttribute('aria-modal','true');document.body.appendChild(o);
     o.addEventListener('click',e=>{const j=e.target.closest('[data-join]');if(j){e.preventDefault();const id=j.dataset.join;closeGroup();setTimeout(()=>{const gg=grp(id)||VIRT[id]||null;if(gg)openJoin(gg)},300);return}if(e.target===o||e.target.closest('.gd-x'))closeGroup()})}
@@ -1078,14 +1088,16 @@ function openGroup(id,ev){const g=GL().find(x=>x.id===id);if(!g)return;const sl=
   o.innerHTML=`<div class="grp gd-card" style="--gc:${c}"><button class="gd-x" type="button" aria-label="Закрыть">✕</button><div class="cov ${im?'img':''}" style="background:linear-gradient(135deg,${c},color-mix(in srgb,${c} 45%,#000))">${im?`<img class="ci" src="${esc(im)}" alt="">`:'<i class="b1"></i><i class="b2"></i><i class="b3"></i>'}<span class="e">${ART[g.art]||'⭐'}</span><h3>${esc(g.name)}</h3></div>
     <div class="gd-b">${g.desc?`<p>${esc(g.desc)}</p>`:''}${meta.length?`<p class="meta">${meta.join('<br>')}</p>`:''}<h4>Расписание</h4>${fm?'<p><span class="tent">Расписание формируется</span></p>':sl.length?sl.map(s=>`<div class="gd-r"><b>${DAYF[s.day]}</b><span>${hm(s.start)}-${hm(s.end)}</span>${s.tent?'<em>время уточняется</em>':''}${s.note?`<em>${esc(s.note)}</em>`:''}</div>`).join(''):'<p class="empty">Расписание появится позже.</p>'}
     <div class="acts">${g.link?`<a class="ibtn pri" href="${esc(g.link)}" ${ext(g.link)?'target="_blank" rel="noopener"':''}>Открыть →</a>`:''}${JOIN(g)?`<a class="ibtn" href="${esc(JOIN(g))}" data-join="${esc(g.id)}">Записаться</a>`:''}${VKG(g)?`<a class="ibtn" href="${esc(VKG(g))}" target="_blank" rel="noopener">ВК ↗</a>`:''}${MAXG(g)?`<a class="ibtn" href="${esc(MAXG(g))}" target="_blank" rel="noopener">MAX ↗</a>`:''}</div></div></div>`;
-  o.classList.add('on');o.scrollTop=0;document.documentElement.style.overflow='hidden';
+  o.getAnimations().forEach(a=>a.cancel());o.classList.add('on');o.scrollTop=0;document.documentElement.style.overflow='hidden';
   if(!GDO){try{history.pushState({gd:1},'')}catch(_){}}GDO=1;
-  if(!RED&&o.animate){const x=ev&&ev.clientX!=null?ev.clientX:innerWidth/2,y=ev&&ev.clientY!=null?ev.clientY:innerHeight/2;
+  if(!RED&&o.animate){const x=ev&&ev.clientX!=null?ev.clientX:innerWidth/2,y=ev&&ev.clientY!=null?ev.clientY:innerHeight/2;GDXY=[x,y];
     o.animate([{clipPath:`circle(0px at ${x}px ${y}px)`},{clipPath:`circle(${Math.hypot(innerWidth,innerHeight)}px at ${x}px ${y}px)`}],{duration:620,easing:'cubic-bezier(.3,.8,.2,1)'});
     o.firstChild.animate([{transform:'scale(.8)',opacity:0},{transform:'none',opacity:1}],{duration:560,delay:140,easing:'cubic-bezier(.3,1.3,.4,1)',fill:'backwards'})}}
 function closeGroup(pop){const o=$('#gdv');if(!o||!GDO)return;GDO=0;document.documentElement.style.overflow='';
-  const done=()=>{o.classList.remove('on');o.innerHTML=''};
-  if(!RED&&o.animate)o.animate([{opacity:1},{opacity:0}],{duration:240,easing:'ease-out'}).onfinish=done;else done();
+  const done=()=>{o.getAnimations().forEach(a=>a.cancel());o.classList.remove('on');o.innerHTML=''};
+  if(!RED&&o.animate){const xy=GDXY||[innerWidth/2,innerHeight/2],R=Math.hypot(innerWidth,innerHeight);
+    if(o.firstChild)o.firstChild.animate([{transform:'none',opacity:1},{transform:'scale(.82)',opacity:0}],{duration:420,easing:'cubic-bezier(.5,0,.8,.5)',fill:'forwards'});
+    o.animate([{clipPath:`circle(${R}px at ${xy[0]}px ${xy[1]}px)`},{clipPath:`circle(0px at ${xy[0]}px ${xy[1]}px)`}],{duration:560,easing:'cubic-bezier(.6,0,.25,1)',fill:'forwards'}).onfinish=done}else done();
   if(!pop&&history.state&&history.state.gd){try{history.back()}catch(_){}}}
 addEventListener('popstate',()=>{if(GDO)closeGroup(true)});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&GDO)closeGroup()});
