@@ -493,6 +493,42 @@ html[data-skin="pixel"] .spk{border-radius:0;border:3px solid var(--line)}
 html.lite .grp .cov .b2,html.lite .grp .cov .b3,html.lite .grp .cov.img .ci{animation:none}
 /* расписание: вся неделя */
 .wkall{display:flex;width:100%;justify-content:space-between;align-items:center;gap:12px;margin-top:16px;padding:16px 20px;border-radius:20px;border:1px solid var(--line);background:var(--card);color:var(--fg);font:600 15px var(--fb);cursor:pointer}.wkall b{color:var(--c1);white-space:nowrap}
+/* неделя одним блоком: мини-неделя + раскрытие */
+.wkc{position:relative;isolation:isolate;padding:20px;border-radius:28px;background:radial-gradient(120% 90% at 0% 0%,color-mix(in srgb,var(--c1) 22%,transparent),transparent 55%),radial-gradient(100% 80% at 100% 100%,color-mix(in srgb,var(--r5,#06b6d4) 18%,transparent),transparent 60%),var(--card);border:1px solid var(--line);box-shadow:var(--shadow);overflow:hidden}
+.wkc::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:2px;background:conic-gradient(from var(--wa,0deg),var(--r1),var(--r3),var(--r4),var(--r5),var(--r7),var(--r1));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.75;z-index:-1;animation:wkb 8s linear infinite;pointer-events:none}
+@property --wa{syntax:'<angle>';inherits:false;initial-value:0deg}
+@keyframes wkb{to{--wa:360deg}}
+.wkh{display:flex;align-items:center;gap:12px;margin-bottom:16px}.wkh b{display:block;font:800 18px var(--fh)}.wkh small{display:block;color:var(--dim);font:600 13px var(--fb);margin-top:2px}
+.wki{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:22px;background:linear-gradient(135deg,var(--c1),var(--c2));box-shadow:0 8px 22px color-mix(in srgb,var(--c1) 45%,transparent);animation:wkbob 3.2s ease-in-out infinite}
+@keyframes wkbob{50%{transform:translateY(-3px) rotate(-6deg)}}
+.wkm{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.wkd{display:flex;flex-direction:column;align-items:stretch;gap:5px;padding:8px 4px 10px;border-radius:16px;background:color-mix(in srgb,var(--text,#fff) 4%,transparent);border:1px solid transparent;cursor:pointer;min-height:96px;transition:transform .3s,background .3s,border-color .3s}
+.wkd:hover{transform:translateY(-3px);border-color:var(--line)}
+.wkd .dn{text-align:center;font:800 13px var(--fb);color:var(--dim);letter-spacing:.3px;margin-bottom:2px}
+.wkd.td{background:color-mix(in srgb,var(--c1) 18%,transparent);border-color:color-mix(in srgb,var(--c1) 70%,transparent);animation:wkglow 2.4s ease-in-out infinite}
+.wkd.td .dn{color:#fff}.wkd.td .dn::after{content:"сегодня";display:block;font:700 8.5px var(--fb);letter-spacing:.3px;color:var(--c1);text-transform:uppercase}
+@keyframes wkglow{50%{box-shadow:0 0 18px -2px color-mix(in srgb,var(--c1) 70%,transparent)}}
+.wkd i{display:flex;flex-direction:column;align-items:center;gap:1px;font:800 10.5px var(--fb);font-style:normal;font-variant-numeric:tabular-nums;color:#fff;padding:5px 2px;border-radius:10px;background:linear-gradient(160deg,var(--ec),color-mix(in srgb,var(--ec) 55%,#000));box-shadow:0 4px 12px -3px color-mix(in srgb,var(--ec) 70%,transparent)}
+.wkd i em{font-style:normal;font-size:15px;line-height:1.1}
+.wkd i.no{background:none;box-shadow:none;color:var(--dim);font-size:14px;opacity:.5}
+.wkd i.tn{outline:1.5px dashed rgba(255,255,255,.7);outline-offset:-3px}
+.wkc.in .wkd i:not(.no){animation:wkpop .6s cubic-bezier(.2,1.5,.4,1) both;animation-delay:calc(var(--i)*70ms + var(--j)*90ms + 150ms)}
+@keyframes wkpop{from{opacity:0;transform:translateY(12px) scale(.6)}}
+.wkl{display:flex;flex-wrap:wrap;gap:6px 8px;margin-top:14px}
+.wkl span{display:inline-flex;align-items:center;gap:6px;padding:5px 11px 5px 6px;border-radius:999px;background:color-mix(in srgb,var(--ec) 16%,transparent);border:1px solid color-mix(in srgb,var(--ec) 45%,transparent);font:700 12.5px var(--fb);cursor:pointer}
+.wkl span b{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:11px;background:var(--ec)}
+.wkx{display:grid;grid-template-rows:0fr;transition:grid-template-rows .6s cubic-bezier(.3,.9,.3,1)}.wkx>div{min-height:0;overflow:hidden}.wkx.on{grid-template-rows:1fr}
+.wkc .wkg{margin-top:16px}
+.wkc .wkall{margin-top:16px;background:linear-gradient(110deg,var(--c1),var(--c2));border:none;color:#fff;font-weight:800;justify-content:center;gap:10px;position:relative;overflow:hidden}
+.wkc .wkall b{color:#fff}.wkc .wkall b i{display:inline-block;font-style:normal;transition:transform .5s cubic-bezier(.3,1.6,.5,1)}.wkc.open .wkall b i{transform:rotate(180deg)}
+.wkc .wkall::after{content:"";position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);animation:wksh 3.5s ease-in-out infinite}
+@keyframes wksh{60%,100%{left:130%}}
+.wd2{position:relative}.wd2.fl{animation:wkfl 1.4s ease}
+@keyframes wkfl{20%,60%{box-shadow:0 0 0 3px var(--c1),0 0 30px color-mix(in srgb,var(--c1) 60%,transparent)}}
+.wd2 .wr{position:relative}.wd2 .wr .ebtn{position:absolute;top:6px;right:6px}
+@media(max-width:520px){.wkc{padding:16px 12px;border-radius:24px}.wkm{gap:4px}.wkd{padding:7px 2px 8px;border-radius:13px;min-height:84px}.wkd .dn{font-size:12px}.wkd i{font-size:9.5px;padding:4px 1px;border-radius:8px}.wkd i em{font-size:13px}.wkh b{font-size:16px}}
+@media (prefers-reduced-motion: reduce){.wkc *,.wkc::before{animation:none!important}}
+html.lite .wkc::before{animation-duration:14s}
 .wkg{display:none;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:12px}.wkg.on{display:grid}
 .wd2{padding:14px;border-radius:20px;background:var(--card);border:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1fr);gap:8px;align-content:start;min-width:0}
 .wd2 h4{font:700 15px var(--fh);display:flex;gap:8px;align-items:baseline}.wd2 h4 small{color:var(--c1);font:600 12px var(--fb)}
@@ -579,6 +615,20 @@ html[data-skin="pixel"] .clk.sh-round{border-radius:50%!important}
 html[data-skin="pixel"] .clk.sh-square{border-radius:5px!important}
 @media (max-width:520px){.top{gap:8px}.clk{padding:5px 8px;gap:6px}.clk .ct{font-size:14px}.clk .cd{font-size:8.5px}.clk.sh-line{padding:7px 10px}.clk.sh-line .cbox{gap:6px}.clk.sh-line .ct{font-size:13px}.clk.sh-line .cd{font-size:8.5px}.clk.sh-round{padding:0}.clk.sh-square .ct{font-size:15px}.clk.sh-pixel .ct{font-size:9px}.clk.sh-pixel .cd{font-size:6px}.clk .cdial{width:52px;height:52px}}
 @media (max-width:400px){.clk.sh-line .cd{display:none}}
+/* дата под часами, секунды и миллисекунды */
+.clkw{display:flex;flex-direction:column;align-items:center;gap:3px;flex:none}
+.clk .cd{display:none!important}
+.clk .ct .cl2{font-style:normal;padding:0 1px;color:var(--ka);opacity:.75}
+.clk .ct .cs{display:inline-block;min-width:2ch}
+.clk .ct .cms{display:inline-block;min-width:3.4ch;font-size:.72em;align-self:flex-end;opacity:.8;margin-left:1px;color:var(--kd,var(--ka))}
+.clkd{font:800 11.5px var(--fb);letter-spacing:.7px;text-transform:uppercase;white-space:nowrap;color:var(--kd,#c4b5fd);transition:color .4s;line-height:1}
+.clkw.ck-neon{--kd:#ffb8f0}.clkw.ck-neon .clkd{text-shadow:0 0 8px rgba(255,79,216,.6)}
+.clkw.ck-space{--kd:#6dff9e}.clkw.ck-space .clkd{font-family:Consolas,'Courier New',monospace;text-shadow:0 0 6px rgba(0,255,102,.8)}
+.clkw.ck-aqua{--kd:#f9b4d0}.clkw.ck-aqua .clkd{font-family:Nunito,sans-serif}
+.clkw.ck-pixel{--kd:#ffd84a}.clkw.ck-pixel .clkd{font:400 8px 'Press Start 2P',monospace;letter-spacing:0}
+.clkw.sh-round .cdial{width:50px;height:50px}
+.cdial .dms{font:800 6.4px var(--fb);fill:var(--kt);opacity:.9;font-variant-numeric:tabular-nums}
+@media (max-width:520px){.clkd{font-size:10px;letter-spacing:.4px}.clkw.ck-pixel .clkd{font-size:7px}.clkw.sh-round .cdial{width:46px;height:46px}.clkw{gap:2px}}
 @media (max-width:340px){.brand b{display:none}.brand .bt{justify-content:center}}
 @media (prefers-reduced-motion: reduce){.clk,.clk *,.clk::before,.clk::after,.tdr>*{animation:none!important;transition:none!important}}
 </style>
@@ -669,7 +719,7 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
 
 <header id="hdr"><div class="wrap top">
   <a class="brand" id="brand" href="#top" aria-label="СПЕКТР - в начало"><img src="mark.webp" alt="СПЕКТР"><span class="bt"><small class="vis since">стартовал 17.10.2026</small><b>ПОРТАЛ</b><small class="vis" id="visC" hidden title="Посещения сайтов СПЕКТР"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><i>0</i><span class="vl">посещений</span></small></span></a>
-  <div class="clk" id="clk" role="button" tabindex="0" title="Нажмите, чтобы сменить вид часов" aria-label="Часы и дата"></div>
+  <div class="clkw" id="clkw"><div class="clk" id="clk" role="button" tabindex="0" title="Нажмите, чтобы сменить вид часов" aria-label="Часы и дата"></div><span class="clkd" id="clkd"></span></div>
   <nav class="mn"><a href="#groupsT">Кружки</a><a href="#dashT">Дашборды</a><a href="#joinT">Подключиться</a><a href="#todayT" id="navToday">Сегодня</a><a href="#weekT">Расписание</a></nav>
   <div class="tr" id="tr"><button class="ibtn" id="stBtn" style="display:none" title="Ученики и заявки" aria-label="Ученики и заявки">👥<b class="stc" id="stCnt" style="display:none"></b></button><div class="tdr" id="tdr"><button class="ibtn" id="lockBtn" style="display:none" title="Вход для редакторов" aria-label="Вход для редакторов">✎</button><button class="ibtn shb" id="shBtn" title="Поделиться, QR-код, установить на экран" aria-label="Поделиться и установить"><svg class="shico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4.5 21 11l-7 6.5v-3.8c-5 0-8.3 1.5-11 5.3.9-5.4 3.9-10.4 11-11.3z"/></svg><span>Поделиться</span></button><button class="ibtn" id="themeBtn" hidden aria-hidden="true" tabindex="-1" style="display:none"></button></div><button class="ibtn gear" id="gearBtn" type="button" aria-expanded="false" aria-controls="tdr" title="Настройки" aria-label="Настройки"><span class="gi">⚙️</span></button></div>
 </div></header>
@@ -704,7 +754,7 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
     <div class="groups" id="groups"></div>
   </section>
   <section class="blk" id="dashT">
-    <div class="sh2 rv"><span class="num">03</span><h2 class="sec">Обучающие <em>дашборды</em></h2><p>Интерактивные: тесты, тренажёры и рейтинг. Нажми на карточку - и окажешься внутри.</p><p class="beta"><i>тестовая версия</i>Дашборды работают в тестовом режиме: мы их проверяем и дорабатываем. Если что-то работает не так, напиши педагогу кружка.</p></div>
+    <div class="sh2 rv"><span class="num">03</span><h2 class="sec">Обучающие <em>дашборды</em></h2><p>Интерактивные: тесты, тренажёры и рейтинг. Нажми на карточку - и окажешься внутри.</p><p class="beta"><i>тестовая версия</i>Дашборды работают в тестовом режиме: мы их проверяем и дорабатываем. Если что-то работает не так, сообщи нам: мы быстро поправим.</p></div>
     <div class="dash" id="dash"></div>
   </section>
   <section class="blk" id="joinT">
@@ -721,7 +771,7 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
   </section>
   <section class="blk" id="weekT">
     <div class="sh2 rv"><span class="num">06</span><h2 class="sec">Расписание <em>недели</em></h2><button class="ibtn sm ed" id="seedBtn" style="margin-left:auto">⤓ Расписание Спектра</button><button class="ibtn sm pri ed" data-new="schedule">+ Занятие</button></div>
-    <div class="rv"><button class="wkfold" id="wkFold" type="button" hidden><span>Расписание пока не опубликовано</span><b>Показать ▾</b></button><div id="wkBody"><div class="days" id="days"></div><div class="tl" id="tl"></div><button class="wkall" id="wkAll" type="button"><span>📅 Вся неделя: все кружки по дням</span><b>Развернуть ▾</b></button><div class="wkg" id="wkG"></div></div></div>
+    <div class="rv"><button class="wkfold" id="wkFold" type="button" hidden><span>Расписание пока не опубликовано</span><b>Показать ▾</b></button><div id="wkBody"><div class="wkc" id="wkC"><div class="wkh"><span class="wki">📅</span><div><b>Неделя в Спектре</b><small id="wkSum"></small></div></div><div class="wkm" id="wkM"></div><div class="wkl" id="wkL"></div><div class="wkx" id="wkX"><div><div class="wkg on" id="wkG"></div></div></div><button class="wkall" id="wkAll" type="button"><span>Подробно по дням</span><b>Развернуть <i>▾</i></b></button></div><div hidden><div class="days" id="days"></div><div class="tl" id="tl"></div></div></div></div>
   </section>
   <section class="blk" id="newsT" hidden>
     <div class="sh2 rv"><span class="num">08</span><h2 class="sec">Новости и <em>объявления</em></h2></div>
@@ -1004,10 +1054,17 @@ async function addVirt(b){if(!canEdit())return;b.disabled=true;b.textContent='Д
 let WKALL=0;
 function renderWeekAll(){const btn=$('#wkAll'),box=$('#wkG');if(!btn)return;const td=dayName(new Date());
   box.innerHTML=DAYS.map(d=>{const L=D.schedule.filter(s=>s.day===d&&live(s)).sort((a,b)=>toMin(a.start)-toMin(b.start));
-    return `<div class="wd2 ${d===td?'td':''} ${L.length?'':'none'}"><h4>${DAYF[d]}${d===td?' <small>сегодня</small>':''}</h4>${L.length?L.map(s=>{const g=grp(s.group);return `<div class="wr" data-g="${esc(g.id)}" style="--ec:${gColor(g)}"><span class="tm">${hm(s.start)}-${hm(s.end)}</span><span class="nm"><b>${esc(g.name)}</b>${s.note?`<small>${esc(s.note)}</small>`:''}${g.who?`<small>${esc(g.who)}</small>`:''}${FM().has(g.id)?'<small class="tent">формируется (видно только вам)</small>':''}</span></div>`}).join(''):'<p class="empty">нет занятий</p>'}</div>`}).join('')
+    return `<div class="wd2 ${d===td?'td':''} ${L.length?'':'none'}" data-d="${d}"><h4>${DAYF[d]}${d===td?' <small>сегодня</small>':''}</h4>${L.length?L.map(s=>{const g=grp(s.group);return `<div class="wr" data-g="${esc(g.id)}" style="--ec:${gColor(g)}"><span class="tm">${hm(s.start)}-${hm(s.end)}</span><span class="nm"><b>${esc(g.name)}</b>${s.note?`<small>${esc(s.note)}</small>`:''}${g.who?`<small>${esc(g.who)}</small>`:''}${FM().has(g.id)?'<small class="tent">формируется (видно только вам)</small>':''}${s.tent?'<small class="tent">время уточняется</small>':''}</span><button class="ebtn ed" data-edit="schedule" data-id="${esc(s.id)}">✎</button></div>`}).join(''):'<p class="empty">нет занятий</p>'}</div>`}).join('')
    +(()=>{const F=GL().filter(forming);return F.length?`<div class="wfm"><b>Расписание формируется:</b> ${F.map(g=>`<span data-g="${esc(g.id)}">${esc(g.name)}</span>`).join('')}</div>`:''})();
-  box.classList.toggle('on',!!WKALL);btn.querySelector('b').textContent=WKALL?'Свернуть ▴':'Развернуть ▾'}
-$('#wkAll').onclick=()=>{WKALL=!WKALL;renderWeekAll();wire();if(WKALL&&HAS_GSAP)gsap.from('#wkG > *',{y:24,opacity:0,duration:.45,stagger:.05,ease:'power3.out'});if(HAS_GSAP&&window.ScrollTrigger)setTimeout(()=>ScrollTrigger.refresh(),200)};
+  box.classList.add('on');$('#wkX').classList.toggle('on',!!WKALL);$('#wkC').classList.toggle('open',!!WKALL);btn.querySelector('b').firstChild.textContent=WKALL?'Свернуть ':'Развернуть ';
+  const all=D.schedule.filter(live),used=[...new Set(all.map(s=>s.group))].map(grp).filter(Boolean);
+  $('#wkSum').textContent=all.length?`${all.length} ${pl(all.length,'занятие','занятия','занятий')} в неделю · ${used.length} ${pl(used.length,'кружок','кружка','кружков')}`:'Расписание появится здесь после согласования';
+  $('#wkM').innerHTML=DAYS.map((d,di)=>{const L=all.filter(s=>s.day===d).sort((a,b)=>toMin(a.start)-toMin(b.start));
+    return `<div class="wkd ${d===td?'td':''}" data-wd="${d}" style="--i:${di}" title="${DAYF[d]}"><span class="dn">${d}</span>${L.length?L.map((s,j)=>{const g=grp(s.group);return `<i class="${s.tent?'tn':''}" style="--ec:${gColor(g)};--j:${j}" title="${esc(g.name)} ${hm(s.start)}-${hm(s.end)}"><em>${ART[g.art]||'⭐'}</em>${hm(s.start)}</i>`}).join(''):'<i class="no">·</i>'}</div>`}).join('');
+  $('#wkL').innerHTML=used.map(g=>`<span data-g="${esc(g.id)}" style="--ec:${gColor(g)}"><b>${ART[g.art]||'⭐'}</b>${esc(g.name)}</span>`).join('');
+  $$('#wkM .wkd').forEach(c=>c.onclick=()=>{const open=!WKALL;if(open){WKALL=1;renderWeekAll();wire()}const t=$(`#wkG .wd2[data-d="${c.dataset.wd}"]`);if(t)setTimeout(()=>{t.scrollIntoView({behavior:'smooth',block:'center'});t.classList.remove('fl');void t.offsetWidth;t.classList.add('fl')},open?520:0)});
+  const wc=$('#wkC');if(!wc._io){wc._io=1;if('IntersectionObserver' in window){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){wc.classList.add('in');io.disconnect()}}),{threshold:.3});io.observe(wc)}else wc.classList.add('in')}}
+$('#wkAll').onclick=()=>{WKALL=!WKALL;renderWeekAll();wire();if(WKALL&&HAS_GSAP)gsap.from('#wkG > *',{y:24,opacity:0,duration:.5,stagger:.06,delay:.1,ease:'power3.out'});if(!WKALL){const c=$('#wkC');if(c.getBoundingClientRect().top<0)c.scrollIntoView({behavior:'smooth',block:'start'})}if(HAS_GSAP&&window.ScrollTrigger)setTimeout(()=>ScrollTrigger.refresh(),200)};
 /* обложки кружков: блик при появлении на экране и при нажатии */
 function covObs(){const G=$$('.grp');G.forEach(c=>{if(c._tp)return;c._tp=1;c.addEventListener('pointerdown',()=>{c.classList.remove('tap');void c.offsetWidth;c.classList.add('tap');clearTimeout(c._tt);c._tt=setTimeout(()=>c.classList.remove('tap'),1200)},{passive:true})});
   if(!('IntersectionObserver' in window)){G.forEach(c=>c.classList.add('in'));return}
@@ -1196,12 +1253,12 @@ mountSkins($('#themeBtn'));
   let k=ls.get('spectr_clk3')||'auto';if(!ST.some(x=>x[0]===k))k='auto';
   const skin=()=>(window.SKIN&&SKIN.get&&SKIN.get())||document.documentElement.dataset.skin||'neon';
   const T=[];for(let i=0;i<12;i++)T.push(`<line x1="32" y1="${i%3?14.6:14}" x2="32" y2="${i%3?16.2:17.4}" transform="rotate(${i*30} 32 32)"/>`);
-  el.innerHTML=`<canvas class="mx" aria-hidden="true"></canvas><svg class="cdial" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="ckg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--r1)"/><stop offset=".33" style="stop-color:var(--r3)"/><stop offset=".66" style="stop-color:var(--r5)"/><stop offset="1" style="stop-color:var(--r7)"/></linearGradient><path id="ckp" d="M32 6.8A25.2 25.2 0 1 1 31.99 6.8"/></defs><circle class="bg" cx="32" cy="32" r="31"/><circle class="rg" cx="32" cy="32" r="30.6"/><g class="rt"><text><textPath href="#ckp" startOffset="0" textLength="156" lengthAdjust="spacing"></textPath></text></g><circle class="fc" cx="32" cy="32" r="19.5"/><g class="tk">${T.join('')}</g><line class="hh" x1="32" y1="33.4" x2="32" y2="23.5"/><line class="mh" x1="32" y1="34" x2="32" y2="18"/><line class="sc" x1="32" y1="35.5" x2="32" y2="16.5"/><circle class="cc" cx="32" cy="32" r="1.5"/></svg><span class="cbox"><span class="ct"></span><span class="cd"></span></span>`;
-  const ct=el.querySelector('.ct'),cd=el.querySelector('.cd'),tp=el.querySelector('textPath'),hh=el.querySelector('.hh'),mh=el.querySelector('.mh'),sc=el.querySelector('.sc'),cv=el.querySelector('canvas.mx');
+  el.innerHTML=`<canvas class="mx" aria-hidden="true"></canvas><svg class="cdial" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="ckg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--r1)"/><stop offset=".33" style="stop-color:var(--r3)"/><stop offset=".66" style="stop-color:var(--r5)"/><stop offset="1" style="stop-color:var(--r7)"/></linearGradient><path id="ckp" d="M32 6.8A25.2 25.2 0 1 1 31.99 6.8"/></defs><circle class="bg" cx="32" cy="32" r="31"/><circle class="rg" cx="32" cy="32" r="30.6"/><g class="rt"><text><textPath href="#ckp" startOffset="0" textLength="156" lengthAdjust="spacing"></textPath></text></g><circle class="fc" cx="32" cy="32" r="19.5"/><g class="tk">${T.join('')}</g><line class="hh" x1="32" y1="33.4" x2="32" y2="23.5"/><line class="mh" x1="32" y1="34" x2="32" y2="18"/><line class="sc" x1="32" y1="35.5" x2="32" y2="16.5"/><text class="dms" x="32" y="46" text-anchor="middle"></text><circle class="cc" cx="32" cy="32" r="1.5"/></svg><span class="cbox"><span class="ct"></span><span class="cd"></span></span>`;
+  const ct=el.querySelector('.ct'),cd=el.querySelector('.cd'),tp=el.querySelector('textPath'),hh=el.querySelector('.hh'),mh=el.querySelector('.mh'),sc=el.querySelector('.sc'),cv=el.querySelector('canvas.mx'),dms=el.querySelector('.dms'),wr=$('#clkw'),cdl=$('#clkd');let cs=null,cms=null;
   let last='',lastD='';const s0=Math.floor(Date.now()/1000);const base=s0-s0%60;
   function tick(){const n=new Date(),t=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
-    if(t!==last){const old=last;ct.innerHTML=[...t].map((c,i)=>c===':'?'<i class="cl">:</i>':`<i class="${old&&old[i]!==c?'nw':''}">${c}</i>`).join('');last=t;el.setAttribute('aria-label','Сейчас '+t)}
-    const dd=`${DW[n.getDay()]}, ${n.getDate()} ${MN[n.getMonth()]}`;if(dd!==lastD){cd.textContent=dd;tp.textContent=`${n.getDate()} ${MG[n.getMonth()]} · ${DWF[n.getDay()]} · `;lastD=dd}
+    if(t!==last){const old=last;ct.innerHTML=[...t].map((c,i)=>c===':'?'<i class="cl">:</i>':`<i class="${old&&old[i]!==c?'nw':''}">${c}</i>`).join('')+'<i class="cl2">:</i><span class="cs"></span><span class="cms"></span>';cs=ct.querySelector('.cs');cms=ct.querySelector('.cms');last=t;el.setAttribute('aria-label','Сейчас '+t)}
+    const dd=`${DW[n.getDay()]}, ${n.getDate()} ${MN[n.getMonth()]}`;if(dd!==lastD){cd.textContent=dd;if(cdl)cdl.textContent=`${DW[n.getDay()]}, ${n.getDate()} ${MG[n.getMonth()]}`;tp.textContent=`${n.getDate()} ${MG[n.getMonth()]} · ${DWF[n.getDay()]} · `;lastD=dd}
     if(el.classList.contains('sh-round')){const sec=Math.floor(Date.now()/1000)-base,m=n.getMinutes()+n.getSeconds()/60,h=(n.getHours()%12)+m/60;
       sc.style.transform=`rotate(${sec*6}deg)`;mh.style.transform=`rotate(${m*6}deg)`;hh.style.transform=`rotate(${h*30}deg)`}}
   /* дождь "Матрицы" за цифрами (стиль Космос) */
@@ -1212,12 +1269,17 @@ mountSkins($('#themeBtn'));
     cx.fillStyle='rgba(2,10,5,.28)';cx.fillRect(0,0,w,h);cx.font='8px monospace';
     mxD.forEach((y,i)=>{cx.fillStyle=Math.random()<.12?'#d8ffe6':'#00ff66';cx.fillText(MXC[(Math.random()*MXC.length)|0],i*8,y);mxD[i]=y>h+Math.random()*30?-Math.random()*20:y+8})}
   setInterval(mxStep,LITE?130:85);
-  function paint(anim){const sk=skin(),sh=k==='auto'?(SKM[sk]||'line'):k;el.className='clk sh-'+sh+' ck-'+sk;el.dataset.k=k;tick();
+  function paint(anim){const sk=skin(),sh=k==='auto'?(SKM[sk]||'line'):k;el.className='clk sh-'+sh+' ck-'+sk;if(wr)wr.className='clkw sh-'+sh+' ck-'+sk;el.dataset.k=k;tick();
     if(anim&&el.animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches)el.animate([{transform:'perspective(300px) rotateY(90deg) scale(.6)',opacity:0,filter:'blur(4px)'},{transform:'none',opacity:1,filter:'none'}],{duration:620,easing:'cubic-bezier(.2,1.3,.4,1)'})}
   const next=()=>{const i=ST.findIndex(x=>x[0]===k);k=ST[(i+1)%ST.length][0];ls.set('spectr_clk3',k);paint(true);toast('Часы: '+ST.find(x=>x[0]===k)[1])};
   el.onclick=next;el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();next()}};
   if(window.SKIN&&SKIN.on)SKIN.on(()=>paint(true));else new MutationObserver(()=>paint(true)).observe(document.documentElement,{attributes:true,attributeFilter:['data-skin']});
   paint(false);setInterval(()=>{if(!document.hidden)tick()},1000);
+  /* секунды и миллисекунды бегут каждый кадр */
+  (function ms(){if(!document.hidden){const n=new Date(),S=String(n.getSeconds()).padStart(2,'0'),M=String(n.getMilliseconds()).padStart(3,'0');
+    if(cs){if(cs.textContent!==S)cs.textContent=S;cms.textContent='.'+M}
+    if(dms&&el.classList.contains('sh-round'))dms.textContent=S+'.'+M}
+    requestAnimationFrame(ms)})();
 })();
 
 /* скорость анимаций: у каждого посетителя своя, хранится в браузере */
