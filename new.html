@@ -1241,9 +1241,7 @@ mountSkins($('#themeBtn'));
       else c.animate([sh,{opacity:1,transform:'translateY(3px) scale(1.04)',offset:.18},hid],{duration:540,delay:(n-1-i)*150,easing:'cubic-bezier(.5,0,.75,.4)',fill:'forwards'})});
     if(!on)tmr=setTimeout(()=>{d.classList.remove('on');V.forEach(c=>c.getAnimations().forEach(a=>a.cancel()))},540+(n-1)*150+40)};
   g.onclick=e=>{e.stopPropagation();set(!isOn)};
-  document.addEventListener('click',e=>{if(!d.contains(e.target)&&!g.contains(e.target))set(false)});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')set(false)});
-  d.addEventListener('click',e=>{if(e.target.closest('.sko'))setTimeout(()=>set(false),350);else if(e.target.closest('.ibtn')&&!e.target.closest('.skw'))setTimeout(()=>set(false),200)},true);
 })();
 
 
