@@ -273,6 +273,8 @@ body:not(.editing) .off{display:none !important}
 .sttool label{display:flex;gap:6px;align-items:center;margin:0}
 .stpts{border:2px solid var(--c1);border-radius:16px;padding:12px 14px;margin:12px 0;background:var(--bg)}
 .stnone{color:var(--dim);font-size:14px}
+.bgrow .bgt{display:block;margin:3px 0;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}
+#bgBtn{position:relative}
 .stdet{margin-top:14px} .stdet summary{cursor:pointer;font-weight:700;font-size:14px;margin-bottom:8px}
 .sttask{font-size:13.5px;padding:6px 0;border-bottom:1px dashed var(--line)} .sttask small{color:var(--dim)}
 .stlinks{margin-top:16px;font-size:12.5px;color:var(--dim);word-break:break-all}
@@ -721,7 +723,7 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
   <a class="brand" id="brand" href="#top" aria-label="СПЕКТР - в начало"><img src="mark.webp" alt="СПЕКТР"><span class="bt"><small class="vis since">стартовал 17.10.2026</small><b>ПОРТАЛ</b><small class="vis" id="visC" hidden title="Посещения сайтов СПЕКТР"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><i>0</i><span class="vl">посещений</span></small></span></a>
   <div class="clkw" id="clkw"><div class="clk" id="clk" role="button" tabindex="0" title="Нажмите, чтобы сменить вид часов" aria-label="Часы и дата"></div><span class="clkd" id="clkd"></span></div>
   <nav class="mn"><a href="#groupsT">Кружки</a><a href="#dashT">Дашборды</a><a href="#joinT">Подключиться</a><a href="#todayT" id="navToday">Сегодня</a><a href="#weekT">Расписание</a></nav>
-  <div class="tr" id="tr"><button class="ibtn" id="stBtn" style="display:none" title="Ученики и заявки" aria-label="Ученики и заявки">👥<b class="stc" id="stCnt" style="display:none"></b></button><div class="tdr" id="tdr"><button class="ibtn" id="lockBtn" style="display:none" title="Вход для редакторов" aria-label="Вход для редакторов">✎</button><button class="ibtn shb" id="shBtn" title="Поделиться, QR-код, установить на экран" aria-label="Поделиться и установить"><svg class="shico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4.5 21 11l-7 6.5v-3.8c-5 0-8.3 1.5-11 5.3.9-5.4 3.9-10.4 11-11.3z"/></svg><span>Поделиться</span></button><button class="ibtn" id="themeBtn" hidden aria-hidden="true" tabindex="-1" style="display:none"></button></div><button class="ibtn gear" id="gearBtn" type="button" aria-expanded="false" aria-controls="tdr" title="Настройки" aria-label="Настройки"><span class="gi">⚙️</span></button></div>
+  <div class="tr" id="tr"><button class="ibtn" id="stBtn" style="display:none" title="Ученики и заявки" aria-label="Ученики и заявки">👥<b class="stc" id="stCnt" style="display:none"></b></button><button class="ibtn" id="bgBtn" style="display:none" title="Сообщения об ошибках" aria-label="Сообщения об ошибках">⚠<b class="stc" id="bgCnt" style="display:none"></b></button><div class="tdr" id="tdr"><button class="ibtn" id="lockBtn" style="display:none" title="Вход для редакторов" aria-label="Вход для редакторов">✎</button><button class="ibtn shb" id="shBtn" title="Поделиться, QR-код, установить на экран" aria-label="Поделиться и установить"><svg class="shico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4.5 21 11l-7 6.5v-3.8c-5 0-8.3 1.5-11 5.3.9-5.4 3.9-10.4 11-11.3z"/></svg><span>Поделиться</span></button><button class="ibtn" id="themeBtn" hidden aria-hidden="true" tabindex="-1" style="display:none"></button></div><button class="ibtn gear" id="gearBtn" type="button" aria-expanded="false" aria-controls="tdr" title="Настройки" aria-label="Настройки"><span class="gi">⚙️</span></button></div>
 </div></header>
 
 <section class="hero" id="top">
@@ -1088,7 +1090,7 @@ $('#seedBtn').onclick=async()=>{ if(!canEdit())return;
 /* ---------- ученики: заявки, личные коды, очки за задания ---------- */
 var ST=null,STF="all",STSEL=new Set(),STPTS=null;
 const STN={vzlet:'Взлёт',studio:'ИИ-студия',agro:'Агрокласс'}, STU={vzlet:'vzlet/#rate',studio:'studio/#rate'};
-function stUpd(){const b=$('#stBtn');if(!b)return;b.style.display=SESS?'':'none';if(!SESS){ST=null;stCount();return}if(!ST&&!stUpd.busy){stUpd.busy=1;stLoad().finally(()=>stUpd.busy=0)}}
+function stUpd(){bgUpd();const b=$('#stBtn');if(!b)return;b.style.display=SESS?'':'none';if(!SESS){ST=null;stCount();return}if(!ST&&!stUpd.busy){stUpd.busy=1;stLoad().finally(()=>stUpd.busy=0)}}
 async function stLoad(){try{ST=await api({op:'slist'})}catch(e){ST={list:[],clubs:[],tasks:[],err:e.message}}stCount();if($('#stp'))stRender()}
 function stCount(){const n=ST&&ST.list?ST.list.filter(x=>x.st==='заявка').length:0,c=$('#stCnt');if(c){c.textContent=n||'';c.style.display=n?'':'none'}}
 function stOpen(){$('#mbody').classList.add('wide');$('#mbody').innerHTML='<div id="stp"><h3>👥 Ученики и заявки</h3><p style="color:var(--dim)">Загружаю…</p></div>';openM();STSEL.clear();STPTS=null;stLoad()}
@@ -1128,6 +1130,23 @@ function stRender(){const P=$('#stp');if(!P||!ST)return;
     if(a==='newcode'&&!confirm('Выдать '+nm+' новый код? Старый перестанет работать, ученику нужно будет войти заново.'))return;
     b.disabled=true;await stDo({op:'sset',id,act:a},{ok:'Принят: '+nm+'. Код появится у ученика на сайте',no:'Заявка отклонена',del:'Удалено',hide:'Скрыт из рейтинга',show:'Снова в рейтинге',newcode:'Новый код выдан'}[a])})}
 $('#stBtn').onclick=stOpen;
+/* ---------- сообщения об ошибках с дашбордов (кнопка ⚠, только для редакторов) ---------- */
+let BG=null,BGF='new';const BGS={portal:'Портал',vzlet:'Взлёт',studio:'Гитара и ИИ-студия',agro:'Агрокласс'};
+function bgUpd(){const b=$('#bgBtn');if(!b)return;b.style.display=SESS?'':'none';if(!SESS){BG=null;bgCount();return}if(!BG&&!bgUpd.busy){bgUpd.busy=1;bgLoad().finally(()=>bgUpd.busy=0)}}
+async function bgLoad(q){try{BG=await api(q||{op:'buglist'})}catch(e){if(q){toast(e.message);bgRender();return}BG={bugs:[],err:e.message}}bgCount();if($('#bgp'))bgRender()}
+function bgCount(){const n=BG&&BG.bugs?BG.bugs.filter(x=>x.st==='новое').length:0,c=$('#bgCnt');if(c){c.textContent=n||'';c.style.display=n?'':'none'}}
+function bgOpen(){$('#mbody').classList.add('wide');$('#mbody').innerHTML='<div id="bgp"><h3>⚠ Сообщения об ошибках</h3><p style="color:var(--dim)">Загружаю…</p></div>';openM();bgLoad()}
+function bgRender(){const P=$('#bgp');if(!P||!BG)return;
+  if(BG.err){P.innerHTML=`<h3>⚠ Сообщения об ошибках</h3><p>${esc(BG.err)}</p><div class="mbar"><button class="ibtn" onclick="closeM()">Закрыть</button></div>`;return}
+  const A=BG.bugs,grp={new:A.filter(x=>x.st==='новое'),work:A.filter(x=>x.st==='в работе'),done:A.filter(x=>x.st==='исправлено')},L=grp[BGF]||[];
+  const tabs=[['new','🆕 Новые'],['work','🔧 В работе'],['done','✅ Исправлено']].map(([k,n])=>`<button class="ibtn sm ${BGF===k?'pri':''}" data-bgf="${k}">${n} · ${grp[k].length}</button>`).join('');
+  const row=x=>`<div class="strow bgrow"><span class="ic">${x.st==='исправлено'?'✅':x.st==='в работе'?'🔧':'⚠'}</span><span class="nm"><b>${esc(x.kind)} · ${esc(BGS[x.site]||x.site)}</b>${x.text?`<span class="bgt">${esc(x.text)}</span>`:''}<small>${esc(x.when)} · ${esc(x.page)} · ${esc(x.dev)}${x.by?' · закрыл '+esc(x.by):''}</small></span><span class="acts">${x.st!=='в работе'&&x.st!=='исправлено'?`<button class="ibtn sm" data-bg="work" data-id="${x.id}">🔧 Взять</button>`:''}${x.st!=='исправлено'?`<button class="ibtn sm pri" data-bg="done" data-id="${x.id}">✓ Исправлено</button>`:`<button class="ibtn sm" data-bg="new" data-id="${x.id}">↺ Снова</button>`}<button class="ibtn sm" data-bg="del" data-id="${x.id}" title="Удалить">🗑</button></span></div>`;
+  P.innerHTML=`<h3>⚠ Сообщения об ошибках</h3><p style="color:var(--dim);font-size:14px;margin-bottom:10px">Ученики отправляют их кнопкой "⚠ Ошибка?" на Взлёте, в студии и Агроклассе. Сайт, раздел и устройство подставляются сами. Всё хранится в листе "Ошибки" общей таблицы.</p><div class="stchips">${tabs}</div>${L.length?L.map(row).join(''):'<p class="stnone" style="margin-top:12px">'+(BGF==='new'?'Новых сообщений нет 🎉':'Пока пусто.')+'</p>'}<div class="mbar"><button class="ibtn" data-bg="reload">↻ Обновить</button><button class="ibtn pri" onclick="closeM()">Готово</button></div>`;
+  P.querySelectorAll('[data-bgf]').forEach(b=>b.onclick=()=>{BGF=b.dataset.bgf;bgRender()});
+  P.querySelectorAll('[data-bg]').forEach(b=>b.onclick=async()=>{const a=b.dataset.bg;if(a==='reload'){b.disabled=true;await bgLoad();return}
+    if(a==='del'&&!confirm('Удалить это сообщение?'))return;b.disabled=true;await bgLoad({op:'bugset',id:b.dataset.id,act:a});if(BG&&!BG.err)toast({work:'Взято в работу',done:'Отмечено: исправлено',new:'Снова в новых',del:'Удалено'}[a])})}
+$('#bgBtn').onclick=bgOpen;
+setInterval(()=>{if(SESS&&!document.hidden&&!$('#bgp'))bgLoad()},3*60e3);
 setInterval(()=>{if(SESS&&!document.hidden&&!$('#stp'))stLoad()},3*60e3);
 stUpd();
 
