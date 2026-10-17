@@ -1466,7 +1466,7 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
     <ol><li>Откройте портал в <b>Chrome</b>.</li><li>Нажмите ⚙️ → <b>📲</b> → <b>"Установить"</b> (или ⋮ → "Установить приложение").</li><li>Если раньше добавляли ярлык через Яндекс, его можно удалить.</li></ol>
     <p class="fin">Оба способа работают, но круглый значок и открытие без строки браузера даёт именно установка из Chrome.</p></div></details>
 </div></div>
-<div class="shbar" id="shBar" role="dialog" aria-label="Установить СПЕКТР"><img src="icon-192.png" alt=""><div><b>СПЕКТР на экран телефона</b>Открывается одним касанием, как приложение</div><button class="ibtn pri sm" id="shBarGo">Установить</button><button class="ibtn sm" id="shBarX" aria-label="Не сейчас">✕</button></div>
+<div class="shbar" id="shBar" role="dialog" aria-label="Установить СПЕКТР"><img src="icon-192.png" alt=""><div id="shBarT"><b>СПЕКТР на экран телефона</b>Открывается одним касанием, как приложение</div><button class="ibtn pri sm" id="shBarGo">Установить</button><button class="ibtn sm" id="shBarX" aria-label="Не сейчас">✕</button></div>
 <script>
 (function(){
   var URL0='https://centrspektr.github.io/', $=function(i){return document.getElementById(i)};
@@ -1480,6 +1480,7 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
   var AND=/Android/i.test(ua);
   var INAPP=/; wv\)|VKAndroidApp|VKClient|vkontakte|Telegram|Instagram|FBAN|FBAV|OdnoklassnikiApp|OKApp|ru\.oneme|OneMe|MAXApp|\bMAX\//i.test(ua)||(IOS&&!/Safari\//.test(ua)&&!/CriOS|FxiOS|YaBrowser|EdgiOS/.test(ua));
   var BR=/YaBrowser|YaApp/.test(ua)?'ya':/SamsungBrowser/.test(ua)?'samsung':/Firefox|FxiOS/.test(ua)?'ff':/OPR\/|Opera/.test(ua)?'opera':/EdgA|EdgiOS/.test(ua)?'edge':/MiuiBrowser|HuaweiBrowser|HeyTapBrowser/.test(ua)?'other':'chrome';
+  var YA=BR==='ya'&&AND;
   function intent(pkg){return 'intent://centrspektr.github.io/?install#Intent;scheme=https;package='+pkg+';S.browser_fallback_url='+encodeURIComponent(URL0+'?install')+';end'}
   var HEAD='<div class="shih"><img src="icon-192.png" alt=""><b>',D='<span style="font-size:14px;color:var(--dim)">',WARN='<p style="margin:8px 0 0;font-size:13.5px">Важно: выбирайте именно <strong>«Установить»</strong>, а не «Создать ярлык» - тогда СПЕКТР откроется как приложение, без строки браузера.</p>';
   function steps(){
@@ -1495,7 +1496,7 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
   function inst(){var el=$('shI');if(!el)return;
     var gd=$('shD');if(gd)gd.style.display=APP?'none':'';
     if(APP){el.innerHTML='<b>✅ СПЕКТР уже на экране</b><span style="font-size:14px;color:var(--dim)">Ты открыл его как приложение.</span>';return}
-    if(dp){el.innerHTML=HEAD+'Установить на экран</b></div>'+D+'Значок СПЕКТР появится рядом с другими приложениями.</span><button class="ibtn pri" id="shGo" style="width:100%;margin-top:10px">📲 Установить приложение</button>'+(BR==='ya'&&AND?D.replace('">',';margin-top:10px;display:block">')+'В Яндексе значок будет с пометкой браузера. Если хочется круглый - можно <a href="'+intent('com.android.chrome')+'">установить из Chrome</a>.</span>':'');$('shGo').onclick=go;return}
+    if(dp&&!YA){el.innerHTML=HEAD+'Установить на экран</b></div>'+D+'Значок СПЕКТР появится рядом с другими приложениями.</span><button class="ibtn pri" id="shGo" style="width:100%;margin-top:10px">📲 Установить приложение</button>'+(BR==='ya'&&AND?D.replace('">',';margin-top:10px;display:block">')+'В Яндексе значок будет с пометкой браузера. Если хочется круглый - можно <a href="'+intent('com.android.chrome')+'">установить из Chrome</a>.</span>':'');$('shGo').onclick=go;return}
     el.innerHTML=steps();el.querySelectorAll('.shg').forEach(function(g){g.style.marginTop='10px'})}
   function go(){if(!dp)return;dp.prompt();dp.userChoice.then(function(r){if(r&&r.outcome==='accepted'){hideBar()}dp=null;inst()}).catch(function(){})}
   function open(){M.classList.add('on');$('shX').focus()}
@@ -1512,7 +1513,8 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
   function bar(){if(APP||!MOB)return;var x=+st.get('spk_inst_x')||0;if(Date.now()-x<14*864e5)return;if(!dp&&!IOS&&!(INAPP&&AND))return;
     clearTimeout(bar._t);bar._t=setTimeout(function(){$('shBar').classList.add('on')},15000)}
   function hideBar(){$('shBar').classList.remove('on')}
-  $('shBarGo').onclick=function(){hideBar();if(dp)go();else openI()};
+  if(YA){$('shBarT').innerHTML='<b>Лучше как приложение из Chrome</b>Значок получится круглым, без строки браузера';$('shBarGo').textContent='В Chrome'}
+  $('shBarGo').onclick=function(){hideBar();if(YA){st.set('spk_inst_x',String(Date.now()));location.href=intent('com.android.chrome')}else if(dp)go();else openI()};
   $('shBarX').onclick=function(){hideBar();st.set('spk_inst_x',String(Date.now()))};
   if(IOS||(INAPP&&AND))bar();
   if(/[?&]share\b/.test(location.search))setTimeout(open,600);
