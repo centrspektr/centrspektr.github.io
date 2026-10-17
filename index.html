@@ -642,7 +642,11 @@ html[data-skin="pixel"] .clk.sh-square{border-radius:5px!important}
 .clkw.sh-round .cdial{width:50px;height:50px}
 .cdial .dms{font:800 6.4px var(--fb);fill:var(--kt);opacity:.9;font-variant-numeric:tabular-nums}
 @media (max-width:520px){.clkd{font-size:10px;letter-spacing:.4px}.clkw.ck-pixel .clkd{font-size:7px}.clkw.sh-round .cdial{width:46px;height:46px}.clkw{gap:2px}}
-@media (max-width:340px){.brand b{display:none}.brand .bt{justify-content:center}}
+/* узкие телефоны и крупный шрифт в системе: шапка не должна наезжать (жалоба 17.10) */
+@media (max-width:430px){.top{gap:6px}.brand{gap:7px;min-width:0}.brand img{height:27px}.brand b{font-size:15px;letter-spacing:.5px}.vis.since{font-size:7.5px;letter-spacing:.3px}.clk.sh-line{padding:6px 8px}.clk.sh-line .ct{font-size:12px}.clkd{font-size:9px}.clk .ct .cms{font-size:.62em}}
+html.hd1 .clk .ct .cms{display:none}
+html.hd2 .brand img{display:none}
+html.hd3 .vis.since,html.hd3 .clkd{display:none}
 @media (prefers-reduced-motion: reduce){.clk,.clk *,.clk::before,.clk::after,.tdr>*{animation:none!important;transition:none!important}}
 </style>
 <script>window.SKIN_KEY='spectr_skin';try{document.documentElement.dataset.theme='dark'}catch(e){}
@@ -1313,6 +1317,13 @@ mountSkins($('#themeBtn'));
 })();
 
 /* скорость анимаций: у каждого посетителя своя, хранится в браузере */
+/* ---------- шапка: если что-то не помещается (узкий экран, крупный шрифт), по шагам упрощаем ---------- */
+(function(){const H=document.documentElement,K=['hd1','hd2','hd3'];
+  function fit(){K.forEach(k=>H.classList.remove(k));const g=(a,b)=>{const x=$(a),y=$(b);if(!x||!y||!x.offsetWidth||!y.offsetWidth)return false;return x.getBoundingClientRect().right>y.getBoundingClientRect().left-4};
+    const bad=()=>g('#brand .bt','#clkw')||g('#clkw','#tr')||document.documentElement.scrollWidth>innerWidth+1;
+    for(const k of K){if(!bad())break;H.classList.add(k)}}
+  fit();addEventListener('resize',fit);addEventListener('load',fit);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);setTimeout(fit,1500)})();
+
 /* ---------- небо: время от времени пролетают метеоры, астероиды и спутник ---------- */
 (function(){const hero=$('.hero');if(!hero||RED)return;const sky=document.createElement('div');sky.className='sky';sky.setAttribute('aria-hidden','true');hero.insertBefore(sky,hero.querySelector('.wrap'));
   const rn=(a,b)=>a+Math.random()*(b-a),on=()=>!document.hidden&&hero.getBoundingClientRect().bottom>60;let uid=0;
@@ -1439,7 +1450,7 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
     if(IOS)return HEAD+'Добавить на экран iPhone</b></div><ol><li>Нажмите «Поделиться» (квадрат со стрелкой)'+(/CriOS|YaBrowser|EdgiOS|FxiOS/.test(ua)?' в адресной строке или в меню':' внизу (или в меню ⋯)')+'</li><li>Выберите «На экран "Домой"»</li><li>Нажмите «Добавить»</li></ol>';
     if(BR==='samsung')return HEAD+'Установить на экран</b></div><ol><li>Нажмите ≡ внизу справа</li><li>Выберите «Добавить страницу на» → «Главный экран»</li></ol>'+D+'Или нажмите значок установки в адресной строке, если он есть.</span>';
     if(BR==='ff')return HEAD+'Установить на экран</b></div><ol><li>Нажмите ⋮ в меню браузера</li><li>Выберите «Установить» (или «Добавить на домашний экран»)</li></ol>';
-    if(BR==='ya')return HEAD+'Установить на экран</b></div><ol><li>Нажмите ⋮ (меню) в Яндекс Браузере</li><li>Выберите «Установить приложение» или «Добавить ярлык на экран»</li></ol>'+D+'Кнопка «Установить» может появиться здесь сама через полминуты - браузер предлагает её, когда страницу немного полистали.</span>';
+    if(BR==='ya')return HEAD+'Установить на экран</b></div><ol><li>Немного полистайте страницу: через полминуты здесь появится кнопка "Установить" - нажмите её</li><li>Или нажмите ⋮ (меню) в Яндекс Браузере и выберите "Установить приложение"</li></ol>'+D+'Не выбирайте "Добавить ярлык": тогда на значке будет буква Я. Если такой значок уже есть - удалите его и установите заново. Ещё проще - откройте портал в Chrome.</span>';
     if(BR==='chrome'||BR==='edge')return HEAD+'Установить на экран</b></div><ol><li>Нажмите ⋮ вверху справа</li><li>Выберите «Добавить на гл. экран» (или «Установить приложение»)</li><li>В окошке нажмите «Установить»</li></ol>'+WARN+'<p style="margin:6px 0 0;font-size:13.5px;color:var(--dim)">Кнопка «Установить» может появиться здесь сама через полминуты - Chrome предлагает её, когда страницу немного полистали.</p>';
     return HEAD+'Установить на экран</b></div><ol><li>Откройте меню браузера (⋮ или ≡)</li><li>Выберите «Установить приложение» или «Добавить на главный экран»</li></ol>'+D+'Лучше всего устанавливается из Chrome или Яндекс Браузера.</span>'}
   function inst(){var el=$('shI');if(!el)return;
