@@ -1288,8 +1288,15 @@ mountSkins($('#themeBtn'));
   b.style.display='';
   const isFs=()=>!!(document.fullscreenElement||document.webkitFullscreenElement);
   const upd=()=>{const f=isFs();b.title=f?'Выйти из полного экрана':'Во весь экран';b.setAttribute('aria-label',b.title);b.querySelector('path').setAttribute('d',f?'M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5':'M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5')};
-  b.onclick=()=>{try{const r=isFs()?ex.call(document):rq.call(de);if(r&&r.catch)r.catch(()=>{})}catch(e){}};
-  document.addEventListener('fullscreenchange',upd);document.addEventListener('webkitfullscreenchange',upd);upd()})();
+  /* браузер разрешает полный экран только после касания, поэтому "сам" = при первом касании страницы; кнопка выключает это насовсем */
+  const K='spk_fs_off',get=k=>{try{return localStorage.getItem(k)}catch(e){return null}},put=(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}};
+  let off=get(K)==='1',tmp=false,byBtn=false;
+  const go=()=>{try{const r=rq.call(de);if(r&&r.catch)r.catch(()=>{})}catch(e){}};
+  b.onclick=()=>{byBtn=true;if(isFs()){off=true;put(K,'1');try{const r=ex.call(document);if(r&&r.catch)r.catch(()=>{})}catch(e){}}else{off=false;tmp=false;put(K,null);go()}};
+  const first=()=>{if(off||tmp||isFs())return;go()};
+  addEventListener('click',first,true);
+  const chg=()=>{upd();if(!isFs()&&!byBtn)tmp=true;byBtn=false};
+  document.addEventListener('fullscreenchange',chg);document.addEventListener('webkitfullscreenchange',chg);upd()})();
 /* ---------- часы и дата у логотипа ---------- */
 (()=>{const el=$('#clk');if(!el)return;
   const ST=[['auto','под стиль'],['round','Круглые'],['line','Строка'],['square','Квадратные'],['pixel','Пиксель']];
