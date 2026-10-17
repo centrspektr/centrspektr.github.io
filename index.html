@@ -60,7 +60,8 @@ body.hascur .cur,body.hascur .cur2{opacity:1}
 #pre .pl{width:min(46vw,260px);opacity:0;transform:scale(.8);filter:drop-shadow(0 0 40px rgba(168,85,247,.5))}
 #pre .bars{position:absolute;inset:0;display:flex}
 #pre .bars i{flex:1;height:100%;transform-origin:50% 0}
-#pre .bars i:nth-child(1){background:var(--r1)}#pre .bars i:nth-child(2){background:var(--r2)}#pre .bars i:nth-child(3){background:var(--r3)}#pre .bars i:nth-child(4){background:var(--r4)}#pre .bars i:nth-child(5){background:var(--r5)}#pre .bars i:nth-child(6){background:var(--r6)}#pre .bars i:nth-child(7){background:var(--r7)}
+/* заставка-радуга при входе всегда в цветах Неона, в любом стиле */
+#pre .bars i:nth-child(1){background:#f43f5e}#pre .bars i:nth-child(2){background:#fb923c}#pre .bars i:nth-child(3){background:#facc15}#pre .bars i:nth-child(4){background:#22c55e}#pre .bars i:nth-child(5){background:#06b6d4}#pre .bars i:nth-child(6){background:#6366f1}#pre .bars i:nth-child(7){background:#a855f7}
 /* ---- шапка ---- */
 header{position:fixed;top:0;left:0;right:0;z-index:200;transition:background .4s,backdrop-filter .4s,border-color .4s;border-bottom:1px solid transparent}
 header.solid{backdrop-filter:blur(18px);background:color-mix(in srgb,var(--bg) 76%,transparent);border-color:var(--line)}
