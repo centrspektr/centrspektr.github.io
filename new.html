@@ -738,7 +738,7 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
   <a class="brand" id="brand" href="#top" aria-label="СПЕКТР - в начало"><img src="mark.webp" alt="СПЕКТР"><span class="bt"><small class="vis since">стартовал 17.10.2026</small><b>ПОРТАЛ</b><small class="vis" id="visC" hidden title="Посещения сайтов СПЕКТР"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><i>0</i><span class="vl">посещений</span></small></span></a>
   <div class="clkw" id="clkw"><div class="clk" id="clk" role="button" tabindex="0" title="Нажмите, чтобы сменить вид часов" aria-label="Часы и дата"></div><span class="clkd" id="clkd"></span></div>
   <nav class="mn"><a href="#groupsT">Кружки</a><a href="#dashT">Дашборды</a><a href="#joinT">Подключиться</a><a href="#todayT" id="navToday">Сегодня</a><a href="#weekT">Расписание</a></nav>
-  <div class="tr" id="tr"><button class="ibtn" id="stBtn" style="display:none" title="Ученики и заявки" aria-label="Ученики и заявки">👥<b class="stc" id="stCnt" style="display:none"></b></button><button class="ibtn" id="bgBtn" style="display:none" title="Сообщения об ошибках" aria-label="Сообщения об ошибках">⚠<b class="stc" id="bgCnt" style="display:none"></b></button><div class="tdr" id="tdr"><button class="ibtn" id="lockBtn" style="display:none" title="Вход для редакторов" aria-label="Вход для редакторов">✎</button><button class="ibtn shb" id="shBtn" title="Поделиться, QR-код, установить на экран" aria-label="Поделиться и установить"><svg class="shico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4.5 21 11l-7 6.5v-3.8c-5 0-8.3 1.5-11 5.3.9-5.4 3.9-10.4 11-11.3z"/></svg><span>Поделиться</span></button><button class="ibtn" id="inBtn" type="button" title="Установить на телефон как приложение" aria-label="Установить на телефон"><svg class="inico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6.5" y="2.5" width="11" height="19" rx="2.6"/><path d="M12 8v6m-2.6-2.4L12 14.2l2.6-2.6M10.6 18.5h2.8"/></svg></button><button class="ibtn" id="fsBtn" type="button" style="display:none" title="Во весь экран" aria-label="Во весь экран"><svg class="fsico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button><button class="ibtn" id="themeBtn" hidden aria-hidden="true" tabindex="-1" style="display:none"></button></div><button class="ibtn gear" id="gearBtn" type="button" aria-expanded="false" aria-controls="tdr" title="Настройки" aria-label="Настройки"><span class="gi">⚙️</span></button></div>
+  <div class="tr" id="tr"><button class="ibtn" id="stBtn" style="display:none" title="Ученики и заявки" aria-label="Ученики и заявки">👥<b class="stc" id="stCnt" style="display:none"></b></button><button class="ibtn" id="bgBtn" style="display:none" title="Сообщения об ошибках" aria-label="Сообщения об ошибках">⚠<b class="stc" id="bgCnt" style="display:none"></b></button><div class="tdr" id="tdr"><button class="ibtn" id="lockBtn" style="display:none" title="Вход для редакторов" aria-label="Вход для редакторов">✎</button><button class="ibtn shb" id="shBtn" title="Поделиться, QR-код, установить на экран" aria-label="Поделиться и установить"><svg class="shico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4.5 21 11l-7 6.5v-3.8c-5 0-8.3 1.5-11 5.3.9-5.4 3.9-10.4 11-11.3z"/></svg><span>Поделиться</span></button><button class="ibtn" id="inBtn" type="button" title="Установить на телефон как приложение" aria-label="Установить на телефон"><svg class="inico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6.5" y="2.5" width="11" height="19" rx="2.6"/><path d="M12 8.2v5.6M9.2 11h5.6M10.6 18.5h2.8"/></svg></button><button class="ibtn" id="themeBtn" hidden aria-hidden="true" tabindex="-1" style="display:none"></button></div><button class="ibtn gear" id="gearBtn" type="button" aria-expanded="false" aria-controls="tdr" title="Настройки" aria-label="Настройки"><span class="gi">⚙️</span></button></div>
 </div></header>
 
 <section class="hero" id="top">
@@ -1279,24 +1279,6 @@ mountSkins($('#themeBtn'));
   document.addEventListener('keydown',e=>{if(e.key==='Escape')set(false)});
   d.addEventListener('click',e=>{if(e.target.closest('.sko'))setTimeout(()=>set(false),350);else if(e.target.closest('.ibtn')&&!e.target.closest('.skw'))setTimeout(()=>set(false),200)},true);
 })();
-/* ---------- кнопка "Во весь экран": только в браузере на телефоне, в установленном приложении строки браузера и так нет ---------- */
-(()=>{const b=$('#fsBtn');if(!b)return;const de=document.documentElement;
-  const rq=de.requestFullscreen||de.webkitRequestFullscreen,ex=document.exitFullscreen||document.webkitExitFullscreen;
-  const app=matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||navigator.standalone;
-  const touch=matchMedia('(pointer:coarse)').matches;
-  if(!rq||!touch||app)return;
-  b.style.display='';
-  const isFs=()=>!!(document.fullscreenElement||document.webkitFullscreenElement);
-  const upd=()=>{const f=isFs();b.title=f?'Выйти из полного экрана':'Во весь экран';b.setAttribute('aria-label',b.title);b.querySelector('path').setAttribute('d',f?'M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5':'M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5')};
-  /* браузер разрешает полный экран только после касания, поэтому "сам" = при первом касании страницы; кнопка выключает это насовсем */
-  const K='spk_fs_off',get=k=>{try{return localStorage.getItem(k)}catch(e){return null}},put=(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}};
-  let off=get(K)==='1',tmp=false,byBtn=false;
-  const go=()=>{try{const r=rq.call(de);if(r&&r.catch)r.catch(()=>{})}catch(e){}};
-  b.onclick=()=>{byBtn=true;if(isFs()){off=true;put(K,'1');try{const r=ex.call(document);if(r&&r.catch)r.catch(()=>{})}catch(e){}}else{off=false;tmp=false;put(K,null);go()}};
-  const first=()=>{if(off||tmp||isFs())return;go()};
-  addEventListener('click',first,true);
-  const chg=()=>{upd();if(!isFs()&&!byBtn)tmp=true;byBtn=false};
-  document.addEventListener('fullscreenchange',chg);document.addEventListener('webkitfullscreenchange',chg);upd()})();
 /* ---------- часы и дата у логотипа ---------- */
 (()=>{const el=$('#clk');if(!el)return;
   const ST=[['auto','под стиль'],['round','Круглые'],['line','Строка'],['square','Квадратные'],['pixel','Пиксель']];
@@ -1432,6 +1414,7 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
 .shi{margin-top:14px;padding:14px;border-radius:16px;border:1px solid var(--line);background:var(--bg2)}
 .shi b{display:block;font-size:15px;margin-bottom:4px}.shi ol{margin:6px 0 0 18px;font-size:14px;line-height:1.6}
 .shi img{width:44px;height:44px;border-radius:11px;flex-shrink:0}.shih{display:flex;gap:10px;align-items:center;margin-bottom:4px}.shih b{margin:0}
+.stp{margin:12px 0 0}.stp>b{display:block;font-size:15px;margin-bottom:4px}.stp small{display:block;margin-top:8px;font-size:13px;line-height:1.45;color:var(--dim)}
 .shd{margin-top:14px;border-radius:16px;border:1px solid var(--line);background:var(--bg2);overflow:hidden}
 .shd summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:13px 14px;font:800 15px var(--fb,inherit);-webkit-tap-highlight-color:transparent}
 .shd summary::-webkit-details-marker{display:none}.shd summary::after{content:"▾";margin-left:auto;transition:transform .3s}.shd[open] summary::after{transform:rotate(180deg)}
@@ -1489,7 +1472,7 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
     if(IOS)return HEAD+'Добавить на экран iPhone</b></div><ol><li>Нажмите «Поделиться» (квадрат со стрелкой)'+(/CriOS|YaBrowser|EdgiOS|FxiOS/.test(ua)?' в адресной строке или в меню':' внизу (или в меню ⋯)')+'</li><li>Выберите «На экран "Домой"»</li><li>Нажмите «Добавить»</li></ol>';
     if(BR==='samsung')return HEAD+'Установить на экран</b></div><ol><li>Нажмите ≡ внизу справа</li><li>Выберите «Добавить страницу на» → «Главный экран»</li></ol>'+D+'Или нажмите значок установки в адресной строке, если он есть.</span>';
     if(BR==='ff')return HEAD+'Установить на экран</b></div><ol><li>Нажмите ⋮ в меню браузера</li><li>Выберите «Установить» (или «Добавить на домашний экран»)</li></ol>';
-    if(BR==='ya'&&AND)return HEAD+'Как лучше установить</b></div>'+D+'В Яндекс Браузере портал тоже можно добавить на экран, но значок будет с пометкой браузера, а внизу останется его строка. Если хочется настоящее приложение, удобнее установить из Chrome.</span><div class="shg" style="margin-top:10px"><a class="ibtn pri w" style="font-size:14px" href="'+intent('com.android.chrome')+'">Открыть в Chrome</a></div><ol><li>Или нажмите ⋮ в Яндексе и выберите "Установить приложение"</li></ol>';
+    if(BR==='ya'&&AND)return HEAD+'Установка из Chrome</b></div>'+D+'Из Яндекс Браузера значок получается с пометкой браузера и со строкой внизу. Чтобы было как приложение, ставим из Chrome.</span><div class="stp"><b>Шаг 1. Откройте портал в Chrome</b><div class="shg"><a class="ibtn pri" style="font-size:14px" href="'+intent('com.android.chrome')+'">Открыть в Chrome</a><button class="ibtn" id="shCp2" style="font-size:14px">📋 Скопировать ссылку</button></div><small>Если Chrome сам не открылся, нажмите "Скопировать ссылку", откройте Chrome и вставьте ссылку в адресную строку.</small></div><div class="stp"><b>Шаг 2. В Chrome установите</b><ol style="margin:4px 0 0 18px"><li>Нажмите ⋮ вверху справа</li><li>Выберите "Установить приложение"</li><li>В окошке нажмите "Установить"</li></ol></div>';
     if(BR==='ya')return HEAD+'Установить на экран</b></div><ol><li>Нажмите ⋮ (меню) в Яндекс Браузере</li><li>Выберите "Установить приложение"</li></ol>'+D+'Круглый значок без пометки браузера лучше получается при установке из Chrome.</span>';
     if(BR==='chrome'||BR==='edge')return HEAD+'Установить на экран</b></div>'+D+'Полистайте страницу несколько секунд: браузер сам предложит установку, и здесь появится синяя кнопка.</span><button class="ibtn" disabled style="width:100%;margin-top:10px;opacity:.75">⏳ Ждём предложение браузера…</button><p style="margin:12px 0 0;font-size:14px;color:var(--dim)">Если кнопка не появилась, установите вручную:</p><ol><li>Нажмите ⋮ вверху справа</li><li>Выберите "Установить приложение" (или "Добавить на гл. экран")</li><li>В окошке нажмите "Установить"</li></ol>'+WARN;
     return HEAD+'Установить на экран</b></div><ol><li>Откройте меню браузера (⋮ или ≡)</li><li>Выберите «Установить приложение» или «Добавить на главный экран»</li></ol>'+D+'Лучше всего устанавливается из Chrome или Яндекс Браузера.</span>'}
@@ -1506,15 +1489,16 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
   addEventListener('keydown',function(e){if(e.key==='Escape')close()});
   $('shShare').onclick=function(){if(navigator.share){navigator.share({title:'СПЕКТР',text:'Кружки, расписание и дашборды СПЕКТРа',url:URL0}).catch(function(){})}else copy()};
   $('shCopy').onclick=copy;
-  function copy(){var b=$('shCopy'),done=function(){b.textContent='✓ Скопировано';setTimeout(function(){b.textContent='📋 Скопировать'},1800)};
+  IM.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('#shCp2');if(b)copy(b)});
+  function copy(b){b=(b&&b.nodeType)?b:$('shCopy');var lab=b.textContent,done=function(){b.textContent='✓ Скопировано';setTimeout(function(){b.textContent=lab},1800)};
     if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(URL0).then(done,fb);else fb();
     function fb(){var t=document.createElement('textarea');t.value=URL0;document.body.appendChild(t);t.select();try{document.execCommand('copy');done()}catch(e){}t.remove()}}
   /* мягкое предложение установить: только на телефоне, не в приложении, не чаще раза в 2 недели */
   function bar(){if(APP||!MOB)return;var x=+st.get('spk_inst_x')||0;if(Date.now()-x<14*864e5)return;if(!dp&&!IOS&&!(INAPP&&AND))return;
     clearTimeout(bar._t);bar._t=setTimeout(function(){$('shBar').classList.add('on')},15000)}
   function hideBar(){$('shBar').classList.remove('on')}
-  if(YA){$('shBarT').innerHTML='<b>Лучше как приложение из Chrome</b>Значок получится круглым, без строки браузера';$('shBarGo').textContent='В Chrome'}
-  $('shBarGo').onclick=function(){hideBar();if(YA){st.set('spk_inst_x',String(Date.now()));location.href=intent('com.android.chrome')}else if(dp)go();else openI()};
+  if(YA){$('shBarT').innerHTML='<b>Лучше как приложение из Chrome</b>Значок получится круглым, без строки браузера';$('shBarGo').textContent='Шаги'}
+  $('shBarGo').onclick=function(){hideBar();if(YA){st.set('spk_inst_x',String(Date.now()));openI()}else if(dp)go();else openI()};
   $('shBarX').onclick=function(){hideBar();st.set('spk_inst_x',String(Date.now()))};
   if(IOS||(INAPP&&AND))bar();
   if(/[?&]share\b/.test(location.search))setTimeout(open,600);
