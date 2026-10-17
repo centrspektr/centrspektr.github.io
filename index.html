@@ -119,7 +119,7 @@ h1.big .ch{display:inline-block;background:inherit;background-size:inherit;-webk
 .lw .orb::before,.lw .orb::after{content:"";position:absolute;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff,var(--r3) 55%);top:-8px;left:50%;box-shadow:0 0 18px var(--r3),0 0 4px #fff;animation:orbp 2.4s ease-in-out infinite}
 @keyframes orbp{50%{box-shadow:0 0 28px var(--r3),0 0 6px #fff}}
 .lw .orb::after{background:radial-gradient(circle at 35% 35%,#fff,var(--r5) 55%);box-shadow:0 0 18px var(--r5),0 0 4px #fff;top:auto;bottom:-8px;width:11px;height:11px;margin-left:-5.5px;animation-delay:-1.2s}
-.lw img{position:relative;z-index:2;width:72%;filter:drop-shadow(0 10px 18px rgba(60,20,120,.25))}
+.lw img{position:relative;z-index:2;width:64%;filter:drop-shadow(0 10px 18px rgba(60,20,120,.25))}
 @keyframes spin{to{transform:rotate(360deg)}}
 /* небо героя: метеоры, астероиды, спутник с сигнальной лампой */
 .sky{position:absolute;inset:0;overflow:hidden;pointer-events:none}
@@ -140,6 +140,21 @@ html[data-skin="pixel"] .sky svg{shape-rendering:crispEdges}
 .mq{cursor:grab;touch-action:pan-y;-webkit-user-select:none;user-select:none}.mq.hold{cursor:grabbing}
 .lw{touch-action:none;cursor:grab;-webkit-user-select:none;user-select:none}.lw.hold{cursor:grabbing}.lw img{pointer-events:none;-webkit-user-drag:none}
 .lw .disc{transition:scale .35s cubic-bezier(.2,.9,.3,1.4)}.lw.hold .disc{scale:.95}
+.lw .dr,.lw .lwh{position:absolute;inset:-3%;width:106%;height:106%;pointer-events:none;overflow:visible}
+.lw .dr{z-index:1;animation:spin 70s linear infinite}
+.lw .dr text{font:700 4.1px var(--fb);letter-spacing:.2px;text-transform:uppercase;fill:var(--hd)}
+.lw .lwh{z-index:4}
+.lw{--hc:#c8ffd9;--hs:#00ff66;--hd:#6dff9e;--tk:rgba(40,30,80,.55)}
+html[data-skin="neon"] .lw{--hc:#fff;--hs:#ff4fd8;--hd:#ffb8f0}
+html[data-skin="aqua"] .lw{--hc:#fff;--hs:#e0679a;--hd:#f9b4d0}
+html[data-skin="pixel"] .lw{--hc:#fff;--hs:#7dff6a;--hd:#ffd84a}
+.lwh .tk line{stroke:var(--tk);stroke-width:.5;stroke-linecap:round}
+.lwh .hg{transform-origin:50px 50px;will-change:transform}
+.lwh .hg .u{stroke:rgba(10,6,30,.6);stroke-linecap:round}
+.lwh .hg .m{stroke:var(--hc);stroke-linecap:round}
+.lwh .h1{stroke-width:.85}.lwh .h2{stroke-width:.6}.lwh .h3{stroke:var(--hs);stroke-width:.38}
+.lwh .hg:nth-of-type(2) .u{stroke-width:1.5}.lwh .hg:nth-of-type(3) .u{stroke-width:1.2}.lwh .hg:nth-of-type(4) .u{stroke-width:.95}
+.lwh .cap{fill:var(--hs);stroke:rgba(10,6,30,.6);stroke-width:.5}
 .tked{position:absolute;right:16px;bottom:2px;z-index:3}
 .mq span{font:900 clamp(18px,3vw,28px) var(--fh);color:#fff;white-space:nowrap;padding:0 22px;text-shadow:0 2px 12px rgba(0,0,0,.25)}
 .mq span::after{content:"✦";margin-left:44px;opacity:.85}
@@ -581,83 +596,20 @@ html.lite .wkc::before{animation-duration:14s}
 .tdr .skp{top:0;right:calc(100% + 8px)}
 @media (max-width:620px){.tdr .skp{right:0;top:calc(100% + 8px)}}
 /* часы и дата: у каждого стиля свои (Неон - круглые с датой по кругу, Космос - строка "Матрица", Акварель - квадратные, Пиксель - пиксельные) */
-.clk{--ka:var(--c1);--kb:rgba(10,8,24,.55);--kt:#fff;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;padding:6px 12px;line-height:1;position:relative;flex:none;overflow:hidden;color:var(--kt);background:var(--kb);border:1px solid color-mix(in srgb,var(--ka) 60%,transparent);border-radius:14px;transition:background .4s,border-color .4s,box-shadow .4s,color .4s,border-radius .5s,padding .4s}
-.clk:focus-visible{outline:2px solid var(--ka);outline-offset:2px}
-.clk .cbox{display:grid;gap:4px;position:relative;z-index:1}
-.clk .ct{display:flex;font:800 19px var(--fb);font-variant-numeric:tabular-nums;letter-spacing:.5px}
-.clk .ct i{font-style:normal;display:inline-block}
-.clk .ct i.nw{animation:ckin .6s cubic-bezier(.2,1.4,.4,1)}
-.clk .ct .cl{animation:ckbl 1s steps(1) infinite;padding:0 1px;color:var(--ka)}
-.clk .cd{font:700 10px var(--fb);letter-spacing:.6px;text-transform:uppercase;color:var(--kd,var(--ka));white-space:nowrap;transition:color .4s}
-.clk .cdial{display:none;width:60px;height:60px;flex:none;position:relative;z-index:1;overflow:visible}
-.clk canvas.mx{display:none;position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:.55;pointer-events:none}
 @keyframes ckin{from{transform:translateY(-75%) scale(.6);opacity:0;filter:blur(3px)}to{transform:none;opacity:1;filter:none}}
 @keyframes ckbl{50%{opacity:.2}}
 /* цвета стилей */
-.clk.ck-neon{--ka:#ff4fd8;--kd:#ffb8f0;--kb:rgba(20,6,40,.62);--kt:#fff;box-shadow:0 0 16px -2px rgba(255,60,210,.45),inset 0 0 12px rgba(120,60,255,.25)}
-.clk.ck-space{--ka:#00ff66;--kd:#6dff9e;--kb:#020a05;--kt:#c8ffd9;border-color:rgba(0,255,102,.45);box-shadow:0 0 16px -4px rgba(0,255,102,.55)}
-.clk.ck-space .ct{font-family:Consolas,'Courier New',monospace;font-weight:700;letter-spacing:1px;text-shadow:0 0 6px #00ff66,0 0 14px rgba(0,255,102,.6)}
-.clk.ck-space .cd{font-family:Consolas,'Courier New',monospace;text-shadow:0 0 6px rgba(0,255,102,.8)}
-.clk.ck-space canvas.mx{display:block}
-.clk.ck-aqua{--ka:#e0679a;--kd:#8a6a9a;--kt:#3a2e48;--kb:radial-gradient(circle at 15% 25%,rgba(255,150,180,.6),transparent 42%),radial-gradient(circle at 80% 30%,rgba(130,190,255,.6),transparent 45%),radial-gradient(circle at 55% 95%,rgba(255,215,120,.6),transparent 45%),#fffaf2;border-color:#e6d6c3;background-size:160% 160%;animation:ckaq 9s ease-in-out infinite alternate}
-.clk.ck-aqua .ct{font-family:Comfortaa,Nunito,sans-serif;font-weight:700}
-.clk.ck-aqua .cd{font-family:Nunito,sans-serif;letter-spacing:.3px}
 @keyframes ckaq{to{background-position:100% 100%}}
-.clk.ck-pixel{--ka:#7dff6a;--kd:#ffd84a;--kb:#10131c;--kt:#7dff6a;border-color:#f5f5f5}
 /* Строка */
-.clk.sh-line{border-radius:999px;padding:9px 15px}
-.clk.sh-line .cbox{display:flex;align-items:baseline;gap:9px}
-.clk.sh-line .ct{font-size:18px}
-.clk.sh-line .cd{font-size:10.5px}
 /* Круглые: циферблат, дата бежит по кругу */
-.clk.sh-round{border-radius:50%;padding:0;background:none;border:0;box-shadow:none;overflow:visible;animation:none}
-.clk.sh-round .cdial{display:block}
-.clk.sh-round .cbox,.clk.sh-round canvas.mx{display:none}
-.cdial .bg{fill:var(--kb)}
-.clk.ck-aqua .cdial .bg{fill:#fffaf2}
-.cdial .rg{fill:none;stroke:url(#ckg);stroke-width:1.6}
-.clk.ck-neon .cdial{filter:drop-shadow(0 0 5px rgba(255,70,220,.65))}
-.cdial .rt{transform-origin:32px 32px;animation:ckrot 50s linear infinite}
-.cdial .rt text{font:800 7.6px var(--fb);letter-spacing:.6px;fill:var(--kd,var(--ka));text-transform:uppercase}
-.cdial .fc{fill:color-mix(in srgb,var(--ka) 14%,transparent);stroke:var(--ka);stroke-opacity:.75;stroke-width:1}
-.cdial .tk line{stroke:var(--kt);stroke-width:1.1;stroke-linecap:round;opacity:.75}
-.cdial line.hh,.cdial line.mh,.cdial line.sc{stroke-linecap:round;transform-origin:32px 32px;transition:transform .45s cubic-bezier(.3,1.6,.5,1)}
-.cdial .hh{stroke:var(--kt);stroke-width:2.4}
-.cdial .mh{stroke:var(--kt);stroke-width:1.6}
-.cdial .sc{stroke:var(--ka);stroke-width:.9}
-.cdial .cc{fill:var(--ka)}
 @keyframes ckrot{to{transform:rotate(360deg)}}
 /* Квадратные */
-.clk.sh-square{border-radius:5px;padding:6px 11px;border-width:2px}
-.clk.sh-square .cbox{justify-items:center}
-.clk.sh-square .ct{font-size:18px}
 /* Пиксель */
-.clk.sh-pixel{border-radius:0;border-width:3px;border-style:solid;box-shadow:3px 3px 0 #000;padding:6px 10px}
-.clk.sh-pixel .ct{font:400 12px 'Press Start 2P',monospace;letter-spacing:0;text-shadow:0 0 6px color-mix(in srgb,var(--ka) 55%,transparent)}
-.clk.sh-pixel .ct i.nw{animation:ckpx .5s steps(4)}
-.clk.sh-pixel .cd{font:400 7px 'Press Start 2P',monospace;letter-spacing:0}
 @keyframes ckpx{from{transform:translateY(-100%);opacity:0}to{transform:none;opacity:1}}
-html[data-skin="pixel"] .clk.sh-line{border-radius:999px!important}
-html[data-skin="pixel"] .clk.sh-round{border-radius:50%!important}
-html[data-skin="pixel"] .clk.sh-square{border-radius:5px!important}
-@media (max-width:520px){.top{gap:8px}.clk{padding:5px 8px;gap:6px}.clk .ct{font-size:15.5px}.clk .cd{font-size:8.5px}.clk.sh-line{padding:7px 10px}.clk.sh-line .cbox{gap:6px}.clk.sh-line .ct{font-size:14.5px}.clk.sh-line .cd{font-size:8.5px}.clk.sh-round{padding:0}.clk.sh-square .ct{font-size:15px}.clk.sh-pixel .ct{font-size:9px}.clk.sh-pixel .cd{font-size:6px}.clk .cdial{width:52px;height:52px}}
-@media (max-width:400px){.clk.sh-line .cd{display:none}}
+@media (max-width:520px){.top{gap:8px}}
 /* дата под часами, секунды и миллисекунды */
-.clkw{display:flex;flex-direction:column;align-items:center;gap:3px;flex:none}
-.clk .cd{display:none!important}
-.clk .ct .cl2{font-style:normal;padding:0 1px;color:var(--ka);opacity:.75}
-.clk .ct .cs{display:inline-block;min-width:2ch}
-.clk .ct .cms{display:inline-block;min-width:3ch;color:var(--kd,var(--ka))}
-.clkd{font:800 11.5px var(--fb);letter-spacing:.7px;text-transform:uppercase;white-space:nowrap;color:var(--kd,#c4b5fd);transition:color .4s;line-height:1}
-.clkw.ck-neon{--kd:#ffb8f0}.clkw.ck-neon .clkd{text-shadow:0 0 8px rgba(255,79,216,.6)}
-.clkw.ck-space{--kd:#6dff9e}.clkw.ck-space .clkd{font-family:Consolas,'Courier New',monospace;text-shadow:0 0 6px rgba(0,255,102,.8)}
-.clkw.ck-aqua{--kd:#f9b4d0}.clkw.ck-aqua .clkd{font-family:Nunito,sans-serif}
-.clkw.ck-pixel{--kd:#ffd84a}.clkw.ck-pixel .clkd{font:400 8px 'Press Start 2P',monospace;letter-spacing:0}
-.clkw.sh-round .cdial{width:50px;height:50px}
-.cdial .dms{font:800 6.4px var(--fb);fill:var(--kt);opacity:.9;font-variant-numeric:tabular-nums}
-@media (max-width:520px){.clkd{font-size:10px;letter-spacing:.4px}.clkw.ck-pixel .clkd{font-size:7px}.clkw.sh-round .cdial{width:46px;height:46px}.clkw{gap:2px}}
 /* узкие телефоны и крупный шрифт в системе: шапка не должна наезжать (жалоба 17.10) */
-@media (max-width:440px){.top{gap:6px}.brand{gap:7px;min-width:0}.brand img{height:27px}.brand b{font-size:15px;letter-spacing:.5px}.vis.since{font-size:7.5px;letter-spacing:.3px}.clk.sh-line{padding:6px 8px}.clk.sh-line .ct{font-size:13.5px}.clkd{font-size:9px}}
+@media (max-width:440px){.top{gap:6px}.brand{gap:7px;min-width:0}.brand img{height:27px}.brand b{font-size:15px;letter-spacing:.5px}.vis.since{font-size:7.5px;letter-spacing:.3px}}
 html.hd1 .vis.since{display:none}
 html.hd2 .brand img{display:none}
 html.hd3 .clkd{display:none}
@@ -751,7 +703,6 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
 
 <header id="hdr"><div class="wrap top">
   <a class="brand" id="brand" href="#top" aria-label="СПЕКТР - в начало"><img src="mark.webp" alt="СПЕКТР"><span class="bt"><small class="vis since">стартовал 17.10.2026</small><b>ПОРТАЛ</b><small class="vis" id="visC" hidden title="Посещения сайтов СПЕКТР"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><i>0</i><span class="vl">посещений</span></small></span></a>
-  <div class="clkw" id="clkw"><div class="clk" id="clk" role="button" tabindex="0" title="Нажмите, чтобы сменить вид часов" aria-label="Часы и дата"></div><span class="clkd" id="clkd"></span></div>
   <nav class="mn"><a href="#groupsT">Кружки</a><a href="#dashT">Дашборды</a><a href="#joinT">Подключиться</a><a href="#todayT" id="navToday">Сегодня</a><a href="#weekT">Расписание</a></nav>
   <div class="tr" id="tr"><button class="ibtn" id="stBtn" style="display:none" title="Ученики и заявки" aria-label="Ученики и заявки">👥<b class="stc" id="stCnt" style="display:none"></b></button><button class="ibtn" id="bgBtn" style="display:none" title="Сообщения об ошибках" aria-label="Сообщения об ошибках">⚠<b class="stc" id="bgCnt" style="display:none"></b></button><div class="tdr" id="tdr"><button class="ibtn" id="lockBtn" style="display:none" title="Вход для редакторов" aria-label="Вход для редакторов">✎</button><button class="ibtn shb" id="shBtn" title="Поделиться, QR-код, установить на экран" aria-label="Поделиться и установить"><svg class="shico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4.5 21 11l-7 6.5v-3.8c-5 0-8.3 1.5-11 5.3.9-5.4 3.9-10.4 11-11.3z"/></svg><span>Поделиться</span></button><button class="ibtn shb" id="inBtn" type="button" title="Установить на телефон как приложение" aria-label="Установить на телефон"><svg class="shico inl" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4.5 21 11l-7 6.5v-3.8c-5 0-8.3 1.5-11 5.3.9-5.4 3.9-10.4 11-11.3z"/></svg></button><button class="ibtn" id="themeBtn" hidden aria-hidden="true" tabindex="-1" style="display:none"></button></div><button class="ibtn gear" id="gearBtn" type="button" aria-expanded="false" aria-controls="tdr" title="Настройки" aria-label="Настройки"><span class="gi"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><defs><linearGradient id="gAr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset=".5" stop-color="#a78bfa"/><stop offset="1" stop-color="#f472b6"/></linearGradient></defs><path d="M12 3.5v14M5.2 11.2 12 18l6.8-6.8" fill="none" stroke="url(#gAr)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button></div>
 </div></header>
@@ -766,7 +717,7 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
       <p class="lead hx">Кружки, дашборды, курсы и музыка в одном месте. Выбирай направление и подключайся.</p>
       <div class="chips" id="heroChips" style="display:none"></div>
     </div>
-    <div class="lw" id="lw"><div class="ring"></div><div class="orb"></div><div class="disc"></div><img src="logo.webp" alt="Логотип ресурсного центра СПЕКТР"></div>
+    <div class="lw" id="lw"><div class="ring"></div><div class="orb"></div><div class="disc"></div><svg class="dr" viewBox="0 0 100 100" aria-hidden="true"><defs><path id="lwp" d="M50 5.7A44.3 44.3 0 1 1 49.99 5.7"/></defs><text><textPath href="#lwp" startOffset="0" id="lwt"></textPath></text></svg><img src="logo.webp" alt="Логотип ресурсного центра СПЕКТР"><svg class="lwh" viewBox="0 0 100 100" role="img" aria-label="Часы"><g class="tk"><line x1="50" y1="13" x2="50" y2="14.799999999999997" transform="rotate(0 50 50)"/><line x1="50" y1="13.799999999999997" x2="50" y2="14.799999999999997" transform="rotate(30 50 50)"/><line x1="50" y1="13.799999999999997" x2="50" y2="14.799999999999997" transform="rotate(60 50 50)"/><line x1="50" y1="13" x2="50" y2="14.799999999999997" transform="rotate(90 50 50)"/><line x1="50" y1="13.799999999999997" x2="50" y2="14.799999999999997" transform="rotate(120 50 50)"/><line x1="50" y1="13.799999999999997" x2="50" y2="14.799999999999997" transform="rotate(150 50 50)"/><line x1="50" y1="13" x2="50" y2="14.799999999999997" transform="rotate(180 50 50)"/><line x1="50" y1="13.799999999999997" x2="50" y2="14.799999999999997" transform="rotate(210 50 50)"/><line x1="50" y1="13.799999999999997" x2="50" y2="14.799999999999997" transform="rotate(240 50 50)"/><line x1="50" y1="13" x2="50" y2="14.799999999999997" transform="rotate(270 50 50)"/><line x1="50" y1="13.799999999999997" x2="50" y2="14.799999999999997" transform="rotate(300 50 50)"/><line x1="50" y1="13.799999999999997" x2="50" y2="14.799999999999997" transform="rotate(330 50 50)"/></g><g class="hg"><line class="u" x1="50" y1="54" x2="50" y2="26"/><line class="m h1" x1="50" y1="54" x2="50" y2="26"/></g><g class="hg"><line class="u" x1="50" y1="55" x2="50" y2="15"/><line class="m h2" x1="50" y1="55" x2="50" y2="15"/></g><g class="hg"><line class="u" x1="50" y1="57" x2="50" y2="9"/><line class="m h3" x1="50" y1="57" x2="50" y2="9"/></g><circle class="cap" cx="50" cy="50" r="1.7"/></svg></div>
   </div>
   <a class="scr" href="#siteT"><i></i>ЛИСТАЙ</a>
 </section>
@@ -1294,48 +1245,13 @@ mountSkins($('#themeBtn'));
   document.addEventListener('keydown',e=>{if(e.key==='Escape')set(false)});
   d.addEventListener('click',e=>{if(e.target.closest('.sko'))setTimeout(()=>set(false),350);else if(e.target.closest('.ibtn')&&!e.target.closest('.skw'))setTimeout(()=>set(false),200)},true);
 })();
-/* ---------- часы и дата у логотипа ---------- */
-(()=>{const el=$('#clk');if(!el)return;
-  const ST=[['auto','под стиль'],['round','Круглые'],['line','Строка'],['square','Квадратные'],['pixel','Пиксель']];
-  const SKM={neon:'round',space:'line',aqua:'square',pixel:'pixel'};
-  const DW=['вс','пн','вт','ср','чт','пт','сб'],DWF=['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'],MN=['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'],MG=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
-  let k=ls.get('spectr_clk3')||'auto';if(!ST.some(x=>x[0]===k))k='auto';
-  const skin=()=>(window.SKIN&&SKIN.get&&SKIN.get())||document.documentElement.dataset.skin||'neon';
-  const T=[];for(let i=0;i<12;i++)T.push(`<line x1="32" y1="${i%3?14.6:14}" x2="32" y2="${i%3?16.2:17.4}" transform="rotate(${i*30} 32 32)"/>`);
-  el.innerHTML=`<canvas class="mx" aria-hidden="true"></canvas><svg class="cdial" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="ckg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--r1)"/><stop offset=".33" style="stop-color:var(--r3)"/><stop offset=".66" style="stop-color:var(--r5)"/><stop offset="1" style="stop-color:var(--r7)"/></linearGradient><path id="ckp" d="M32 6.8A25.2 25.2 0 1 1 31.99 6.8"/></defs><circle class="bg" cx="32" cy="32" r="31"/><circle class="rg" cx="32" cy="32" r="30.6"/><g class="rt"><text><textPath href="#ckp" startOffset="0" textLength="156" lengthAdjust="spacing"></textPath></text></g><circle class="fc" cx="32" cy="32" r="19.5"/><g class="tk">${T.join('')}</g><line class="hh" x1="32" y1="33.4" x2="32" y2="23.5"/><line class="mh" x1="32" y1="34" x2="32" y2="18"/><line class="sc" x1="32" y1="35.5" x2="32" y2="16.5"/><text class="dms" x="32" y="46" text-anchor="middle"></text><circle class="cc" cx="32" cy="32" r="1.5"/></svg><span class="cbox"><span class="ct"></span><span class="cd"></span></span>`;
-  const ct=el.querySelector('.ct'),cd=el.querySelector('.cd'),tp=el.querySelector('textPath'),hh=el.querySelector('.hh'),mh=el.querySelector('.mh'),sc=el.querySelector('.sc'),cv=el.querySelector('canvas.mx'),dms=el.querySelector('.dms'),wr=$('#clkw'),cdl=$('#clkd');let cs=null,cms=null;
-  let last='',lastD='';const s0=Math.floor(Date.now()/1000);const base=s0-s0%60;
-  function tick(){const n=new Date(),t=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
-    if(t!==last){const old=last;ct.innerHTML=[...t].map((c,i)=>c===':'?'<i class="cl">:</i>':`<i class="${old&&old[i]!==c?'nw':''}">${c}</i>`).join('')+'<i class="cl2">:</i><span class="cs"></span><span class="cms"></span>';cs=ct.querySelector('.cs');cms=ct.querySelector('.cms');last=t;el.setAttribute('aria-label','Сейчас '+t)}
-    const dd=`${DW[n.getDay()]}, ${n.getDate()} ${MN[n.getMonth()]}`;if(dd!==lastD){cd.textContent=dd;if(cdl)cdl.textContent=`${DW[n.getDay()]}, ${n.getDate()} ${MG[n.getMonth()]}`;tp.textContent=`${n.getDate()} ${MG[n.getMonth()]} · ${DWF[n.getDay()]} · `;lastD=dd}
-    if(el.classList.contains('sh-round')){const sec=Math.floor(Date.now()/1000)-base,m=n.getMinutes()+n.getSeconds()/60,h=(n.getHours()%12)+m/60;
-      sc.style.transform=`rotate(${sec*6}deg)`;mh.style.transform=`rotate(${m*6}deg)`;hh.style.transform=`rotate(${h*30}deg)`}}
-  /* дождь "Матрицы" за цифрами (стиль Космос) */
-  const MXC='ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄ0123456789';let mxD=[],mxT=0,mxW=0,mxH=0;const cx=cv.getContext&&cv.getContext('2d');
-  function mxStep(){if(!cx||document.hidden||!el.classList.contains('ck-space')||el.classList.contains('sh-round'))return;
-    const w=el.clientWidth,h=el.clientHeight,dpr=Math.min(2,devicePixelRatio||1);
-    if(w!==mxW||h!==mxH){mxW=w;mxH=h;cv.width=w*dpr;cv.height=h*dpr;cx.setTransform(dpr,0,0,dpr,0,0);mxD=Array.from({length:Math.ceil(w/8)},()=>Math.random()*-h)}
-    cx.fillStyle='rgba(2,10,5,.28)';cx.fillRect(0,0,w,h);cx.font='8px monospace';
-    mxD.forEach((y,i)=>{cx.fillStyle=Math.random()<.12?'#d8ffe6':'#00ff66';cx.fillText(MXC[(Math.random()*MXC.length)|0],i*8,y);mxD[i]=y>h+Math.random()*30?-Math.random()*20:y+8})}
-  setInterval(mxStep,LITE?130:85);
-  function paint(anim){const sk=skin(),sh=k==='auto'?(SKM[sk]||'line'):k;el.className='clk sh-'+sh+' ck-'+sk;if(wr)wr.className='clkw sh-'+sh+' ck-'+sk;el.dataset.k=k;tick();
-    if(anim&&el.animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches)el.animate([{transform:'perspective(300px) rotateY(90deg) scale(.6)',opacity:0,filter:'blur(4px)'},{transform:'none',opacity:1,filter:'none'}],{duration:620,easing:'cubic-bezier(.2,1.3,.4,1)'})}
-  const next=()=>{const i=ST.findIndex(x=>x[0]===k);k=ST[(i+1)%ST.length][0];ls.set('spectr_clk3',k);paint(true);toast('Часы: '+ST.find(x=>x[0]===k)[1])};
-  el.onclick=next;el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();next()}};
-  if(window.SKIN&&SKIN.on)SKIN.on(()=>paint(true));else new MutationObserver(()=>paint(true)).observe(document.documentElement,{attributes:true,attributeFilter:['data-skin']});
-  paint(false);setInterval(()=>{if(!document.hidden)tick()},1000);
-  /* секунды и миллисекунды бегут каждый кадр */
-  (function ms(){if(!document.hidden){const n=new Date(),S=String(n.getSeconds()).padStart(2,'0'),M=String(n.getMilliseconds()).padStart(3,'0');
-    if(cs){if(cs.textContent!==S)cs.textContent=S;cms.textContent='.'+M}
-    if(dms&&el.classList.contains('sh-round'))dms.textContent=S+'.'+M}
-    requestAnimationFrame(ms)})();
-})();
+
 
 /* скорость анимаций: у каждого посетителя своя, хранится в браузере */
 /* ---------- шапка: если что-то не помещается (узкий экран, крупный шрифт), по шагам упрощаем ---------- */
 (function(){const H=document.documentElement,K=['hd1','hd2','hd3','hd4'];
   function fit(){K.forEach(k=>H.classList.remove(k));const g=(a,b)=>{const x=$(a),y=$(b);if(!x||!y||!x.offsetWidth||!y.offsetWidth)return false;return x.getBoundingClientRect().right>y.getBoundingClientRect().left-4};
-    const bad=()=>g('#brand .bt','#clkw')||g('#clkw','#tr')||document.documentElement.scrollWidth>innerWidth+1;
+    const bad=()=>g('#brand .bt','#tr')||document.documentElement.scrollWidth>innerWidth+1;
     for(const k of K){if(!bad())break;H.classList.add(k)}}
   fit();addEventListener('resize',fit);addEventListener('load',fit);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);setTimeout(fit,1500)})();
 
@@ -1356,20 +1272,45 @@ function applySpd(){try{document.getAnimations().forEach(x=>{if(!(x instanceof C
 $$('[data-spd]').forEach(r=>{r.value=SPD[r.dataset.spd];r.oninput=()=>{SPD[r.dataset.spd]=+r.value;ls.set('spectr_spd_'+r.dataset.spd,r.value);applySpd()}});
 setTimeout(applySpd,300);
 
+/* ---------- часы вокруг логотипа: стрелки, дата по кругу; при вращении логотипа стрелки крутятся сами, потом висят вниз и не спеша встают на место ---------- */
+(function(){const lw=$('#lw');if(!lw)return;const hs=lw.querySelector('.lwh'),G=[...hs.querySelectorAll('.hg')],tp=$('#lwt');if(!G.length||!tp)return;
+  const MG=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'],DW=['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'];
+  let ds='';const CIR=278.4;
+  function setDate(n){const d=n.getDate()+' '+MG[n.getMonth()]+' · '+DW[n.getDay()]+' · ';if(d===ds)return;ds=d;tp.textContent=d;const t=tp.parentNode;let len=0;try{len=t.getComputedTextLength()}catch(_){}
+    const c=Math.max(1,Math.round(CIR/(len||95)));tp.textContent=d.repeat(c);tp.setAttribute('textLength',CIR);tp.setAttribute('lengthAdjust','spacing')}
+  const real=()=>{const n=new Date(),s=n.getSeconds()+n.getMilliseconds()/1000,m=n.getMinutes()+s/60,h=(n.getHours()%12)+m/60;return[h*30,m*6,s*6]};
+  const A=real(),V=[0,0,0],K=[.6,-1.1,1.7],F=[2.3,3.1,1.7],P=[0,2,4],KS=[48,38,30],KD=[3.2,2.8,2.4];
+  let mode='live',tm=0,lt=0,lf=0,vis=true,run=false,T=[180,180,180];const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const put=()=>{for(let i=0;i<3;i++)G[i].style.transform='rotate('+A[i].toFixed(2)+'deg)'};
+  const set=m=>{mode=m;tm=0};
+  lw.addEventListener('lwgo',()=>{if(RM)return;if(mode!=='chaos')set('chaos');go()});
+  lw.addEventListener('lwstop',()=>{if(RM||mode!=='chaos')return;T=A.map(a=>180+360*Math.round((a-180)/360));set('hang');go()});
+  function frame(ts){run=false;if(!vis||document.hidden)return;const dt=Math.min(.05,(ts-lt)/1000||.016);lt=ts;tm+=dt;
+    if(mode==='live'){if(LITE&&ts-lf<32){go();return}lf=ts;const r=real();for(let i=0;i<3;i++)A[i]=r[i];if(RM)setTimeout(go,1000);put();if(!RM)go();return}
+    if(mode==='chaos'){const w=lw._w?lw._w():0,aw=Math.abs(w)>40?1:0;for(let i=0;i<3;i++){V[i]=w*K[i]+aw*150*Math.sin(ts/1000*F[i]+P[i]);A[i]+=V[i]*dt}}
+    else if(mode==='hang'){let q=0;for(let i=0;i<3;i++){const x=A[i]-T[i];V[i]+=(-KS[i]*x-KD[i]*V[i])*dt;A[i]+=V[i]*dt;q+=Math.abs(x)+Math.abs(V[i])*.1}if(tm>1.6&&q<1.2)set('recover')}
+    else{const r=real();let mx=0;for(let i=0;i<3;i++){const dl=Math.max(0,tm-i*.45);if(dl<=0){mx=99;continue}const d=((r[i]-A[i]+540)%360)-180,rate=.8+dl*.9;A[i]+=d*(1-Math.exp(-dt*rate));mx=Math.max(mx,Math.abs(d))}if(tm>1.4&&mx<2)set('live')}
+    put();go()}
+  function go(){if(!run&&vis){run=true;requestAnimationFrame(frame)}}
+  new IntersectionObserver(es=>{vis=es[0].isIntersecting;if(vis){lt=performance.now();go()}}).observe(lw);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden){lt=performance.now();go()}});
+  setDate(new Date());setInterval(()=>setDate(new Date()),20000);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{ds='';setDate(new Date())});
+  put();go()})();
+
 /* ---------- шарики и бегущая строка: можно поймать пальцем ---------- */
 /* логотип с шариками: крути пальцем, после отпускания крутится по инерции и плавно замедляется */
-(function(){const lw=$('#lw');if(!lw)return;const parts=[lw.querySelector('.ring'),lw.querySelector('.orb')].filter(Boolean),img=lw.querySelector('img');
-  let A=0,I=0,w=0,held=false,id=null,pa=0,pt=0,run=false,lt=0;
+(function(){const lw=$('#lw');if(!lw)return;const parts=[lw.querySelector('.ring'),lw.querySelector('.orb'),lw.querySelector('.dr')].filter(Boolean),img=lw.querySelector('img');
+  let A=0,I=0,w=0,held=false,id=null,pa=0,pt=0,run=false,lt=0;lw._w=()=>w;lw._h=()=>held;
   const ang=e=>{const r=lw.getBoundingClientRect();return Math.atan2(e.clientY-r.top-r.height/2,e.clientX-r.left-r.width/2)*57.2958};
   const put=()=>{parts.forEach(p=>p.style.rotate=A.toFixed(2)+'deg');if(img)img.style.rotate=I.toFixed(2)+'deg'};
   function loop(ts){const dt=Math.min(.05,(ts-lt)/1000||.016);lt=ts;
     if(held)w*=Math.exp(-dt*8);
     else{A+=w*dt;I+=w*dt;w*=Math.exp(-dt*1.3);
       if(Math.abs(w)<60){const g=Math.round(I/360)*360;I+=(g-I)*(1-Math.exp(-dt*4))}
-      if(Math.abs(w)<1&&Math.abs(I-Math.round(I/360)*360)<.1){w=0;A%=360;I=0;put();run=false;return}}
+      if(Math.abs(w)<1&&Math.abs(I-Math.round(I/360)*360)<.1){w=0;A%=360;I=0;put();run=false;lw.dispatchEvent(new Event('lwstop'));return}}
     put();requestAnimationFrame(loop)}
   const go=()=>{if(!run){run=true;lt=performance.now();requestAnimationFrame(loop)}};
-  lw.addEventListener('pointerdown',e=>{held=true;id=e.pointerId;try{lw.setPointerCapture(id)}catch(_){}pa=ang(e);pt=e.timeStamp;w*=.3;lw.classList.add('hold');go()});
+  lw.addEventListener('pointerdown',e=>{held=true;id=e.pointerId;try{lw.setPointerCapture(id)}catch(_){}pa=ang(e);pt=e.timeStamp;w*=.3;lw.classList.add('hold');lw.dispatchEvent(new Event('lwgo'));go()});
   lw.addEventListener('pointermove',e=>{if(!held||e.pointerId!==id)return;const a=ang(e);let d=a-pa;if(d>180)d-=360;if(d<-180)d+=360;pa=a;
     const dt=Math.max(.008,(e.timeStamp-pt)/1000);pt=e.timeStamp;A+=d;I+=d;w=w*.5+(d/dt)*.5});
   const up=e=>{if(!held||e.pointerId!==id)return;held=false;lw.classList.remove('hold');w=Math.max(-1500,Math.min(1500,w));go()};

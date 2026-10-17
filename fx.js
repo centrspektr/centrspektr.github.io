@@ -7,7 +7,7 @@ var D=document,R=D.documentElement;
 var RED=matchMedia('(prefers-reduced-motion: reduce)').matches;
 var FINE=matchMedia('(hover:hover) and (pointer:fine)').matches;
 var LITE=!FINE||matchMedia('(max-width:860px)').matches;
-var TAU=Math.PI*2, rnd=Math.random;
+var TAU=Math.PI*2, _sd=20261017;function rnd(){_sd=(_sd+0x6D2B79F5)|0;var t=Math.imul(_sd^(_sd>>>15),1|_sd);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296}
 /* на страницах кружков (Взлёт, студия) своего переключателя стилей нет: берём стиль, выбранный на портале */
 var SKINS=[['neon','Неон'],['space','Космос'],['aqua','Акварель'],['pixel','Пиксель']];
 if(!window.SKIN){(function(){var K='spectr_skin',cur=null,subs=[];try{cur=localStorage.getItem(K)}catch(e){}if(!SKINS.some(function(x){return x[0]===cur}))cur='space';R.dataset.skin=cur;
@@ -23,9 +23,9 @@ function mount(){D.body.insertBefore(cv,D.body.firstChild)}
 if(D.body)mount();else D.addEventListener('DOMContentLoaded',mount);
 
 var W=0,H=0,DPR=1,hero=null,heroH=0,Q=1; // Q - качество, снижается само, если компьютер не успевает
-function size(){var d=LITE?.75*Q:Math.min(window.devicePixelRatio||1,1.5,Math.sqrt(1.4e6/(innerWidth*innerHeight)))*Q;d=Math.max(.5,d);DPR=skin()==='pixel'?(LITE?.5:1):d;cv.style.imageRendering=skin()==='pixel'?'pixelated':'auto';W=innerWidth;H=innerHeight;
+function size(keep){var d=LITE?.75*Q:Math.min(window.devicePixelRatio||1,1.5,Math.sqrt(1.4e6/(innerWidth*innerHeight)))*Q;d=Math.max(.5,d);DPR=skin()==='pixel'?(LITE?.5:1):d;cv.style.imageRendering=skin()==='pixel'?'pixelated':'auto';W=innerWidth;H=innerHeight;
   cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);cx.setTransform(DPR,0,0,DPR,0,0);
-  hero=D.querySelector('.hero');heroH=hero?hero.offsetTop+hero.offsetHeight:0;var l=D.getElementById('lw');if(l){var r=l.getBoundingClientRect();LW={x:r.left+r.width/2,y:r.top+scrollY+r.height/2,r:r.width/2}}S={};}
+  hero=D.querySelector('.hero');heroH=hero?hero.offsetTop+hero.offsetHeight:0;var l=D.getElementById('lw');if(l){var r=l.getBoundingClientRect();LW={x:r.left+r.width/2,y:r.top+scrollY+r.height/2,r:r.width/2}}if(!keep||skin()==='pixel')S={};}
 var LW=null;
 var lastW=0;addEventListener('resize',function(){if(LITE&&Math.abs(innerWidth-lastW)<2&&Math.abs(innerHeight-H)<160)return;lastW=innerWidth;size()});
 
@@ -209,7 +209,7 @@ function loop(ts){if(!run)return;requestAnimationFrame(loop);var dt=ts-lt;
   // компьютер не успевает - плавно снижаем разрешение фона (красота почти та же, а кадры ровные)
   if(dt<200){fa+=dt;fn++}
   if(fn>=45){var avg=fa/fn;fa=fn=0;
-    if(avg>21&&Q>.55){Q=Math.max(.5,Q*.8);size()}else if(LITE===false&&avg>40&&Q<=.55){LITE=true;size()}
+    if(avg>21&&Q>.55){Q=Math.max(.5,Q*.8);size(true)}else if(LITE===false&&avg>40&&Q<=.55){LITE=true;size()}
     if(fq){if(!fpsEl){fpsEl=D.createElement('div');fpsEl.style.cssText='position:fixed;right:8px;bottom:8px;z-index:99999;padding:6px 10px;border-radius:8px;background:rgba(0,0,0,.75);color:#0f0;font:700 13px monospace;pointer-events:none';D.body.appendChild(fpsEl)}
       fpsEl.textContent=Math.round(1000/avg)+' fps · кадр '+avg.toFixed(1)+' мс · фон '+cv.width+'x'+cv.height+(LITE?' · лёгкий':'')}}
   frame(ts);lt=ts}
