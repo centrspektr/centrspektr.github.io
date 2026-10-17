@@ -1459,7 +1459,7 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
   <div class="shg"><button class="ibtn pri" id="shShare">📤 Поделиться</button><button class="ibtn" id="shCopy">📋 Скопировать</button></div>
 </div></div>
 <div class="shm" id="inM" role="dialog" aria-modal="true" aria-label="Установить СПЕКТР на телефон"><div class="shp">
-  <h3>📲 Установить <button class="ibtn sm" id="inX" aria-label="Закрыть">✕</button></h3>
+  <h3>📲 Установка <button class="ibtn sm" id="inX" aria-label="Закрыть">✕</button></h3>
   <div class="shi" id="shI" style="margin-top:6px"></div>
   <details class="shd" id="shD"><summary><span>❓</span>Как установить лучше всего</summary><div class="gb">
     <div class="gi2"><div class="ok"><div class="ic rd"><img src="icon-192.png" alt=""></div><b>✅ Приложение</b>круглый значок, открывается без строки браузера</div><div class="no"><div class="ic sq"><img src="icon-192.png" alt=""><i>Я</i></div><b>Ярлык браузера</b>квадрат с пометкой, строка браузера остаётся</div></div>
@@ -1490,7 +1490,7 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
     if(BR==='ff')return HEAD+'Установить на экран</b></div><ol><li>Нажмите ⋮ в меню браузера</li><li>Выберите «Установить» (или «Добавить на домашний экран»)</li></ol>';
     if(BR==='ya'&&AND)return HEAD+'Как лучше установить</b></div>'+D+'В Яндекс Браузере портал тоже можно добавить на экран, но значок будет с пометкой браузера, а внизу останется его строка. Если хочется настоящее приложение, удобнее установить из Chrome.</span><div class="shg" style="margin-top:10px"><a class="ibtn pri w" style="font-size:14px" href="'+intent('com.android.chrome')+'">Открыть в Chrome</a></div><ol><li>Или нажмите ⋮ в Яндексе и выберите "Установить приложение"</li></ol>';
     if(BR==='ya')return HEAD+'Установить на экран</b></div><ol><li>Нажмите ⋮ (меню) в Яндекс Браузере</li><li>Выберите "Установить приложение"</li></ol>'+D+'Круглый значок без пометки браузера лучше получается при установке из Chrome.</span>';
-    if(BR==='chrome'||BR==='edge')return HEAD+'Установить на экран</b></div><ol><li>Нажмите ⋮ вверху справа</li><li>Выберите «Добавить на гл. экран» (или «Установить приложение»)</li><li>В окошке нажмите «Установить»</li></ol>'+WARN+'<p style="margin:6px 0 0;font-size:13.5px;color:var(--dim)">Кнопка «Установить» может появиться здесь сама через полминуты - Chrome предлагает её, когда страницу немного полистали.</p>';
+    if(BR==='chrome'||BR==='edge')return HEAD+'Установить на экран</b></div>'+D+'Полистайте страницу несколько секунд: браузер сам предложит установку, и здесь появится синяя кнопка.</span><button class="ibtn" disabled style="width:100%;margin-top:10px;opacity:.75">⏳ Ждём предложение браузера…</button><p style="margin:12px 0 0;font-size:14px;color:var(--dim)">Если кнопка не появилась, установите вручную:</p><ol><li>Нажмите ⋮ вверху справа</li><li>Выберите "Установить приложение" (или "Добавить на гл. экран")</li><li>В окошке нажмите "Установить"</li></ol>'+WARN;
     return HEAD+'Установить на экран</b></div><ol><li>Откройте меню браузера (⋮ или ≡)</li><li>Выберите «Установить приложение» или «Добавить на главный экран»</li></ol>'+D+'Лучше всего устанавливается из Chrome или Яндекс Браузера.</span>'}
   function inst(){var el=$('shI');if(!el)return;
     var gd=$('shD');if(gd)gd.style.display=APP?'none':'';
