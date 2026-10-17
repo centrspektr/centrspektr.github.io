@@ -728,7 +728,7 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
 
 
 </main>
-<footer><img src="logo.webp" alt="Логотип СПЕКТР"><p class="fdev"><span id="fDev"></span><button class="ibtn sm ed" id="dvEdit" type="button">✎</button></p><a class="ibtn pri fsup" id="fSup" target="_blank" rel="noopener">💛 Поддержать проект ↗</a><div class="fsm">Ресурсный центр "СПЕКТР" · Иртышское поселение · Черлакский район<span id="upd"></span></div></footer>
+<footer><img src="logo.webp" alt="Логотип СПЕКТР"><p class="fdev"><span id="fDev"></span><button class="ibtn sm ed" id="dvEdit" type="button">✎</button></p><a class="ibtn pri fsup" id="fSup" href="#podderzhka">💛 Поддержать проект</a><div class="fsm">Ресурсный центр "СПЕКТР" · Иртышское поселение · Черлакский район<span id="upd"></span></div></footer>
 
 <div id="dive"></div>
 <div id="soon"></div>
@@ -749,7 +749,6 @@ const FIXL=[{name:'Перейти на сайт Спектр',url:LINKS.site,not
  {name:'Агрокласс',url:LINKS.agro,note:'дроны, Python, ИИ'},{name:'Гитара и ИИ-студия',url:'studio/',note:'аккорды, тюнер, музыка с ИИ'},{name:'MAX: ИИ-студия',url:SOCIAL.maxStudio,note:'группа студии',nf:1},
  {name:'Расписание дополнительных занятий',url:LINKS.zan,note:'кружки и секции Иртыша',nf:1,sk:'zan'}];
 const ST_TAG='статусы', DV_TAG='девиз', DEVIZ='Время - главная ценность. Мы идём с ним в ногу: дроны, нейросети, музыка и творчество рядом с домом.';
-const SUPPORT_URL=LINKS.site; // кнопка "Поддержать" есть на сайте Спектра справа вверху
 const stMap=()=>{const it=D.news.find(x=>x.date===ST_TAG),m={};String(it?it.text:'').split(/\n+/).forEach(r=>{const q=r.indexOf('=');if(q>0)m[r.slice(0,q).trim()]=r.slice(q+1).trim()});return m};
 const ST_L={open:'Открыто - ссылка работает',agree:'Закрыто: на согласовании',time:'Закрыто: время занятий уточняется'};
 const ST_N={agree:'на согласовании',time:'время занятий уточняется'};
@@ -903,7 +902,6 @@ function render(){
   const lnk=(l,i,h)=>`<a class="lnk ${h?'hid':''} ${l.url?'':'nolink'}" ${l.url?`href="${esc(l.url)}" ${ext(l.url)?'target="_blank" rel="noopener"':''}`:''}><span class="ic">${!l.url?'⏳':ext(l.url)?'↗':'→'}</span><span style="flex:1"><b>${esc(l.name)}</b><small>${h?'не показывается посетителям (дубль или ведёт на этот же сайт) - лучше удалить':esc(l.note||'')}</small></span>${stKey(l)?`<button class="ebtn ed" data-st="${esc(stKey(l))}" data-n="${esc(l.name)}" title="Открыть или закрыть">⏱</button>`:''}${l.id?`<button class="ebtn ed" data-edit="links" data-id="${esc(l.id)}">✎</button>`:''}</a>`;
   const SM=stMap();$('#links').innerHTML=FIXL.map(l=>lnk(stApply(l,SM))).join('')+D.links.map(l=>{const h=bad(l);return h&&!canEdit()?'':lnk(stApply(l,SM),0,h)}).join('');
   {const dv=D.news.find(x=>x.date===DV_TAG);$('#fDev').textContent=(dv&&String(dv.text).trim())||DEVIZ}
-  $('#fSup').href=SUPPORT_URL;
   // пустые блоки посетителям не показываем (в режиме правки видны)
   const off=(sel,v)=>{const e=$(sel);if(e)e.classList.toggle('off',!!v)};
   off('#todayT',!D.schedule.some(live)); off('#navToday',!D.schedule.some(live));
@@ -1315,6 +1313,34 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
   $('shBarX').onclick=function(){hideBar();st.set('spk_inst_x',String(Date.now()))};
   if(IOS)bar();
   if(/[?&]share\b/.test(location.search))setTimeout(open,600);
+})();
+</script>
+<!-- поддержать проект: QR-код для перевода (тот же, что на centrspektr.fun) -->
+<style>
+.supq{width:min(240px,64vw)}
+.sup .shg{grid-template-columns:1fr}
+.sup small.nt{display:block;color:var(--dim);font-size:13px;line-height:1.45;margin-top:10px;text-align:center}
+.sup .pur{font-weight:800;color:var(--text)}
+</style>
+<div class="shm sup" id="supM" role="dialog" aria-modal="true" aria-label="Поддержать СПЕКТР"><div class="shp">
+  <h3>💛 Поддержать СПЕКТР <button class="ibtn sm" id="supX" aria-label="Закрыть">✕</button></h3>
+  <p>Каждое пожертвование идёт на занятия для детей и молодёжи села: оборудование для кружков, материалы, поездки на соревнования.</p>
+  <img class="shq supq" src="qr-podderzhka.png" alt="QR-код для перевода в приложении банка" width="240" height="240">
+  <p style="text-align:center;margin-bottom:12px">Отсканируйте в приложении банка (раздел "Оплата по QR") - откроется перевод на счёт организации, сумму указываете сами. Назначение уже заполнено: <span class="pur">"Добровольное пожертвование на уставную деятельность"</span>.</p>
+  <div class="shg"><a class="ibtn pri" href="qr-podderzhka.png" download="SPEKTR-podderzhka-QR.png">⬇ Сохранить QR-код</a></div>
+  <small class="nt" id="supMob">Открыли с телефона? Сохраните QR-код, затем в приложении банка выберите "Оплата по QR" и загрузите картинку из галереи.</small>
+  <small class="nt"><a href="https://centrspektr.fun" target="_blank" rel="noopener" style="color:inherit">Подробнее на сайте Спектра ↗</a></small>
+</div></div>
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)},M=$('supM'),B=$('fSup');if(!M||!B)return;
+  if(!/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)&&!(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1))$('supMob').style.display='none';
+  function open(){M.classList.add('on');$('supX').focus()}
+  function close(){M.classList.remove('on');if(location.hash==='#podderzhka')history.replaceState(null,'',location.pathname+location.search)}
+  B.onclick=function(e){e.preventDefault();open()};
+  $('supX').onclick=close;M.onclick=function(e){if(e.target===M)close()};
+  addEventListener('keydown',function(e){if(e.key==='Escape'&&M.classList.contains('on'))close()});
+  if(location.hash==='#podderzhka'||/[?&]podderzhka\b/.test(location.search))setTimeout(open,700);
 })();
 </script>
 </body>
