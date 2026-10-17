@@ -142,7 +142,7 @@ html[data-skin="pixel"] .sky svg{shape-rendering:crispEdges}
 .lw .disc{transition:scale .35s cubic-bezier(.2,.9,.3,1.4)}.lw.hold .disc{scale:.95}
 .lw .dr,.lw .lwh{position:absolute;inset:-3%;width:106%;height:106%;pointer-events:none;overflow:visible}
 .lw .dr{z-index:1;animation:spin 70s linear infinite}
-.lw .dr text{font:700 4.1px var(--fb);letter-spacing:.2px;text-transform:uppercase;fill:var(--hd)}
+.lw .dr text{font:700 4.1px var(--fb);letter-spacing:.2px;fill:var(--hd)}
 .lw .lwh{z-index:4}
 .lw{--hc:#c8ffd9;--hs:#00ff66;--hd:#6dff9e;--tk:rgba(40,30,80,.55)}
 html[data-skin="neon"] .lw{--hc:#fff;--hs:#ff4fd8;--hd:#ffb8f0}
@@ -1276,8 +1276,8 @@ setTimeout(applySpd,300);
 (function(){const lw=$('#lw');if(!lw)return;const hs=lw.querySelector('.lwh'),G=[...hs.querySelectorAll('.hg')],tp=$('#lwt');if(!G.length||!tp)return;
   const MG=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'],DW=['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'];
   let ds='';const CIR=278.4;
-  function setDate(n){const d=n.getDate()+' '+MG[n.getMonth()]+' · '+DW[n.getDay()]+' · ';if(d===ds)return;ds=d;tp.textContent=d;const t=tp.parentNode;let len=0;try{len=t.getComputedTextLength()}catch(_){}
-    const c=Math.max(1,Math.round(CIR/(len||95)));tp.textContent=d.repeat(c);tp.setAttribute('textLength',CIR);tp.setAttribute('lengthAdjust','spacing')}
+  function setDate(n){const d=(n.getDate()+' '+MG[n.getMonth()]+' · '+DW[n.getDay()]+' · ').toUpperCase();if(d===ds)return;ds=d;tp.textContent=d;const t=tp.parentNode;let len=0;try{len=t.getComputedTextLength()}catch(_){}
+    const c=Math.max(1,Math.floor(CIR/(len||95)));tp.textContent=d.repeat(c);tp.setAttribute('textLength',CIR);tp.setAttribute('lengthAdjust','spacing')}
   const real=()=>{const n=new Date(),s=n.getSeconds()+n.getMilliseconds()/1000,m=n.getMinutes()+s/60,h=(n.getHours()%12)+m/60;return[h*30,m*6,s*6]};
   const A=real(),V=[0,0,0],K=[.6,-1.1,1.7],F=[2.3,3.1,1.7],P=[0,2,4],KS=[48,38,30],KD=[3.2,2.8,2.4];
   let mode='live',tm=0,lt=0,lf=0,vis=true,run=false,T=[180,180,180];const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
