@@ -738,7 +738,7 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
   <a class="brand" id="brand" href="#top" aria-label="СПЕКТР - в начало"><img src="mark.webp" alt="СПЕКТР"><span class="bt"><small class="vis since">стартовал 17.10.2026</small><b>ПОРТАЛ</b><small class="vis" id="visC" hidden title="Посещения сайтов СПЕКТР"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><i>0</i><span class="vl">посещений</span></small></span></a>
   <div class="clkw" id="clkw"><div class="clk" id="clk" role="button" tabindex="0" title="Нажмите, чтобы сменить вид часов" aria-label="Часы и дата"></div><span class="clkd" id="clkd"></span></div>
   <nav class="mn"><a href="#groupsT">Кружки</a><a href="#dashT">Дашборды</a><a href="#joinT">Подключиться</a><a href="#todayT" id="navToday">Сегодня</a><a href="#weekT">Расписание</a></nav>
-  <div class="tr" id="tr"><button class="ibtn" id="stBtn" style="display:none" title="Ученики и заявки" aria-label="Ученики и заявки">👥<b class="stc" id="stCnt" style="display:none"></b></button><button class="ibtn" id="bgBtn" style="display:none" title="Сообщения об ошибках" aria-label="Сообщения об ошибках">⚠<b class="stc" id="bgCnt" style="display:none"></b></button><div class="tdr" id="tdr"><button class="ibtn" id="lockBtn" style="display:none" title="Вход для редакторов" aria-label="Вход для редакторов">✎</button><button class="ibtn shb" id="shBtn" title="Поделиться, QR-код, установить на экран" aria-label="Поделиться и установить"><svg class="shico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4.5 21 11l-7 6.5v-3.8c-5 0-8.3 1.5-11 5.3.9-5.4 3.9-10.4 11-11.3z"/></svg><span>Поделиться</span></button><button class="ibtn" id="fsBtn" type="button" style="display:none" title="Во весь экран" aria-label="Во весь экран"><svg class="fsico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button><button class="ibtn" id="themeBtn" hidden aria-hidden="true" tabindex="-1" style="display:none"></button></div><button class="ibtn gear" id="gearBtn" type="button" aria-expanded="false" aria-controls="tdr" title="Настройки" aria-label="Настройки"><span class="gi">⚙️</span></button></div>
+  <div class="tr" id="tr"><button class="ibtn" id="stBtn" style="display:none" title="Ученики и заявки" aria-label="Ученики и заявки">👥<b class="stc" id="stCnt" style="display:none"></b></button><button class="ibtn" id="bgBtn" style="display:none" title="Сообщения об ошибках" aria-label="Сообщения об ошибках">⚠<b class="stc" id="bgCnt" style="display:none"></b></button><div class="tdr" id="tdr"><button class="ibtn" id="lockBtn" style="display:none" title="Вход для редакторов" aria-label="Вход для редакторов">✎</button><button class="ibtn shb" id="shBtn" title="Поделиться, QR-код, установить на экран" aria-label="Поделиться и установить"><svg class="shico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4.5 21 11l-7 6.5v-3.8c-5 0-8.3 1.5-11 5.3.9-5.4 3.9-10.4 11-11.3z"/></svg><span>Поделиться</span></button><button class="ibtn" id="inBtn" type="button" title="Установить на телефон как приложение" aria-label="Установить на телефон"><svg class="inico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6.5" y="2.5" width="11" height="19" rx="2.6"/><path d="M12 8v6m-2.6-2.4L12 14.2l2.6-2.6M10.6 18.5h2.8"/></svg></button><button class="ibtn" id="fsBtn" type="button" style="display:none" title="Во весь экран" aria-label="Во весь экран"><svg class="fsico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button><button class="ibtn" id="themeBtn" hidden aria-hidden="true" tabindex="-1" style="display:none"></button></div><button class="ibtn gear" id="gearBtn" type="button" aria-expanded="false" aria-controls="tdr" title="Настройки" aria-label="Настройки"><span class="gi">⚙️</span></button></div>
 </div></header>
 
 <section class="hero" id="top">
@@ -1439,7 +1439,7 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
 .shd .gi2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:2px 0 12px}
 .shd .gi2>div{text-align:center;padding:12px 6px 10px;border-radius:14px;border:1px solid var(--line);font-size:12.5px;line-height:1.3;color:var(--dim)}
 .shd .gi2>div b{display:block;font-size:13.5px;color:var(--text);margin-top:8px}
-.shd .gi2>div.ok{border-color:#22c55e;background:rgba(34,197,94,.1)}.shd .gi2>div.no{border-color:#ef4444;background:rgba(239,68,68,.08)}
+.shd .gi2>div.ok{border-color:#22c55e;background:rgba(34,197,94,.1)}.shd .gi2>div.no{border-color:var(--line)}
 .shd .ic{position:relative;width:64px;height:64px;margin:0 auto}
 .shd .ic img{width:64px;height:64px;display:block;object-fit:cover;background:#fff}
 .shd .ic.rd img{border-radius:50%}.shd .ic.sq img{border-radius:14px}
@@ -1451,24 +1451,26 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
 @media(min-width:700px){.shbar{left:auto;width:380px}}
 @media (prefers-reduced-motion: reduce){.shm,.shp,.shbar{transition:none}}
 </style>
-<div class="shm" id="shM" role="dialog" aria-modal="true" aria-label="СПЕКТР в телефоне"><div class="shp">
-  <h3>📲 СПЕКТР в телефоне <button class="ibtn sm" id="shX" aria-label="Закрыть">✕</button></h3>
+<div class="shm" id="shM" role="dialog" aria-modal="true" aria-label="Поделиться СПЕКТРом"><div class="shp">
+  <h3>Поделиться <button class="ibtn sm" id="shX" aria-label="Закрыть">✕</button></h3>
   <p>Наведи камеру телефона на код - откроется СПЕКТР. Оттуда можно перейти в любой кружок.</p>
   <img class="shq" src="qr-spektr.png" alt="QR-код ссылки на СПЕКТР" width="260" height="260">
   <div class="shu" id="shU">centrspektr.github.io</div>
-  <div class="shg"><button class="ibtn pri" id="shShare">📤 Поделиться</button><button class="ibtn" id="shCopy">📋 Скопировать</button>
-    <a class="ibtn w" href="qr-spektr.png" download="SPEKTR-QR.png">⬇ Скачать QR-код для печати</a></div>
-  <div class="shi" id="shI"></div>
-  <details class="shd" id="shD"><summary><span>❓</span>Как установить правильно</summary><div class="gb">
-    <div class="gi2"><div class="ok"><div class="ic rd"><img src="icon-192.png" alt=""></div><b>✅ Так нужно</b>круглый значок, приложение без строки браузера</div><div class="no"><div class="ic sq"><img src="icon-192.png" alt=""><i>Я</i></div><b>❌ Так не надо</b>квадрат с буквой Я - это ярлык браузера</div></div>
-    <ol><li>Откройте портал в <b>Chrome</b>.</li><li>Нажмите ⚙️ → 📲 → <b>"Установить"</b> (или ⋮ → "Установить приложение").</li><li>Старый значок с буквой Я удалите.</li></ol>
-    <p class="fin">Не выбирайте "Добавить ярлык" - получится квадрат с Я и строкой браузера.</p></div></details>
+  <div class="shg"><button class="ibtn pri" id="shShare">📤 Поделиться</button><button class="ibtn" id="shCopy">📋 Скопировать</button></div>
+</div></div>
+<div class="shm" id="inM" role="dialog" aria-modal="true" aria-label="Установить СПЕКТР на телефон"><div class="shp">
+  <h3>📲 Установить <button class="ibtn sm" id="inX" aria-label="Закрыть">✕</button></h3>
+  <div class="shi" id="shI" style="margin-top:6px"></div>
+  <details class="shd" id="shD"><summary><span>❓</span>Как установить лучше всего</summary><div class="gb">
+    <div class="gi2"><div class="ok"><div class="ic rd"><img src="icon-192.png" alt=""></div><b>✅ Приложение</b>круглый значок, открывается без строки браузера</div><div class="no"><div class="ic sq"><img src="icon-192.png" alt=""><i>Я</i></div><b>Ярлык браузера</b>квадрат с пометкой, строка браузера остаётся</div></div>
+    <ol><li>Откройте портал в <b>Chrome</b>.</li><li>Нажмите ⚙️ → <b>📲</b> → <b>"Установить"</b> (или ⋮ → "Установить приложение").</li><li>Если раньше добавляли ярлык через Яндекс, его можно удалить.</li></ol>
+    <p class="fin">Оба способа работают, но круглый значок и открытие без строки браузера даёт именно установка из Chrome.</p></div></details>
 </div></div>
 <div class="shbar" id="shBar" role="dialog" aria-label="Установить СПЕКТР"><img src="icon-192.png" alt=""><div><b>СПЕКТР на экран телефона</b>Открывается одним касанием, как приложение</div><button class="ibtn pri sm" id="shBarGo">Установить</button><button class="ibtn sm" id="shBarX" aria-label="Не сейчас">✕</button></div>
 <script>
 (function(){
   var URL0='https://centrspektr.github.io/', $=function(i){return document.getElementById(i)};
-  var M=$('shM'), dp=null, st={get:function(k){try{return localStorage.getItem(k)}catch(e){return null}},set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+  var M=$('shM'), IM=$('inM'), dp=null, st={get:function(k){try{return localStorage.getItem(k)}catch(e){return null}},set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
   var ua=navigator.userAgent, IOS=/iPhone|iPad|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1), MOB=/Android|iPhone|iPad|iPod/i.test(ua)||IOS;
   var APP=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
   if('serviceWorker' in navigator) addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){})});
@@ -1478,7 +1480,7 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
   var AND=/Android/i.test(ua);
   var INAPP=/; wv\)|VKAndroidApp|VKClient|vkontakte|Telegram|Instagram|FBAN|FBAV|OdnoklassnikiApp|OKApp|ru\.oneme|OneMe|MAXApp|\bMAX\//i.test(ua)||(IOS&&!/Safari\//.test(ua)&&!/CriOS|FxiOS|YaBrowser|EdgiOS/.test(ua));
   var BR=/YaBrowser|YaApp/.test(ua)?'ya':/SamsungBrowser/.test(ua)?'samsung':/Firefox|FxiOS/.test(ua)?'ff':/OPR\/|Opera/.test(ua)?'opera':/EdgA|EdgiOS/.test(ua)?'edge':/MiuiBrowser|HuaweiBrowser|HeyTapBrowser/.test(ua)?'other':'chrome';
-  function intent(pkg){return 'intent://centrspektr.github.io/?share#Intent;scheme=https;package='+pkg+';S.browser_fallback_url='+encodeURIComponent(URL0+'?share')+';end'}
+  function intent(pkg){return 'intent://centrspektr.github.io/?install#Intent;scheme=https;package='+pkg+';S.browser_fallback_url='+encodeURIComponent(URL0+'?install')+';end'}
   var HEAD='<div class="shih"><img src="icon-192.png" alt=""><b>',D='<span style="font-size:14px;color:var(--dim)">',WARN='<p style="margin:8px 0 0;font-size:13.5px">Важно: выбирайте именно <strong>«Установить»</strong>, а не «Создать ярлык» - тогда СПЕКТР откроется как приложение, без строки браузера.</p>';
   function steps(){
     if(INAPP&&AND)return HEAD+'Сначала откройте в браузере</b></div>'+D+'Вы смотрите портал внутри мессенджера (ВК, MAX, Telegram) - отсюда установить нельзя.</span><div class="shg" style="margin-top:10px"><a class="ibtn pri" style="font-size:14px" href="'+intent('com.android.chrome')+'">В Chrome</a><a class="ibtn" style="font-size:14px" href="'+intent('com.yandex.browser')+'">В Яндексе</a></div><ol><li>Или нажмите ⋮ вверху справа и выберите «Открыть в браузере», либо скопируйте ссылку кнопкой «📋 Скопировать» выше и вставьте в браузер</li><li>В браузере снова нажмите ⚙️ → 📲 - появится кнопка «Установить»</li></ol>';
@@ -1486,19 +1488,20 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
     if(IOS)return HEAD+'Добавить на экран iPhone</b></div><ol><li>Нажмите «Поделиться» (квадрат со стрелкой)'+(/CriOS|YaBrowser|EdgiOS|FxiOS/.test(ua)?' в адресной строке или в меню':' внизу (или в меню ⋯)')+'</li><li>Выберите «На экран "Домой"»</li><li>Нажмите «Добавить»</li></ol>';
     if(BR==='samsung')return HEAD+'Установить на экран</b></div><ol><li>Нажмите ≡ внизу справа</li><li>Выберите «Добавить страницу на» → «Главный экран»</li></ol>'+D+'Или нажмите значок установки в адресной строке, если он есть.</span>';
     if(BR==='ff')return HEAD+'Установить на экран</b></div><ol><li>Нажмите ⋮ в меню браузера</li><li>Выберите «Установить» (или «Добавить на домашний экран»)</li></ol>';
-    if(BR==='ya'&&AND)return HEAD+'Лучше установить из Chrome</b></div>'+D+'Из Яндекс Браузера получится только ярлык с буквой Я и строкой браузера. Подробнее - в подсказке ниже.</span><div class="shg" style="margin-top:10px"><a class="ibtn pri w" style="font-size:14px" href="'+intent('com.android.chrome')+'">Открыть в Chrome</a></div>';
-    if(BR==='ya')return HEAD+'Установить на экран</b></div><ol><li>Нажмите ⋮ (меню) в Яндекс Браузере</li><li>Выберите "Установить приложение"</li></ol>'+D+'Лучше всего устанавливать из Chrome: тогда значок без буквы Я.</span>';
+    if(BR==='ya'&&AND)return HEAD+'Как лучше установить</b></div>'+D+'В Яндекс Браузере портал тоже можно добавить на экран, но значок будет с пометкой браузера, а внизу останется его строка. Если хочется настоящее приложение, удобнее установить из Chrome.</span><div class="shg" style="margin-top:10px"><a class="ibtn pri w" style="font-size:14px" href="'+intent('com.android.chrome')+'">Открыть в Chrome</a></div><ol><li>Или нажмите ⋮ в Яндексе и выберите "Установить приложение"</li></ol>';
+    if(BR==='ya')return HEAD+'Установить на экран</b></div><ol><li>Нажмите ⋮ (меню) в Яндекс Браузере</li><li>Выберите "Установить приложение"</li></ol>'+D+'Круглый значок без пометки браузера лучше получается при установке из Chrome.</span>';
     if(BR==='chrome'||BR==='edge')return HEAD+'Установить на экран</b></div><ol><li>Нажмите ⋮ вверху справа</li><li>Выберите «Добавить на гл. экран» (или «Установить приложение»)</li><li>В окошке нажмите «Установить»</li></ol>'+WARN+'<p style="margin:6px 0 0;font-size:13.5px;color:var(--dim)">Кнопка «Установить» может появиться здесь сама через полминуты - Chrome предлагает её, когда страницу немного полистали.</p>';
     return HEAD+'Установить на экран</b></div><ol><li>Откройте меню браузера (⋮ или ≡)</li><li>Выберите «Установить приложение» или «Добавить на главный экран»</li></ol>'+D+'Лучше всего устанавливается из Chrome или Яндекс Браузера.</span>'}
   function inst(){var el=$('shI');if(!el)return;
     var gd=$('shD');if(gd)gd.style.display=APP?'none':'';
     if(APP){el.innerHTML='<b>✅ СПЕКТР уже на экране</b><span style="font-size:14px;color:var(--dim)">Ты открыл его как приложение.</span>';return}
-    if(dp){el.innerHTML=HEAD+'Установить на экран</b></div>'+D+'Значок СПЕКТР появится рядом с другими приложениями.</span><button class="ibtn pri" id="shGo" style="width:100%;margin-top:10px">📲 Установить приложение</button>'+(BR==='ya'&&AND?D.replace('">',';margin-top:10px;display:block">')+'В Яндекс Браузере значок будет с буквой Я. Без неё - <a href="'+intent('com.android.chrome')+'">установить из Chrome</a>.</span>':'');$('shGo').onclick=go;return}
+    if(dp){el.innerHTML=HEAD+'Установить на экран</b></div>'+D+'Значок СПЕКТР появится рядом с другими приложениями.</span><button class="ibtn pri" id="shGo" style="width:100%;margin-top:10px">📲 Установить приложение</button>'+(BR==='ya'&&AND?D.replace('">',';margin-top:10px;display:block">')+'В Яндексе значок будет с пометкой браузера. Если хочется круглый - можно <a href="'+intent('com.android.chrome')+'">установить из Chrome</a>.</span>':'');$('shGo').onclick=go;return}
     el.innerHTML=steps();el.querySelectorAll('.shg').forEach(function(g){g.style.marginTop='10px'})}
   function go(){if(!dp)return;dp.prompt();dp.userChoice.then(function(r){if(r&&r.outcome==='accepted'){hideBar()}dp=null;inst()}).catch(function(){})}
-  function open(){inst();M.classList.add('on');$('shX').focus()}
-  function close(){M.classList.remove('on')}
-  $('shBtn').onclick=open; $('shX').onclick=close; M.onclick=function(e){if(e.target===M)close()};
+  function open(){M.classList.add('on');$('shX').focus()}
+  function openI(){inst();IM.classList.add('on');$('inX').focus()}
+  function close(){M.classList.remove('on');IM.classList.remove('on')}
+  $('shBtn').onclick=open; $('inBtn').onclick=openI; $('shX').onclick=close; $('inX').onclick=close; M.onclick=function(e){if(e.target===M)close()}; IM.onclick=function(e){if(e.target===IM)close()};
   addEventListener('keydown',function(e){if(e.key==='Escape')close()});
   $('shShare').onclick=function(){if(navigator.share){navigator.share({title:'СПЕКТР',text:'Кружки, расписание и дашборды СПЕКТРа',url:URL0}).catch(function(){})}else copy()};
   $('shCopy').onclick=copy;
@@ -1509,10 +1512,11 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
   function bar(){if(APP||!MOB)return;var x=+st.get('spk_inst_x')||0;if(Date.now()-x<14*864e5)return;if(!dp&&!IOS&&!(INAPP&&AND))return;
     clearTimeout(bar._t);bar._t=setTimeout(function(){$('shBar').classList.add('on')},15000)}
   function hideBar(){$('shBar').classList.remove('on')}
-  $('shBarGo').onclick=function(){hideBar();if(dp)go();else open()};
+  $('shBarGo').onclick=function(){hideBar();if(dp)go();else openI()};
   $('shBarX').onclick=function(){hideBar();st.set('spk_inst_x',String(Date.now()))};
   if(IOS||(INAPP&&AND))bar();
   if(/[?&]share\b/.test(location.search))setTimeout(open,600);
+  if(/[?&]install\b/.test(location.search))setTimeout(openI,600);
 })();
 </script>
 <!-- поддержать проект: QR-код для перевода (тот же, что на centrspektr.fun) -->
