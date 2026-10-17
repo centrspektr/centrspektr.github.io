@@ -25,9 +25,9 @@
     return [t, h ? '#' + h : ''].filter(Boolean).join(' ') || 'главная';
   }
 
-  var css = '.spkbug{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:9000;display:flex;align-items:center;gap:7px;height:42px;padding:0 13px 0 11px;border-radius:999px;border:1px solid rgba(255,200,80,.55);background:rgba(20,14,36,.82);color:#ffe9b0;font:800 13px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;cursor:pointer;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 8px 24px -8px rgba(0,0,0,.6),0 0 0 0 rgba(255,190,60,.5);transition:transform .25s,box-shadow .25s;-webkit-tap-highlight-color:transparent;animation:spkbugIn .6s .8s cubic-bezier(.2,1.4,.4,1) both}'
+  var css = '.spkbug{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:9000;display:flex;align-items:center;gap:8px;padding:5px 5px 5px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(20,14,36,.8);color:#e9e4ff;font:700 12px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;cursor:pointer;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 8px 22px -8px rgba(0,0,0,.6);transition:transform .25s,box-shadow .25s;-webkit-tap-highlight-color:transparent;animation:spkbugIn .6s .8s cubic-bezier(.2,1.4,.4,1) both}'
+    + '.spkbug b{padding:5px 11px;border-radius:999px;background:linear-gradient(110deg,#f59e0b,#ec4899);color:#fff;font-weight:800;font-size:12px;letter-spacing:.2px}'
     + '.spkbug:hover{transform:translateY(-2px);box-shadow:0 10px 26px -8px rgba(0,0,0,.6),0 0 0 4px rgba(255,190,60,.18)}'
-    + '.spkbug i{font-style:normal;font-size:17px;line-height:1}.spkbug.sm span{display:none}.spkbug.sm{padding:0;width:42px;justify-content:center}'
     + '@keyframes spkbugIn{from{opacity:0;transform:translateY(20px) scale(.7)}}'
     + '.spkbm{position:fixed;inset:0;z-index:9001;display:flex;align-items:flex-end;justify-content:center;padding:12px;background:rgba(6,3,16,.6);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;transition:opacity .25s}.spkbm.on{opacity:1}'
     + '@media(min-width:600px){.spkbm{align-items:center}}'
@@ -85,11 +85,9 @@
 
   function mount() {
     var st = el('style'); st.textContent = css; document.head.appendChild(st);
-    var b = el('button', 'spkbug', '<i>⚠</i><span>Ошибка?</span>');
+    var b = el('button', 'spkbug', '<span>Нашёл ошибку?</span><b>Жми</b>');
     b.type = 'button'; b.title = 'Сообщить об ошибке'; b.setAttribute('aria-label', 'Сообщить об ошибке');
     b.onclick = open; document.body.appendChild(b);
-    // на телефоне при прокрутке вниз сворачиваем до значка, чтобы не мешала
-    var ly = scrollY; addEventListener('scroll', function () { var y = scrollY; if (Math.abs(y - ly) > 30) { b.classList.toggle('sm', y > ly && y > 200); ly = y; } }, { passive: true });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount); else mount();
 })();
