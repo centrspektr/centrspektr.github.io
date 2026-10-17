@@ -67,6 +67,15 @@ header.solid{backdrop-filter:blur(18px);background:color-mix(in srgb,var(--bg) 7
 .top{display:flex;align-items:center;gap:14px;height:66px}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .brand img{height:34px;width:auto}
+.brand .bt{display:flex;flex-direction:column;gap:4px;line-height:1}
+.vis{display:flex;align-items:center;gap:4px;font:700 10px var(--fb);letter-spacing:.4px;color:var(--dim);white-space:nowrap;opacity:0;transform:translateY(-4px);transition:opacity .6s,transform .6s}
+.vis.on{opacity:1;transform:none}
+.vis svg{width:12px;height:12px;fill:none;stroke:var(--c1);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.vis i{font-style:normal;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums}
+header:not(.solid) .vis{color:rgba(255,255,255,.7)}header:not(.solid) .vis i{color:#fff}
+html[data-skin="aqua"][data-theme="light"] header:not(.solid) .vis{color:#7a6f80}html[data-skin="aqua"][data-theme="light"] header:not(.solid) .vis i{color:#2c2535}
+html[data-skin="pixel"] .vis{font:400 7px 'Press Start 2P',monospace}
+@media (max-width:420px){.vis .vl{display:none}}
 .brand b{font:900 18px var(--fh);letter-spacing:1px;background:var(--rain);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sh 9s linear infinite}
 header:not(.solid) .brand b{filter:brightness(1.25)}
 @keyframes sh{to{background-position:-300% 0}}
@@ -556,7 +565,7 @@ html[data-skin="pixel"] .clk.sh-round{border-radius:50%!important}
 html[data-skin="pixel"] .clk.sh-square{border-radius:5px!important}
 @media (max-width:520px){.top{gap:8px}.clk{padding:5px 8px;gap:6px}.clk .ct{font-size:14px}.clk .cd{font-size:8.5px}.clk.sh-line{padding:7px 10px}.clk.sh-line .cbox{gap:6px}.clk.sh-line .ct{font-size:13px}.clk.sh-line .cd{font-size:8.5px}.clk.sh-round{padding:0}.clk.sh-square .ct{font-size:15px}.clk.sh-pixel .ct{font-size:9px}.clk.sh-pixel .cd{font-size:6px}.clk .cdial{width:52px;height:52px}}
 @media (max-width:400px){.clk.sh-line .cd{display:none}}
-@media (max-width:340px){.brand b{display:none}}
+@media (max-width:340px){.brand b{display:none}.brand .bt{justify-content:center}}
 @media (prefers-reduced-motion: reduce){.clk,.clk *,.clk::before,.clk::after,.tdr>*{animation:none!important;transition:none!important}}
 </style>
 <script>window.SKIN_KEY='spectr_skin';try{document.documentElement.dataset.theme=localStorage.getItem('spectr_theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}
@@ -645,7 +654,7 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
 <div class="cur"></div><div class="cur2"></div>
 
 <header id="hdr"><div class="wrap top">
-  <a class="brand" id="brand" href="#top" aria-label="СПЕКТР - в начало"><img src="mark.webp" alt="СПЕКТР"><b>ПОРТАЛ</b></a>
+  <a class="brand" id="brand" href="#top" aria-label="СПЕКТР - в начало"><img src="mark.webp" alt="СПЕКТР"><span class="bt"><b>ПОРТАЛ</b><small class="vis" id="visC" hidden title="Посещения сайтов СПЕКТР"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><i>0</i><span class="vl">посещений</span></small></span></a>
   <div class="clk" id="clk" role="button" tabindex="0" title="Нажмите, чтобы сменить вид часов" aria-label="Часы и дата"></div>
   <nav class="mn"><a href="#groupsT">Кружки</a><a href="#dashT">Дашборды</a><a href="#joinT">Подключиться</a><a href="#todayT" id="navToday">Сегодня</a><a href="#weekT">Расписание</a></nav>
   <div class="tr" id="tr"><button class="ibtn" id="stBtn" style="display:none" title="Ученики и заявки" aria-label="Ученики и заявки">👥<b class="stc" id="stCnt" style="display:none"></b></button><div class="tdr" id="tdr"><button class="ibtn" id="lockBtn" style="display:none" title="Вход для редакторов" aria-label="Вход для редакторов">✎</button><button class="ibtn shb" id="shBtn" title="Поделиться, QR-код, установить на экран" aria-label="Поделиться и установить">📲<span>В телефон</span></button><button class="ibtn" id="themeBtn" title="Светлая или тёмная тема" aria-label="Светлая или тёмная тема" data-l="Светлая / тёмная">🌓</button></div><button class="ibtn gear" id="gearBtn" type="button" aria-expanded="false" aria-controls="tdr" title="Настройки" aria-label="Настройки"><span class="gi">⚙️</span></button></div>
@@ -1238,8 +1247,10 @@ setTimeout(applySpd,300);
 renderDash(); render(); applyUser(); intro(); load(); loadVz();
 setInterval(()=>{if(!document.hidden)load()},5*60e3); setInterval(()=>{if(!$('.modal.on')&&!editingFocus())render()},60e3);
 function editingFocus(){return document.activeElement&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)}
-(function hit(page){try{const k='irtysh_hit_'+page;if(ss.get(k)!==null)return;const d=new Date().toDateString(),fresh=!ls.get('irtysh_new_'+page),today=ls.get('irtysh_day_'+page)!==d;
-  fetch(API,{method:'POST',body:JSON.stringify({op:'hit',page,fresh,today})}).then(r=>r.json()).then(j=>{if(!j.ok)return;ls.set('irtysh_new_'+page,'1');ls.set('irtysh_day_'+page,d);ss.set(k,String(j.total||''))}).catch(()=>{})}catch(e){}})(HUB);
+function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.querySelector('i'),f=v=>Math.round(v).toLocaleString('ru-RU');el.hidden=false;requestAnimationFrame(()=>el.classList.add('on'));
+  if(!anim||RED){i.textContent=f(n);return}const t0=performance.now(),from=Math.max(0,n-Math.min(n,60));(function st(t){const k=Math.min(1,(t-t0)/1400),e=1-Math.pow(1-k,3);i.textContent=f(from+(n-from)*e);if(k<1)requestAnimationFrame(st)})(t0)}
+(function hit(page){try{const k='irtysh_hit_'+page;if(ss.get(k)!==null){showVis(ss.get(k),false);return}const d=new Date().toDateString(),fresh=!ls.get('irtysh_new_'+page),today=ls.get('irtysh_day_'+page)!==d;
+  fetch(API,{method:'POST',body:JSON.stringify({op:'hit',page,fresh,today})}).then(r=>r.json()).then(j=>{if(!j.ok)return;ls.set('irtysh_new_'+page,'1');ls.set('irtysh_day_'+page,d);ss.set(k,String(j.total||''));showVis(j.total,true)}).catch(()=>{})}catch(e){}})(HUB);
 </script>
 <!-- поделиться / QR / установить на экран -->
 <style>
