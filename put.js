@@ -385,4 +385,34 @@
   var nav = document.querySelector('[data-t="put"]');
   if (nav) nav.addEventListener('click', function () { OPEN = null; render(); });
   render();
+
+  /* ---------- плашка "Бета-версия" ---------- */
+  (function () {
+    var at = document.getElementById('ahero') || document.querySelector('.hero');
+    if (!at || document.getElementById('pnBeta')) return;
+    var K = 'spk_beta_seen', seen = false;
+    try { seen = localStorage.getItem(K) === '1'; } catch (e) {}
+    var s = document.createElement('style');
+    s.textContent = '#pnBeta{max-width:1100px;margin:10px auto;padding:0 14px;font-family:inherit}' +
+      '#pnBeta .bt{width:100%;display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:14px;border:1px solid rgba(168,85,247,.38);background:rgba(12,13,30,.82);color:inherit;font:inherit;font-size:13.5px;cursor:pointer;text-align:left}' +
+      '#pnBeta .bt i{font-style:normal;font-weight:800;font-size:11px;letter-spacing:.06em;padding:3px 8px;border-radius:99px;background:linear-gradient(90deg,#a855f7,#22d3ee);color:#fff}' +
+      '#pnBeta .bt span{flex:1;opacity:.88} #pnBeta .bt u{text-decoration:none;opacity:.7;font-size:12.5px}' +
+      '#pnBeta .bx{display:none;margin-top:8px;padding:14px 16px;border-radius:16px;border:1px solid rgba(168,85,247,.3);background:rgba(12,13,30,.9);font-size:14px;line-height:1.55}' +
+      '#pnBeta.o .bx{display:block;animation:pnOpen .3s ease} #pnBeta .bx p{margin:0 0 8px} #pnBeta .bx ul{margin:0 0 10px;padding-left:18px} #pnBeta .bx li{margin:3px 0}' +
+      '#pnBeta .ok{min-height:40px;padding:8px 18px;border-radius:12px;border:0;background:linear-gradient(90deg,#a855f7,#22d3ee);color:#fff;font:inherit;font-weight:700;cursor:pointer}';
+    document.head.appendChild(s);
+    var d = document.createElement('div');
+    d.id = 'pnBeta';
+    if (!seen) d.className = 'o';
+    d.innerHTML = '<button class="bt" type="button"><i>БЕТА</i><span>Дашборд в бета-версии: тестируем вместе</span><u>Подробнее</u></button>' +
+      '<div class="bx"><p><b>Ребята, вы первые!</b> Дашборд ещё дорабатывается, и вы помогаете его тестировать.</p><ul>' +
+      '<li>Очки иногда могут обнуляться, а задания меняться.</li>' +
+      '<li>Заявки подтверждаем быстро.</li>' +
+      '<li>Вместе сделаем удобное место для зачётов, рейтинга, тестов, тренировок и шпаргалок.</li></ul>' +
+      '<p>Что-то не работает или есть идея? Жми "Нашёл ошибку?" внизу справа.</p>' +
+      '<button class="ok" type="button">Понятно</button></div>';
+    at.parentNode.insertBefore(d, at);
+    d.querySelector('.bt').onclick = function () { d.classList.toggle('o'); };
+    d.querySelector('.ok').onclick = function () { d.classList.remove('o'); try { localStorage.setItem(K, '1'); } catch (e) {} };
+  })();
 })();
