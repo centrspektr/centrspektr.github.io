@@ -1,4 +1,4 @@
-/* СПЕКТР - заявка в рейтинг кружка и общий рейтинг учеников.
+/* СПЕКТР - подключение к кружку (заявка) и общий рейтинг учеников.
    Подключение на сайте кружка:
      <div data-spk-club="vzlet"></div>
      <script src="/students.js" defer></script>
@@ -9,6 +9,8 @@
   'use strict';
   var API = 'https://script.google.com/macros/s/AKfycbwmh9Ksw7lm9pYZCy3ao-mvZ5ogKbFM7E66zJIAa5ZvorA6q7FLH8ZlFZvFK9RKHRM-/exec';
   var NAMES = { vzlet: 'клуба "Взлёт"', studio: 'ИИ-студии', agro: 'Агрокласса' };
+  var TO = { vzlet: 'клубу "Взлёт"', studio: 'ИИ-студии', agro: 'Агроклассу' };
+  var MAX = { vzlet: 'https://max.ru/join/v0ZfpDIihnow9hdwq3vpjm0KiPFW7A0WDfkNlIt9JVs', studio: 'https://max.ru/join/x7bqQ0ZGLEmvUJso1aof3ylEJv5K-1x_4cbCWCHaf0A' };
   var RED = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   var store = {
@@ -87,7 +89,10 @@
     document.addEventListener('visibilitychange', function () { if (!document.hidden) self.refresh(false); });
   }
 
-  Box.prototype.save = function () { store.set(this.key, this.S.status ? this.S : null); };
+  Box.prototype.save = function () {
+    store.set(this.key, this.S.status ? this.S : null);
+    try { document.dispatchEvent(new CustomEvent('spk-status', { detail: { club: this.club, status: this.S.status || '' } })); } catch (e) {}
+  };
 
   Box.prototype.progress = function () {
     try { var p = window.SPK_PROGRESS && window.SPK_PROGRESS(this.club); if (p) return p; } catch (e) {}
@@ -153,48 +158,52 @@
 
   Box.prototype.render = function () {
     var S = this.S, self = this, h = '';
-    var club = esc(NAMES[this.club] || '');
+    var club = esc(NAMES[this.club] || ''), to = esc(TO[this.club] || ''), max = MAX[this.club];
+    var hasPut = !!document.querySelector('[data-t="put"]');
     if (S.status === 'принят') {
       this.view = 'in';
       var me = this.me || {}, pts = me.pts != null ? me.pts : '...';
       h = '<div class="spk-me' + (S.fresh ? ' spk-pop' : '') + '"><div class="spk-ava">' + esc((S.first || '?').charAt(0)) + '</div><div>' +
-        '<h4>' + (S.fresh ? '🎉 Заявку одобрили! ' : '') + esc(S.first) + ', ' + esc(S.cls) + '</h4>' +
+        '<h4>' + (S.fresh ? '🎉 Добро пожаловать в группу! ' : '') + esc(S.first) + ', ' + esc(S.cls) + '</h4>' +
         '<div class="spk-stat"><span>⭐ ' + pts + ' ' + pl(+pts || 0, 'очко', 'очка', 'очков') + '</span>' +
         (me.rank ? '<span>🏆 место ' + me.rank + '</span>' : '') +
         (me.teacher ? '<span>📝 задания: ' + me.teacher + '</span>' : '') + '</div></div></div>' +
-        '<p style="margin-top:12px">Твои тесты и значки теперь сами попадают в рейтинг ' + club + '. Очки за выполненные задания тоже идут в рейтинг.</p>' +
+        '<p style="margin-top:12px">Ты в группе ' + club + '. Тесты, тренировки и значки теперь сами попадают в рейтинг, очки за задания педагога тоже.</p>' +
+        ((hasPut || max) ? '<div class="spk-row" style="margin-bottom:12px">' + (hasPut ? '<button class="spk-btn pri" data-a="put">🧭 Путь новичка</button>' : '') +
+          (max ? '<a class="spk-btn" href="' + max + '" target="_blank" rel="noopener">💬 Группа в MAX</a>' : '') + '</div>' : '') +
         '<p>Твой личный код - запиши его, чтобы войти с другого телефона:</p><div class="spk-code">' + esc(S.code) + '</div>' +
         '<div class="spk-row"><button class="spk-btn ghost" data-a="out">Выйти на этом устройстве</button></div>';
       if (S.fresh) { delete S.fresh; this.save(); }
     } else if (S.status === 'заявка') {
       this.view = 'wait';
-      h = '<h4><span class="spk-pulse"></span>Заявка отправлена</h4>' +
-        '<p>' + esc(S.first) + ', ' + esc(S.cls) + ' - заявка на проверке. Система зарегистрирует тебя после проверки. Как только это случится, здесь появится твой личный код.</p>' +
+      h = '<h4><span class="spk-pulse"></span>Почти готово!</h4>' +
+        '<p>' + esc(S.first) + ', ' + esc(S.cls) + ' - педагог скоро подтвердит, и ты в группе. Тогда здесь появится твой личный код' + (hasPut ? ', а путь новичка начнёт считать очки' : '') + '.</p>' +
+        (max ? '<p>А пока можно вступить в группу в MAX - там новости и расписание.</p><div class="spk-row" style="margin-bottom:8px"><a class="spk-btn" href="' + max + '" target="_blank" rel="noopener">💬 Группа в MAX</a></div>' : '') +
         '<div class="spk-row"><button class="spk-btn pri" data-a="check">↻ Проверить</button><button class="spk-btn ghost" data-a="code">У меня уже есть код</button><button class="spk-btn ghost" data-a="cancel">Отменить</button></div><div class="spk-msg"></div>';
     } else if (S.status === 'отклонён') {
       this.view = 'no';
-      h = '<h4>Заявку не одобрили</h4><p>Проверь, правильно ли указаны имя и класс, и отправь заявку заново. Если не получается - спроси на занятии.</p>' +
+      h = '<h4>Подключение не подтвердили</h4><p>Проверь, правильно ли указаны имя и класс, и отправь ещё раз. Если не получается - спроси на занятии.</p>' +
         '<div class="spk-row"><button class="spk-btn pri" data-a="form">Отправить заново</button><button class="spk-btn ghost" data-a="cancel">Закрыть</button></div>';
     } else if (this.view === 'form') {
-      h = '<h4>Заявка в рейтинг ' + club + '</h4>' +
+      h = '<h4>Подключение к ' + to + '</h4>' +
         '<p>Нужны только имя и класс - фамилию не пиши.</p>' +
         '<div class="spk-f"><label>Имя<input name="first" autocomplete="given-name" maxlength="30"></label>' +
         '<label>Класс<input name="cls" placeholder="например 7Б" maxlength="4" autocapitalize="characters"></label></div>' +
-        '<label class="spk-ok"><input type="checkbox" name="pd1"><span>Согласен(на) на обработку имени и класса для участия в рейтинге ' + club + '. Если мне меньше 14 лет, согласие дал мой родитель.</span></label>' +
+        '<label class="spk-ok"><input type="checkbox" name="pd1"><span>Согласен(на) на обработку имени и класса для занятий и рейтинга ' + club + '. Если мне меньше 14 лет, согласие дал мой родитель.</span></label>' +
         '<label class="spk-ok"><input type="checkbox" name="pd2"><span>Согласен(на), чтобы мои имя и класс были видны в рейтинге на сайте.</span></label>' +
         '<details class="spk-pd"><summary>Как используются данные</summary>' +
-        '<p>Данные получает ресурсный центр СПЕКТР, чтобы вести рейтинг кружка и выдать личный код. Публично видны только имя и класс. Данные не передаются другим людям и сайтам.</p>' +
+        '<p>Данные получает ресурсный центр СПЕКТР, чтобы записать тебя в группу, вести рейтинг кружка и выдать личный код. Публично видны только имя и класс. Данные не передаются другим людям и сайтам.</p>' +
         '<p>Хранятся, пока ты занимаешься в кружке. Чтобы удалить данные и отозвать согласие, скажи педагогу - запись удалят в течение 30 дней.</p></details>' +
-        '<div class="spk-row"><button class="spk-btn pri" data-a="send">Отправить заявку</button><button class="spk-btn ghost" data-a="back">Отмена</button></div><div class="spk-msg"></div>';
+        '<div class="spk-row"><button class="spk-btn pri" data-a="send">👋 Подключиться</button><button class="spk-btn ghost" data-a="back">Отмена</button></div><div class="spk-msg"></div>';
     } else if (this.view === 'code') {
-      h = '<h4>Вход по личному коду</h4><p>Код выдаётся после одобрения заявки. Он одинаковый на всех твоих устройствах.</p>' +
+      h = '<h4>Вход по личному коду</h4><p>Код выдаётся, когда педагог подтвердит подключение. Он одинаковый на всех твоих устройствах.</p>' +
         '<div class="spk-f"><label class="w">Код<input name="code" maxlength="8" autocapitalize="characters" autocomplete="off" style="letter-spacing:.15em;text-transform:uppercase"></label></div>' +
         '<div class="spk-row"><button class="spk-btn pri" data-a="join">Войти</button><button class="spk-btn ghost" data-a="back">Отмена</button></div><div class="spk-msg"></div>';
     } else {
       this.view = 'none';
-      h = '<h4>Попади в рейтинг ' + club + '</h4>' +
-        '<p>Сейчас твои тесты и значки видны только на этом устройстве. Оставь заявку - после проверки система зарегистрирует тебя, и твои очки будут попадать в общий рейтинг.</p>' +
-        '<div class="spk-row"><button class="spk-btn pri" data-a="form">✍ Оставить заявку</button><button class="spk-btn ghost" data-a="code">У меня уже есть код</button></div>';
+      h = '<h4>👋 Подключайся к ' + to + '</h4>' +
+        '<p>Впиши имя и класс - педагог подтвердит, и ты в группе.' + (hasPut ? ' Дальше тебя ждёт путь новичка: короткие модули, тренировки и тесты, а очки сами пойдут в твой счёт.' : ' После этого твои очки будут попадать в общий рейтинг.') + '</p>' +
+        '<div class="spk-row"><button class="spk-btn pri" data-a="form">👋 Подключиться</button><button class="spk-btn ghost" data-a="code">У меня уже есть код</button></div>';
     }
     this.mine.innerHTML = h;
     var inp = this.mine.querySelector('input'); if (inp && !this._nofocus && matchMedia('(hover:hover)').matches) inp.focus();
@@ -209,19 +218,20 @@
     var self = this, S = this.S;
     if (a === 'form' || a === 'code') { if (a === 'form' && S.status === 'отклонён') { this.S = {}; this.save(); } this.view = a; this.render(); return; }
     if (a === 'back') { this.view = ''; this.render(); return; }
-    if (a === 'cancel') { if (S.status === 'заявка' && !confirm('Отменить заявку на этом устройстве?')) return; this.S = {}; this.save(); this.view = ''; this.render(); return; }
+    if (a === 'put') { var t = document.querySelector('[data-t="put"]'); if (t) { t.click(); window.scrollTo({ top: 0, behavior: 'smooth' }); } return; }
+    if (a === 'cancel') { if (S.status === 'заявка' && !confirm('Отменить подключение на этом устройстве?')) return; this.S = {}; this.save(); this.view = ''; this.render(); return; }
     if (a === 'out') { if (!confirm('Выйти? Чтобы вернуться, понадобится твой код ' + S.code + '.')) return; this.S = {}; this.save(); this.me = null; this.view = ''; this.render(); this.renderTop(); return; }
-    if (a === 'check') { btn.disabled = true; this.check(); setTimeout(function () { btn.disabled = false; if (self.view === 'wait') self.msg('Пока ждём одобрения', true); }, 1500); return; }
+    if (a === 'check') { btn.disabled = true; this.check(); setTimeout(function () { btn.disabled = false; if (self.view === 'wait') self.msg('Пока ждём подтверждения педагога', true); }, 1500); return; }
     if (a === 'send') {
       var q = { op: 'sapply', club: this.club, first: this.val('first'), cls: this.val('cls') };
       if (q.first.length < 2) return this.msg('Напиши имя');
       if (!/^\d{1,2}\s*[а-яёa-z]?$/i.test(q.cls)) return this.msg('Класс - например 7Б');
       var c1 = this.mine.querySelector('input[name="pd1"]'), c2 = this.mine.querySelector('input[name="pd2"]');
-      if (!c1 || !c1.checked || !c2 || !c2.checked) return this.msg('Отметь обе галочки согласия - без них заявку принять нельзя');
+      if (!c1 || !c1.checked || !c2 || !c2.checked) return this.msg('Отметь обе галочки согласия - без них подключить нельзя');
       q.consent = 'pd1,pd2 ' + new Date().toISOString().slice(0, 10);
       btn.disabled = true; btn.textContent = 'Отправляю...';
       api(q).then(function (j) {
-        if (!j.ok) { btn.disabled = false; btn.textContent = 'Отправить заявку'; return self.msg(j.error || 'Ошибка'); }
+        if (!j.ok) { btn.disabled = false; btn.textContent = '👋 Подключиться'; return self.msg(j.error || 'Ошибка'); }
         self.S = { id: j.id, status: j.status, first: j.first, cls: j.cls }; self.save(); self.view = ''; self.render();
       });
       return;
