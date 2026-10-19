@@ -954,8 +954,8 @@ const VZ_SHEET='1GNVM7smAVzjOVK77FzJ_HfDQ9lI85DCSt0idMU8GJqk';let VZS=[];try{VZS
 const VZD={пн:'Пн',понедельник:'Пн',вт:'Вт',вторник:'Вт',ср:'Ср',среда:'Ср',чт:'Чт',четверг:'Чт',пт:'Пт',пятница:'Пт',сб:'Сб',суббота:'Сб',вс:'Вс',воскресенье:'Вс'};
 function vzCsv(t){const rows=[];let row=[],f='',q=false;for(let i=0;i<t.length;i++){const c=t[i];if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++}else q=false}else f+=c}else if(c==='"')q=true;else if(c===','){row.push(f);f=''}else if(c==='\n'){row.push(f);rows.push(row);row=[];f=''}else if(c!=='\r')f+=c}
   if(f!==''||row.length){row.push(f);rows.push(row)}if(!rows.length)return[];const h=rows[0].map(x=>x.trim());return rows.slice(1).filter(r=>r.some(x=>x.trim())).map(r=>Object.fromEntries(h.map((k,i)=>[k,(r[i]||'').trim()])))}
-async function loadVz(){try{const r=await fetch(`https://docs.google.com/spreadsheets/d/${VZ_SHEET}/gviz/tq?tqx=out:csv&headers=1&sheet=${encodeURIComponent('Расписание')}`,{cache:'no-store'});if(!r.ok)return;const t=await r.text();if(t.trim().startsWith('<'))return;
-  const L=[];vzCsv(t).forEach((x,i)=>{const d=VZD[String(x['День']||'').trim().toLowerCase().replace(/\.$/,'')];const m=String(x['Время']||'').match(/(\d{1,2})[:.](\d{2})(?:\s*[-–—]\s*(\d{1,2})[:.](\d{2}))?/);if(!d||!m)return;
+async function loadVz(){try{const r=await fetch('https://functions.yandexcloud.net/d4e4vhndceg7scc0mh3b?s=vzlet&op=data',{cache:'no-store'});if(!r.ok)return;const j=await r.json();if(!j.ok||!j.data)return;
+  const L=[];(j.data['Расписание']||[]).forEach((x,i)=>{const d=VZD[String(x['День']||'').trim().toLowerCase().replace(/\.$/,'')];const m=String(x['Время']||'').match(/(\d{1,2})[:.](\d{2})(?:\s*[-–—]\s*(\d{1,2})[:.](\d{2}))?/);if(!d||!m)return;
     const st=m[1].padStart(2,'0')+':'+m[2],e=m[3]?m[3].padStart(2,'0')+':'+m[4]:(()=>{const v=+m[1]*60+ +m[2]+60;return String(Math.floor(v/60)%24).padStart(2,'0')+':'+String(v%60).padStart(2,'0')})();
     L.push({id:'_vz'+i,day:d,start:st,end:e,place:'',tent:'',note:[x['Занятие'],x['Примечание']].filter(Boolean).join(' · '),_x:1})});
   VZS=L;ls.set('vz_sched',JSON.stringify(L));render()}catch(e){}}
