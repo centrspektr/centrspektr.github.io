@@ -265,7 +265,7 @@ footer .fsm{font-size:13px}
 html[data-skin="pixel"] footer .fdev{font-size:11px;line-height:1.8}
 footer .fl a{padding:8px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);text-decoration:none;font-weight:700;font-size:13.5px}
 footer .fl a:hover{border-color:var(--c1)}
-.join{display:grid;grid-template-columns:repeat(4,1fr);gap:14px} @media(max-width:980px){.join{grid-template-columns:1fr 1fr}} @media(max-width:560px){.join{grid-template-columns:1fr}}
+.join{display:grid;grid-template-columns:repeat(var(--jn,4),1fr);gap:14px} @media(max-width:980px){.join{grid-template-columns:1fr 1fr}} @media(max-width:560px){.join{grid-template-columns:1fr}}
 .join .stp{display:flex;gap:14px;align-items:flex-start;font-size:15px}
 .join .stp b{flex-shrink:0;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:#fff;font:800 17px var(--fh);background:linear-gradient(135deg,var(--c1),var(--c2))}
 .wkfold{display:flex;width:100%;justify-content:space-between;align-items:center;gap:12px;padding:18px 20px;border-radius:20px;border:1px dashed var(--line);background:var(--card);color:var(--dim);font:600 15px var(--fb);cursor:pointer} .wkfold b{color:var(--c1);white-space:nowrap} #wkBody{margin-top:12px}
@@ -1212,7 +1212,7 @@ const JN_TAG='шаги подключения', JN_DEF={p:'Ученик подк
   'Иди по пути новичка и курсу: короткие модули, тренировки и тесты. Очки сами идут в рейтинг.']};
 const jnItem=()=>D.news.find(x=>x.date===JN_TAG);
 function jnData(){const it=jnItem();if(it)try{const o=JSON.parse(it.text);if(o&&Array.isArray(o.s))return{p:String(o.p||''),s:o.s.map(String).filter(x=>x.trim())}}catch(e){}return JN_DEF}
-function renderJoin(){const d=jnData(),k=JSON.stringify(d);if(renderJoin._k===k)return;renderJoin._k=k;$('#joinP').textContent=d.p;$('#joinL').innerHTML=d.s.map((t,i)=>`<div class="card stp"><b>${i+1}</b><span>${esc(t)}</span></div>`).join('')}
+function renderJoin(){const d=jnData(),k=JSON.stringify(d);if(renderJoin._k===k)return;renderJoin._k=k;$('#joinP').textContent=d.p;$('#joinL').style.setProperty('--jn',d.s.length<=5?d.s.length:Math.ceil(d.s.length/2));$('#joinL').innerHTML=d.s.map((t,i)=>`<div class="card stp"><b>${i+1}</b><span>${esc(t)}</span></div>`).join('')}
 $('#joinEdit').onclick=()=>{if(!canEdit())return;const d=jnData();
   const row=(t,i)=>`<div class="jnr" style="display:flex;gap:8px;align-items:flex-start;margin:8px 0"><b style="min-width:20px;padding-top:10px">${i+1}</b><textarea rows="2" style="flex:1">${esc(t)}</textarea><button class="ibtn sm" data-jx title="Убрать шаг">✕</button></div>`;
   $('#mbody').innerHTML=`<h3>Как подключиться</h3><p style="color:var(--dim);font-size:14px">Подпись под заголовком и шаги. Шаг можно убрать крестиком или добавить новый.</p><label>Подпись<input id="jnP" value="${esc(d.p)}"></label><div id="jnS">${d.s.map(row).join('')}</div><button class="ibtn sm" id="jnAdd">+ Шаг</button><div class="mbar"><button class="ibtn" id="jnDef" title="Вернуть шаги по умолчанию">↺ Как было</button><button class="ibtn" onclick="closeM()">Отмена</button><button class="ibtn pri" id="jnSave">Сохранить</button></div>`;openM();
