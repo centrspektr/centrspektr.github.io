@@ -7,7 +7,7 @@
    Если педагог обнулил ученика, вызывается window.SPK_RESET(club): сайт стирает свой прогресс на этом устройстве. */
 (function () {
   'use strict';
-  var API = 'https://script.google.com/macros/s/AKfycbwmh9Ksw7lm9pYZCy3ao-mvZ5ogKbFM7E66zJIAa5ZvorA6q7FLH8ZlFZvFK9RKHRM-/exec';
+  var API = 'https://functions.yandexcloud.net/d4e4vhndceg7scc0mh3b';
   var NAMES = { vzlet: 'клуба "Взлёт"', studio: 'ИИ-студии', agro: 'Агрокласса' };
   var TO = { vzlet: 'клубу "Взлёт"', studio: 'ИИ-студии', agro: 'Агроклассу' };
   var MAX = { vzlet: 'https://max.ru/join/v0ZfpDIihnow9hdwq3vpjm0KiPFW7A0WDfkNlIt9JVs', studio: 'https://max.ru/join/x7bqQ0ZGLEmvUJso1aof3ylEJv5K-1x_4cbCWCHaf0A' };

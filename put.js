@@ -426,7 +426,7 @@
     var last = 0; try { last = +localStorage.getItem(TK + '_at') || 0; } catch (e) {}
     if (Date.now() - last > 3600000) try {
       try { localStorage.setItem(TK + '_at', String(Date.now())); } catch (e) {}
-      fetch('https://script.google.com/macros/s/AKfycbwmh9Ksw7lm9pYZCy3ao-mvZ5ogKbFM7E66zJIAa5ZvorA6q7FLH8ZlFZvFK9RKHRM-/exec?hub=spectr', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
+      fetch('https://functions.yandexcloud.net/d4e4vhndceg7scc0mh3b?hub=spectr', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
         var it = j && j.ok && j.data && (j.data.news || []).filter(function (x) { return x.date === 'бета-плашка'; })[0], o = it ? parse(it.text) : null, t = o ? JSON.stringify(o) : '';
         if (t === (cur ? JSON.stringify(cur) : '')) return;
         try { o ? localStorage.setItem(TK, t) : localStorage.removeItem(TK); } catch (e) {}

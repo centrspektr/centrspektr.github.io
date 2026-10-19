@@ -3,7 +3,7 @@
    Сообщение уходит в общий скрипт (лист "Ошибки"), список видно на портале по PIN (кнопка ⚠). */
 (function () {
   if (window.SPK_BUG) return; window.SPK_BUG = 1;
-  var API = 'https://script.google.com/macros/s/AKfycbwmh9Ksw7lm9pYZCy3ao-mvZ5ogKbFM7E66zJIAa5ZvorA6q7FLH8ZlFZvFK9RKHRM-/exec';
+  var API = 'https://functions.yandexcloud.net/d4e4vhndceg7scc0mh3b';
   var me = document.currentScript, SITE = (me && me.dataset.site) || '';
   if (!SITE) { var p = location.pathname; SITE = /vzlet/.test(p) ? 'vzlet' : /studio/.test(p) ? 'studio' : /agro/.test(p) ? 'agro' : 'portal'; }
   var NAMES = { portal: 'Портал', vzlet: 'Взлёт', studio: 'Гитара и ИИ-студия', agro: 'Агрокласс' };
