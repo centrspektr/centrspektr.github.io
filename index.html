@@ -771,17 +771,12 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
     <div class="groups" id="groups"></div>
   </section>
   <section class="blk" id="dashT">
-    <div class="sh2 rv"><span class="num">03</span><h2 class="sec">Обучающие <em>дашборды</em></h2><p>Интерактивные: тесты, тренажёры и рейтинг. Нажми на карточку - и окажешься внутри.</p><p class="beta"><i>тестовая версия</i>Дашборды работают в тестовом режиме: мы их проверяем и дорабатываем. Если что-то работает не так, сообщи нам: мы быстро поправим.</p></div>
+    <div class="sh2 rv"><span class="num">03</span><h2 class="sec">Обучающие <em>дашборды</em></h2><p>Интерактивные: тесты, тренажёры и рейтинг. Нажми на карточку - и окажешься внутри.</p><p class="beta"><i>тестовая версия</i>Дашборды работают в тестовом режиме: мы их проверяем и дорабатываем. Если что-то работает не так, сообщи нам: мы быстро поправим.</p><button class="ibtn sm ed" id="btEdit" style="margin-left:auto">✎ Плашка БЕТА</button></div>
     <div class="dash" id="dash"></div>
   </section>
   <section class="blk" id="joinT">
-    <div class="sh2 rv"><span class="num">04</span><h2 class="sec">Как <em>подключиться</em></h2><p>Ученик подключается сам, педагог подтверждает.</p></div>
-    <div class="join rv">
-      <div class="card stp"><b>1</b><span>Открой обучающий дашборд "Взлёт" или "Гитара и ИИ-студия" и нажми "👋 Подключиться".</span></div>
-      <div class="card stp"><b>2</b><span>Впиши имя и класс, отметь согласие.</span></div>
-      <div class="card stp"><b>3</b><span>Педагог подтвердит - и ты в группе: появится личный код и ссылка на группу в MAX.</span></div>
-      <div class="card stp"><b>4</b><span>Иди по пути новичка: короткие модули, тренировки и тесты. Очки сами идут в рейтинг.</span></div>
-    </div>
+    <div class="sh2 rv"><span class="num">04</span><h2 class="sec">Как <em>подключиться</em></h2><p id="joinP">Ученик подключается сам, педагог подтверждает.</p><button class="ibtn sm ed" id="joinEdit" style="margin-left:auto">✎ Шаги</button></div>
+    <div class="join rv" id="joinL"></div>
   </section>
   <section class="blk" id="todayT">
     <div class="sh2 rv"><span class="num">05</span><h2 class="sec">Сегодня <em>в Спектре</em></h2><p id="todayD"></p></div>
@@ -985,7 +980,7 @@ function render(){
     <span class="gmore">Нажми, чтобы раскрыть ›</span><div class="acts">${g.link?`<a class="ibtn sm pri" href="${esc(g.link)}" ${ext(g.link)?'target="_blank" rel="noopener"':''}>Открыть →</a>`:''}${JOIN(g)?`<a class="ibtn sm" href="${esc(JOIN(g))}" data-join="${esc(g.id)}">Записаться</a>`:''}${VKG(g)?`<a class="ibtn sm" href="${esc(VKG(g))}" target="_blank" rel="noopener">ВК ↗</a>`:''}${MAXG(g)?`<a class="ibtn sm" href="${esc(MAXG(g))}" target="_blank" rel="noopener">MAX ↗</a>`:''}${VIRT[g.id]?`<button class="ebtn ed" data-addv="${g.id}">+ добавить в таблицу</button>`:`<button class="ebtn ed" data-edit="groups" data-id="${esc(g.id)}">✎ изменить</button>`}</div></div></div>`}).join('')||'<div class="card"><p class="empty">Кружки скоро появятся.</p></div>';
   const ev=upcoming();
   $('#events').innerHTML=ev.length?ev.map(e=>{const d=pDate(e.date),days=d?Math.round((d-today0())/864e5):null;return `<div class="it"><div class="dd">${d?`<b>${d.getDate()}</b><small>${MON[d.getMonth()]}</small>`:'<b>!</b>'}</div><div class="tx"><b>${esc(e.title)}</b><br><small class="p">${esc(e.place||'')}${days!==null?(days===0?' · сегодня':days===1?' · завтра':` · через ${days} ${pl(days,'день','дня','дней')}`):''}</small></div><button class="ebtn ed" data-edit="events" data-id="${esc(e.id)}">✎</button></div>`}).join(''):'<p class="empty">Пока нет объявлений.</p>';
-  const NW=D.news.filter(x=>![TK_TAG,RW_TAG,FM_TAG,ST_TAG,DV_TAG].includes(x.date));$('#news').innerHTML=NW.length?NW.slice().reverse().map(x=>`<div class="it"><div class="tx"><small class="p">${esc(x.date)}</small><br>${esc(x.text)}</div><button class="ebtn ed" data-edit="news" data-id="${esc(x.id)}">✎</button></div>`).join(''):'<p class="empty">Новостей пока нет.</p>';
+  const NW=D.news.filter(x=>![TK_TAG,RW_TAG,FM_TAG,ST_TAG,DV_TAG,JN_TAG,BT_TAG].includes(x.date));$('#news').innerHTML=NW.length?NW.slice().reverse().map(x=>`<div class="it"><div class="tx"><small class="p">${esc(x.date)}</small><br>${esc(x.text)}</div><button class="ebtn ed" data-edit="news" data-id="${esc(x.id)}">✎</button></div>`).join(''):'<p class="empty">Новостей пока нет.</p>';
   const nu=u=>String(u||'').trim().toLowerCase().replace(/^https?:\/\//,'').replace(/^[a-z0-9.-]+\.github\.io\/?/,'').replace(/[#?].*$/,'').replace(/\/+$/,'');
   const fixU=new Set(FIXL.map(l=>nu(l.url))), bad=l=>(l.url&&!nu(l.url))||/школ/i.test(l.name||'')||(l.url&&fixU.has(nu(l.url)));
   const lnk=(l,i,h)=>`<a class="lnk ${h?'hid':''} ${l.url?'':'nolink'}" ${l.url?`href="${esc(l.url)}" ${ext(l.url)?'target="_blank" rel="noopener"':''}`:''}><span class="ic">${!l.url?'⏳':ext(l.url)?'↗':'→'}</span><span style="flex:1"><b>${esc(l.name)}</b><small>${h?'не показывается посетителям (дубль или ведёт на этот же сайт) - лучше удалить':esc(l.note||'')}</small></span>${stKey(l)?`<button class="ebtn ed" data-st="${esc(stKey(l))}" data-n="${esc(l.name)}" title="Открыть или закрыть">⏱</button>`:''}${l.id?`<button class="ebtn ed" data-edit="links" data-id="${esc(l.id)}">✎</button>`:''}</a>`;
@@ -997,7 +992,7 @@ function render(){
   off('#evCard',!ev.length); off('#newsCard',!NW.length); 
   off('#groupsT',!GL().length); renderWeekAll(); $$('[data-addv]').forEach(b=>b.onclick=()=>addVirt(b)); covObs();
   { const none=!D.schedule.some(live), f=$('#wkFold'); f.hidden=!none; if(!none)WKOPEN=0; $('#wkBody').hidden=none&&!WKOPEN&&!canEdit(); f.querySelector('b').textContent=WKOPEN?'Скрыть ▴':'Показать ▾'; }
-  renderTicker(); wire(); applyUser();
+  renderTicker(); renderJoin(); wire(); applyUser();
   // высота страницы поменялась - пересчитать точки появления блоков, иначе нижние разделы остаются невидимыми
   if(HAS_GSAP&&window.ScrollTrigger){clearTimeout(render._r);render._r=setTimeout(()=>ScrollTrigger.refresh(),150)}
 }
@@ -1208,6 +1203,40 @@ function renderTicker(){const t=(tkItem()?tkItem().text:TK_DEF),w=t.split(/[,\n]
 $('#tkEdit').onclick=()=>{if(!canEdit())return;const it=tkItem();$('#mbody').innerHTML=`<h3>Бегущая строка</h3><p style="color:var(--dim);font-size:14px">Слова через запятую.</p><label>Слова<textarea id="tkTxt">${esc(it?it.text:TK_DEF)}</textarea></label><div class="mbar"><button class="ibtn" onclick="closeM()">Отмена</button><button class="ibtn pri" id="tkSave">Сохранить</button></div>`;openM();
   $('#tkSave').onclick=async()=>{const b=$('#tkSave');b.disabled=true;b.textContent='Сохраняю…';try{const j=await api({op:'hput',hub:HUB,key:'news',item:{id:it?it.id:'',text:$('#tkTxt').value.trim()||TK_DEF,date:TK_TAG}});D=j.data;ls.set('hub_'+HUB,JSON.stringify(D));closeM();render();toast('Сохранено')}catch(e){toast(e.message);b.disabled=false;b.textContent='Сохранить'}}};
 renderTicker();
+/* блок 04 "Как подключиться": подпись и шаги хранятся на сервере (запись с датой "шаги подключения"), правит администратор */
+const JN_TAG='шаги подключения', JN_DEF={p:'Ученик подключается сам, педагог подтверждает.',s:[
+  'Открой обучающий дашборд "Взлёт" или "Гитара и ИИ-студия" и нажми "👋 Подключиться".',
+  'Впиши имя и класс, отметь согласие.',
+  'Педагог подтвердит заявку - и на твоём телефоне сам появится личный код, вводить ничего не надо. Там же ссылка на группу в MAX.',
+  'Запиши код: он нужен, только чтобы войти с другого телефона (кнопка "У меня уже есть код").',
+  'Иди по пути новичка и курсу: короткие модули, тренировки и тесты. Очки сами идут в рейтинг.']};
+const jnItem=()=>D.news.find(x=>x.date===JN_TAG);
+function jnData(){const it=jnItem();if(it)try{const o=JSON.parse(it.text);if(o&&Array.isArray(o.s))return{p:String(o.p||''),s:o.s.map(String).filter(x=>x.trim())}}catch(e){}return JN_DEF}
+function renderJoin(){const d=jnData(),k=JSON.stringify(d);if(renderJoin._k===k)return;renderJoin._k=k;$('#joinP').textContent=d.p;$('#joinL').innerHTML=d.s.map((t,i)=>`<div class="card stp"><b>${i+1}</b><span>${esc(t)}</span></div>`).join('')}
+$('#joinEdit').onclick=()=>{if(!canEdit())return;const d=jnData();
+  const row=(t,i)=>`<div class="jnr" style="display:flex;gap:8px;align-items:flex-start;margin:8px 0"><b style="min-width:20px;padding-top:10px">${i+1}</b><textarea rows="2" style="flex:1">${esc(t)}</textarea><button class="ibtn sm" data-jx title="Убрать шаг">✕</button></div>`;
+  $('#mbody').innerHTML=`<h3>Как подключиться</h3><p style="color:var(--dim);font-size:14px">Подпись под заголовком и шаги. Шаг можно убрать крестиком или добавить новый.</p><label>Подпись<input id="jnP" value="${esc(d.p)}"></label><div id="jnS">${d.s.map(row).join('')}</div><button class="ibtn sm" id="jnAdd">+ Шаг</button><div class="mbar"><button class="ibtn" id="jnDef" title="Вернуть шаги по умолчанию">↺ Как было</button><button class="ibtn" onclick="closeM()">Отмена</button><button class="ibtn pri" id="jnSave">Сохранить</button></div>`;openM();
+  const num=()=>$$('#jnS .jnr b').forEach((b,i)=>b.textContent=i+1);
+  $('#jnS').onclick=e=>{const x=e.target.closest('[data-jx]');if(x){x.parentNode.remove();num()}};
+  $('#jnAdd').onclick=()=>{$('#jnS').insertAdjacentHTML('beforeend',row('',$$('#jnS .jnr').length));const t=$$('#jnS textarea');t[t.length-1].focus()};
+  $('#jnDef').onclick=()=>{$('#jnP').value=JN_DEF.p;$('#jnS').innerHTML=JN_DEF.s.map(row).join('')};
+  $('#jnSave').onclick=async()=>{const b=$('#jnSave'),s=$$('#jnS textarea').map(t=>t.value.trim()).filter(Boolean).slice(0,12);if(!s.length){toast('Нужен хотя бы один шаг');return}
+    b.disabled=true;b.textContent='Сохраняю…';try{await hSave(JN_TAG,JSON.stringify({p:$('#jnP').value.trim().slice(0,200),s:s.map(x=>x.slice(0,400))}),jnItem())}catch(e){toast(e.message);b.disabled=false;b.textContent='Сохранить'}}};
+/* плашка "БЕТА" на дашбордах Взлёта и студии (put.js): текст хранится здесь, запись "бета-плашка"; дашборды подхватывают его в течение часа */
+const BT_TAG='бета-плашка', BT_DEF={h:'Дашборд в бета-версии: тестируем вместе',top:'Ребята, вы первые! Дашборд ещё дорабатывается, и вы помогаете его тестировать.',
+  li:['Очки иногда могут обнуляться, а задания меняться.','Заявки подтверждаем быстро.','У заданий курса есть кнопки 👍 и 👎. Понравилось - жми 👍, скучно или непонятно - 👎. По ним тренер правит и меняет задания.','Вместе сделаем удобное место для зачётов, рейтинга, тестов, тренировок и шпаргалок.'],
+  bot:'Что-то не работает или есть идея? Жми "Нашёл ошибку?" внизу справа.'};
+const btItem=()=>D.news.find(x=>x.date===BT_TAG);
+function btData(){const it=btItem();if(it)try{const o=JSON.parse(it.text);if(o&&o.h&&Array.isArray(o.li))return o}catch(e){}return BT_DEF}
+$('#btEdit').onclick=()=>{if(!canEdit())return;const d=btData();
+  $('#mbody').innerHTML=`<h3>Плашка БЕТА на дашбордах</h3><p style="color:var(--dim);font-size:14px">Видна над главным блоком Взлёта и студии. Дашборды подхватывают новый текст в течение часа.</p>
+  <label>Строка на плашке<input id="btH" value="${esc(d.h)}"></label><label>Первая фраза (жирным)<input id="btT" value="${esc(d.top||'')}"></label>
+  <label>Пункты списка - каждый с новой строки<textarea id="btL" rows="7">${esc(d.li.join('\n'))}</textarea></label><label>Последняя фраза<input id="btB" value="${esc(d.bot||'')}"></label>
+  <div class="mbar"><button class="ibtn" id="btDef">↺ Как было</button><button class="ibtn" onclick="closeM()">Отмена</button><button class="ibtn pri" id="btSave">Сохранить</button></div>`;openM();
+  $('#btDef').onclick=()=>{$('#btH').value=BT_DEF.h;$('#btT').value=BT_DEF.top;$('#btL').value=BT_DEF.li.join('\n');$('#btB').value=BT_DEF.bot};
+  $('#btSave').onclick=async()=>{const b=$('#btSave'),h=$('#btH').value.trim();if(!h){toast('Нужна строка на плашке');return}
+    const o={h:h.slice(0,120),top:$('#btT').value.trim().slice(0,300),li:$('#btL').value.split(/\n+/).map(x=>x.trim()).filter(Boolean).slice(0,10).map(x=>x.slice(0,300)),bot:$('#btB').value.trim().slice(0,300)};
+    b.disabled=true;b.textContent='Сохраняю…';try{await hSave(BT_TAG,JSON.stringify(o),btItem())}catch(e){toast(e.message);b.disabled=false;b.textContent='Сохранить'}}};
 async function hSave(tag,text,it){const j=await api({op:'hput',hub:HUB,key:'news',item:{id:it?it.id:'',text,date:tag}});D=j.data;ls.set('hub_'+HUB,JSON.stringify(D));closeM();render();toast('Сохранено')}
 function openSt(key,name){if(!canEdit())return;const m=stMap(),cur=m[key]||'open';
   $('#mbody').innerHTML=`<h3>${esc(name||'Ссылка')}</h3><p style="color:var(--dim);font-size:14px">Что видят посетители.</p>${Object.keys(ST_L).map(v=>`<label style="display:flex;gap:10px;align-items:center;font-weight:700;margin:10px 0"><input type="radio" name="stv" value="${v}" ${v===cur?'checked':''} style="width:auto"> ${ST_L[v]}</label>`).join('')}<div class="mbar"><button class="ibtn" onclick="closeM()">Отмена</button><button class="ibtn pri" id="stSave">Сохранить</button></div>`;openM();
