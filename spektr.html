@@ -1461,6 +1461,7 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
 .stp{display:flex;gap:10px;margin:0 0 12px}.stp>i{flex:none;width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;font:800 14px/26px var(--fb);text-align:center;font-style:normal}.stp>div{flex:1;min-width:0;font-size:14px;line-height:1.5}.stp b{display:block;font-size:15px;margin-bottom:2px}.stp .shg{margin-top:8px}
 .chr{display:inline-block;vertical-align:-5px;width:22px;height:22px;border-radius:50%;background:conic-gradient(from -60deg,#ea4335 0 120deg,#fbbc04 120deg 240deg,#34a853 240deg 360deg);position:relative;margin:0 2px}.chr::before{content:"";position:absolute;inset:6px;border-radius:50%;background:#4285f4;border:2px solid #fff;box-sizing:border-box}
 .shs{margin:8px auto 4px;text-align:center}.shs img{width:min(100%,280px);height:auto;border-radius:16px;border:1px solid var(--line);display:block;margin:0 auto}.shs figcaption{font-size:12.5px;line-height:1.4;color:var(--dim);margin-top:6px}
+.ins-t{margin:0 0 12px;font-size:14px;line-height:1.5;color:var(--dim)}.ins-go{display:flex;width:100%;height:52px;font-size:17px;margin:0 0 14px;justify-content:center;align-items:center}#shI .stp:last-child{margin-bottom:0}#shI .shg{margin-top:8px}
 .shd{margin-top:14px;border-radius:16px;border:1px solid var(--line);background:var(--bg2);overflow:hidden}
 .shd summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:13px 14px;font:800 15px var(--fb,inherit);-webkit-tap-highlight-color:transparent}
 .shd summary::-webkit-details-marker{display:none}.shd summary::after{content:"▾";margin-left:auto;transition:transform .3s}.shd[open] summary::after{transform:rotate(180deg)}
@@ -1490,7 +1491,6 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
 <div class="shm" id="inM" role="dialog" aria-modal="true" aria-label="Установить СПЕКТР на телефон"><div class="shp">
   <h3>Установка <button class="ibtn sm" id="inX" aria-label="Закрыть">✕</button></h3>
   <div class="shi" id="shI" style="margin-top:6px"></div>
-  <details class="shd" id="shD" open><summary><span>❓</span>Как установить пошагово</summary><div class="gb" id="shDb"></div></details>
 </div></div>
 <div class="shbar" id="shBar" role="dialog" aria-label="Установить СПЕКТР"><img src="icon-192.png" alt=""><div id="shBarT"><b>СПЕКТР на экран телефона</b>Открывается одним касанием, как приложение</div><button class="ibtn pri sm" id="shBarGo">Установить</button><button class="ibtn sm" id="shBarX" aria-label="Не сейчас">✕</button></div>
 <script>
@@ -1500,7 +1500,7 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
   var ua=navigator.userAgent, IOS=/iPhone|iPad|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1), MOB=/Android|iPhone|iPad|iPod/i.test(ua)||IOS;
   var APP=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
   if('serviceWorker' in navigator) addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){})});
-  addEventListener('beforeinstallprompt',function(e){e.preventDefault();dp=e;inst();bar()});
+  addEventListener('beforeinstallprompt',function(e){if(/YaBrowser|YaApp/.test(navigator.userAgent))e.preventDefault();dp=e;inst();bar()});
   addEventListener('appinstalled',function(){dp=null;APP=true;inst();hideBar()});
   /* какой браузер: от него зависит, есть ли кнопка "Установить" в одно касание */
   var AND=/Android/i.test(ua);
@@ -1508,26 +1508,23 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
   var BR=/YaBrowser|YaApp/.test(ua)?'ya':/SamsungBrowser/.test(ua)?'samsung':/Firefox|FxiOS/.test(ua)?'ff':/OPR\/|Opera/.test(ua)?'opera':/EdgA|EdgiOS/.test(ua)?'edge':/MiuiBrowser|HuaweiBrowser|HeyTapBrowser/.test(ua)?'other':'chrome';
   var YA=BR==='ya'&&AND;
   function intent(pkg){return 'intent://centrspektr.github.io/?install#Intent;scheme=https;package='+pkg+';S.browser_fallback_url='+encodeURIComponent(URL0+'?install')+';end'}
-  var HEAD='<div class="shih"><img src="icon-192.png" alt=""><b>',D='<span style="font-size:14px;color:var(--dim)">',WARN='<p style="margin:8px 0 0;font-size:13.5px">Важно: выбирайте именно <strong>«Установить»</strong>, а не «Создать ярлык» - тогда СПЕКТР откроется как приложение, без строки браузера.</p>';
+  /* окно установки: один короткий блок под браузер */
+  var D='<p class="ins-t">';
+  function S(n,b,t){return '<div class="stp"><i>'+n+'</i><div><b>'+b+'</b>'+(t||'')+'</div></div>'}
+  var CP='<div class="shg" style="grid-template-columns:1fr"><button class="ibtn" id="shCp2">📋 Скопировать ссылку</button></div>';
   function steps(){
-    if(INAPP&&AND)return HEAD+'Сначала откройте в браузере</b></div>'+D+'Вы смотрите портал внутри мессенджера (ВК, MAX, Telegram) - отсюда установить нельзя.</span><div class="shg" style="margin-top:10px"><a class="ibtn pri" style="font-size:14px" href="'+intent('com.android.chrome')+'">В Chrome</a><a class="ibtn" style="font-size:14px" href="'+intent('com.yandex.browser')+'">В Яндексе</a></div><ol><li>Или нажмите ⋮ вверху справа и выберите «Открыть в браузере», либо скопируйте ссылку кнопкой «📋 Скопировать» выше и вставьте в браузер</li><li>В браузере снова нажмите ⚙️ → 📲 - появится кнопка «Установить»</li></ol>';
-    if(INAPP&&IOS)return HEAD+'Сначала откройте в Safari</b></div>'+D+'Вы смотрите портал внутри приложения - отсюда на экран не добавить.</span><ol><li>Нажмите ⋯ или значок компаса и выберите «Открыть в Safari» (или скопируйте ссылку и вставьте в Safari)</li><li>В Safari нажмите «Поделиться» (квадрат со стрелкой)</li><li>Выберите «На экран "Домой"»</li></ol>';
-    if(IOS)return HEAD+'Добавить на экран iPhone</b></div><ol><li>Нажмите «Поделиться» (квадрат со стрелкой)'+(/CriOS|YaBrowser|EdgiOS|FxiOS/.test(ua)?' в адресной строке или в меню':' внизу (или в меню ⋯)')+'</li><li>Выберите «На экран "Домой"»</li><li>Нажмите «Добавить»</li></ol>';
-    if(BR==='samsung')return HEAD+'Установить на экран</b></div><ol><li>Нажмите ≡ внизу справа</li><li>Выберите «Добавить страницу на» → «Главный экран»</li></ol>'+D+'Или нажмите значок установки в адресной строке, если он есть.</span>';
-    if(BR==='ff')return HEAD+'Установить на экран</b></div><ol><li>Нажмите ⋮ в меню браузера</li><li>Выберите «Установить» (или «Добавить на домашний экран»)</li></ol>';
-    if(BR==='ya'&&AND)return HEAD+'Лучше установить из Chrome</b></div>'+D+'Яндекс Браузер ставит только ярлык со своей пометкой и строкой браузера. Чтобы был круглый значок и приложение без строки, поставьте из Chrome - шаги ниже.</span>';
-    if(BR==='ya')return HEAD+'Установить на экран</b></div><ol><li>Нажмите ⋮ (меню) в Яндекс Браузере</li><li>Выберите "Установить приложение"</li></ol>'+D+'Круглый значок без пометки браузера лучше получается при установке из Chrome.</span>';
-    if(BR==='chrome'||BR==='edge')return HEAD+'Установить на экран</b></div>'+D+'Полистайте страницу несколько секунд: браузер сам предложит установку, и здесь появится синяя кнопка.</span><button class="ibtn" disabled style="width:100%;margin-top:10px;opacity:.75">⏳ Ждём предложение браузера…</button>';
-    return HEAD+'Установить на экран</b></div><ol><li>Откройте меню браузера (⋮ или ≡)</li><li>Выберите «Установить приложение» или «Добавить на главный экран»</li></ol>'+D+'Лучше всего устанавливается из Chrome или Яндекс Браузера.</span>'}
-  function guide(){var shot='<figure class="shs"><img src="install-chrome.webp" alt="Окно установки в Chrome" loading="lazy" width="260" height="402"><figcaption>Так выглядит окно в Chrome. Нажмите "Установить приложение"</figcaption></figure>';
-    var cmp='<div class="gi2"><div class="ok"><div class="ic rd"><img src="icon-192.png" alt=""></div><b>✅ Приложение</b>круглый значок, открывается без строки браузера</div><div class="no"><div class="ic sq"><img src="icon-192.png" alt=""><i>Я</i></div><b>Ярлык браузера</b>квадрат с пометкой, строка браузера остаётся</div></div>';
-    if((BR==='chrome'||BR==='edge')&&!INAPP)return cmp+'<div class="stp"><i>1</i><div><b>Полистайте страницу</b>Несколько секунд: Chrome сам предложит установку.</div></div><div class="stp"><i>2</i><div><b>Нажмите "Установить приложение"</b>Синяя кнопка вверху этого окна. Если её нет: ⋮ вверху справа → "Установить приложение".</div></div>'+shot+'<div class="stp"><i>3</i><div><b>Подтвердите</b>В окошке нажмите "Установить". Круглый значок СПЕКТР появится среди приложений.</div></div>';
-    return cmp+'<div class="stp"><i>1</i><div><b>Скопируйте ссылку</b><div class="shg" style="grid-template-columns:1fr;margin-top:6px"><button class="ibtn pri" id="shCp2" style="font-size:14px;height:auto;min-height:42px;padding:8px 14px;white-space:nowrap">📋 Скопировать ссылку</button></div></div></div><div class="stp"><i>2</i><div><b>Откройте Chrome <span class="chr"></span></b>Значок Chrome на экране телефона.</div></div><div class="stp"><i>3</i><div><b>Вставьте ссылку и откройте</b>В адресную строку Chrome. Через несколько секунд появится окно "Установка" с кнопкой "Установить приложение".</div></div>'+shot+'<div class="stp"><i>4</i><div><b>Нажмите "Установить приложение"</b>Круглый значок СПЕКТР появится среди приложений.</div></div>'}
+    if(!MOB)return D+'На компьютере: нажмите значок установки справа в адресной строке или меню ⋮ → «Установить».</p>';
+    if(INAPP&&IOS)return S(1,'Откройте в Safari','Нажмите ⋯ или значок компаса → «Открыть в Safari».')+S(2,'Нажмите «Поделиться»','Квадрат со стрелкой.')+S(3,'«На экран "Домой"»','И «Добавить».');
+    if(IOS)return S(1,'Нажмите «Поделиться»','Квадрат со стрелкой'+(/CriOS|YaBrowser|EdgiOS|FxiOS/.test(ua)?' в адресной строке.':' внизу или в меню ⋯.'))+S(2,'«На экран "Домой"»','И «Добавить».');
+    if(BR==='samsung'&&!INAPP)return S(1,'Нажмите ≡ внизу справа')+S(2,'«Добавить страницу на» → «Главный экран»');
+    if(BR==='ff'&&!INAPP)return S(1,'Нажмите ⋮')+S(2,'Выберите «Установить»');
+    if((BR==='chrome'||BR==='edge')&&!INAPP)return S(1,'Нажмите ⋮ вверху справа')+S(2,'Выберите «Установить приложение»','Если такого пункта нет - «Добавить на гл. экран», потом «Установить».')+D+'Chrome может и сам предложить установку внизу экрана - тогда просто нажмите «Установить».</p>';
+    // Яндекс, мессенджеры (ВК, MAX, Telegram) и другие браузеры Android: ставим через Chrome
+    return D+'Приложение ставится через Chrome.</p><a class="ibtn pri ins-go" href="'+intent('com.android.chrome')+'">Открыть в Chrome</a>'+S(1,'Не открылось?','Скопируйте ссылку и вставьте её в Chrome.'+CP)+S(2,'В Chrome нажмите ⋮','И выберите «Установить приложение».')}
   function inst(){var el=$('shI');if(!el)return;
-    var gd=$('shD');if(gd){gd.style.display=(APP||IOS)?'none':'';var gb=$('shDb');if(gb&&!APP&&!IOS)gb.innerHTML=guide()}
-    if(APP){el.innerHTML='<b>✅ СПЕКТР уже на экране</b><span style="font-size:14px;color:var(--dim)">Ты открыл его как приложение.</span>';return}
-    if(dp&&!YA){el.innerHTML=HEAD+'Установить на экран</b></div>'+D+'Значок СПЕКТР появится рядом с другими приложениями.</span><button class="ibtn pri" id="shGo" style="width:100%;margin-top:10px">📲 Установить приложение</button>'+(BR==='ya'&&AND?D.replace('">',';margin-top:10px;display:block">')+'В Яндексе значок будет с пометкой браузера. Если хочется круглый - можно <a href="'+intent('com.android.chrome')+'">установить из Chrome</a>.</span>':'');$('shGo').onclick=go;return}
-    el.innerHTML=steps();el.querySelectorAll('.shg').forEach(function(g){g.style.marginTop='10px'})}
+    if(APP){el.innerHTML='<b>✅ СПЕКТР уже установлен</b>'+D+'Вы открыли его как приложение.</p>';return}
+    if(dp&&!YA){el.innerHTML='<button class="ibtn pri ins-go" id="shGo">📲 Установить приложение</button>'+D+'Значок СПЕКТР появится рядом с другими приложениями.</p>';$('shGo').onclick=go;return}
+    el.innerHTML=steps()}
   function go(){if(!dp)return;dp.prompt();dp.userChoice.then(function(r){if(r&&r.outcome==='accepted'){hideBar()}dp=null;inst()}).catch(function(){})}
   function open(){M.classList.add('on');$('shX').focus()}
   function openI(){inst();IM.classList.add('on');$('inX').focus()}
