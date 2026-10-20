@@ -156,6 +156,9 @@ html[data-skin="pixel"] .lw{--hc:#fff;--hs:#7dff6a;--hd:#ffd84a}
 .lwh .hg:nth-of-type(2) .u{stroke-width:1.5}.lwh .hg:nth-of-type(3) .u{stroke-width:1.2}.lwh .hg:nth-of-type(4) .u{stroke-width:.95}
 .lwh .cap{fill:var(--hs);stroke:rgba(10,6,30,.6);stroke-width:.5}
 .tked{position:absolute;right:16px;bottom:2px;z-index:3}
+.mqw.tkoff{display:none} body.editing .mqw.tkoff{display:block;opacity:.35}
+.tkhd{position:absolute;right:170px;bottom:2px;z-index:3}
+
 .mq span{font:900 clamp(18px,3vw,28px) var(--fh);color:#fff;white-space:nowrap;padding:0 22px;text-shadow:0 2px 12px rgba(0,0,0,.25)}
 .mq span::after{content:"✦";margin-left:44px;opacity:.85}
 @keyframes mq{to{transform:translateX(-50%)}}
@@ -197,6 +200,27 @@ h2.sec em{font-style:normal;background:var(--rain);background-size:300% 100%;-we
 .dc.site:hover .ph img{transform:rotate(0) scale(1.06)}
 .dc.site::before{background:linear-gradient(180deg,rgba(0,0,0,0) 45%,rgba(5,3,15,.7) 100%)}
 /* переход "провалиться" */
+
+/* 01 планеты-направления */
+@media (max-width:640px){.pl{height:min(64vh,560px)!important}}
+.pl{position:relative;height:min(78vh,640px);min-height:420px;border-radius:30px;overflow:hidden;background:radial-gradient(ellipse at 50% 45%,rgba(124,243,255,.10),rgba(5,6,20,.0) 60%);border:1px solid rgba(160,170,255,.16)}
+.pl3{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y;cursor:grab}
+.pl.drag .pl3{cursor:grabbing}
+.plLab{position:absolute;inset:0;pointer-events:none}
+.plL{position:absolute;left:0;top:0;white-space:nowrap;font:700 13px/1 inherit;font-family:inherit;color:#fff;padding:7px 12px;border-radius:99px;background:rgba(20,24,52,.62);border:1px solid var(--pc);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);cursor:pointer;transition:opacity .3s}
+.plCard{position:absolute;left:50%;bottom:16px;transform:translate(-50%,30px);width:min(420px,calc(100% - 32px));background:rgba(16,18,44,.72);border:1px solid rgba(160,170,255,.25);border-radius:22px;padding:16px 18px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);opacity:0;pointer-events:none;transition:opacity .45s,transform .45s}
+.plCard.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.plCard h3{margin:0 0 6px;font-size:20px}.plCard p{margin:0 0 12px;color:var(--dim);font-size:14px;line-height:1.45}
+.plRow{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.plGo{display:flex;align-items:center;gap:12px;background:none;border:0;color:#fff;font:inherit;font-weight:800;cursor:pointer;padding:0}
+.plGo .pwb{position:relative;display:grid;place-items:center;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.28),rgba(20,16,40,.72) 70%);border:2px solid rgba(255,255,255,.55);box-shadow:0 6px 18px rgba(0,0,0,.4);transition:transform .25s,border-color .35s,box-shadow .35s}
+.plGo .pwb svg{width:28px;height:28px;fill:none;stroke:#fff;stroke-width:2.6;stroke-linecap:round;transition:stroke .35s}
+.plGo:active .pwb{transform:scale(.94)}
+.plGo.lit .pwb{border-color:#4ade80;box-shadow:0 0 0 4px rgba(74,222,128,.25),0 0 28px rgba(74,222,128,.75)}.plGo.lit .pwb svg{stroke:#4ade80}
+.pl.foc .plList{opacity:0;pointer-events:none}
+.plList{position:absolute;left:0;right:0;top:12px;display:none;gap:8px;justify-content:center;flex-wrap:wrap;padding:0 12px;transition:opacity .3s}
+.pl.noGL{height:auto;min-height:0;padding:16px}.pl.noGL .plList{position:static;display:flex}.pl.noGL .pl3,.pl.noGL .plLab{display:none}
+.plList a{color:#fff;text-decoration:none;font-weight:700;padding:10px 14px;border-radius:99px;background:rgba(20,24,52,.62);border:1px solid rgba(160,170,255,.3)}
 #dive{position:fixed;z-index:800;overflow:hidden;pointer-events:none;display:none;background:#000}
 #dive img,#dive canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 #dive .fl{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
@@ -265,7 +289,7 @@ footer .fsm{font-size:13px}
 html[data-skin="pixel"] footer .fdev{font-size:11px;line-height:1.8}
 footer .fl a{padding:8px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);text-decoration:none;font-weight:700;font-size:13.5px}
 footer .fl a:hover{border-color:var(--c1)}
-.join{display:grid;grid-template-columns:repeat(4,1fr);gap:14px} @media(max-width:980px){.join{grid-template-columns:1fr 1fr}} @media(max-width:560px){.join{grid-template-columns:1fr}}
+.join{display:grid;grid-template-columns:repeat(var(--jn,4),1fr);gap:14px} @media(max-width:980px){.join{grid-template-columns:1fr 1fr}} @media(max-width:560px){.join{grid-template-columns:1fr}}
 .join .stp{display:flex;gap:14px;align-items:flex-start;font-size:15px}
 .join .stp b{flex-shrink:0;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:#fff;font:800 17px var(--fh);background:linear-gradient(135deg,var(--c1),var(--c2))}
 .wkfold{display:flex;width:100%;justify-content:space-between;align-items:center;gap:12px;padding:18px 20px;border-radius:20px;border:1px dashed var(--line);background:var(--card);color:var(--dim);font:600 15px var(--fb);cursor:pointer} .wkfold b{color:var(--c1);white-space:nowrap} #wkBody{margin-top:12px}
@@ -737,7 +761,7 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
 
 <header id="hdr"><div class="wrap top">
   <a class="brand" id="brand" href="#top" aria-label="СПЕКТР - в начало"><img src="mark.webp" alt="СПЕКТР"><span class="bt"><small class="vis since">стартовал 17.10.2026</small><b>ПОРТАЛ</b><small class="vis" id="visC" hidden title="Посещения сайтов СПЕКТР"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><i>0</i><span class="vl">посещений</span></small></span></a>
-  <nav class="mn"><a href="#groupsT">Кружки</a><a href="#dashT">Дашборды</a><a href="#joinT">Подключиться</a><a href="#todayT" id="navToday">Сегодня</a><a href="#weekT">Расписание</a></nav>
+  <nav class="mn"><a href="#planT">Направления</a><a href="#linksT">Ссылки</a></nav>
   <div class="tr" id="tr"><button class="ibtn" id="stBtn" style="display:none" title="Ученики и заявки" aria-label="Ученики и заявки">👥<b class="stc" id="stCnt" style="display:none"></b></button><button class="ibtn" id="bgBtn" style="display:none" title="Сообщения об ошибках" aria-label="Сообщения об ошибках">⚠<b class="stc" id="bgCnt" style="display:none"></b></button><div class="tdr" id="tdr"><button class="ibtn" id="lockBtn" style="display:none" title="Вход для редакторов" aria-label="Вход для редакторов">✎</button><button class="ibtn shb" id="shBtn" title="Поделиться, QR-код, установить на экран" aria-label="Поделиться и установить"><svg class="shico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4.5 21 11l-7 6.5v-3.8c-5 0-8.3 1.5-11 5.3.9-5.4 3.9-10.4 11-11.3z"/></svg><span>Поделиться</span></button><button class="ibtn shb" id="inBtn" type="button" title="Установить на телефон как приложение" aria-label="Установить на телефон"><svg class="shico inl" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4.5 21 11l-7 6.5v-3.8c-5 0-8.3 1.5-11 5.3.9-5.4 3.9-10.4 11-11.3z"/></svg></button><button class="ibtn" id="themeBtn" hidden aria-hidden="true" tabindex="-1" style="display:none"></button></div><button class="ibtn gear" id="gearBtn" type="button" aria-expanded="false" aria-controls="tdr" title="Настройки" aria-label="Настройки"><span class="gi"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><defs><linearGradient id="gAr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset=".5" stop-color="#a78bfa"/><stop offset="1" stop-color="#f472b6"/></linearGradient></defs><path d="M12 3.5v14M5.2 11.2 12 18l6.8-6.8" fill="none" stroke="url(#gAr)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button></div>
 </div></header>
 
@@ -748,17 +772,23 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
       <div class="kick hx"><i></i>Ресурсный центр · Иртышское поселение</div>
       <h1 class="big" id="bigT">СПЕКТР</h1>
       <p class="rot hx"><span id="rotw" class="rw">гонки на дронах</span><button class="ibtn sm ed rwed" id="rwEdit" type="button">✎ Слова</button></p>
-      <p class="lead hx">Кружки, дашборды, курсы и музыка в одном месте. Выбирай направление и подключайся.</p>
+      <p class="lead hx">Выбирай направление и подключайся.</p>
       <div class="chips" id="heroChips" style="display:none"></div>
     </div>
     <div class="lw" id="lw"><div class="ring"></div><div class="orb"></div><div class="disc"></div><svg class="dr" viewBox="0 0 100 100" aria-hidden="true"><defs><path id="lwp" d="M50 5.7A44.3 44.3 0 1 1 49.99 5.7"/></defs><text><textPath href="#lwp" startOffset="0" id="lwt"></textPath></text></svg><img src="logo.webp" alt="Логотип ресурсного центра СПЕКТР"><svg class="lwh" viewBox="0 0 100 100" role="img" aria-label="Часы"><g class="tk"><line x1="50" y1="13" x2="50" y2="14.799999999999997" transform="rotate(0 50 50)"/><line x1="50" y1="13.799999999999997" x2="50" y2="14.799999999999997" transform="rotate(30 50 50)"/><line x1="50" y1="13.799999999999997" x2="50" y2="14.799999999999997" transform="rotate(60 50 50)"/><line x1="50" y1="13" x2="50" y2="14.799999999999997" transform="rotate(90 50 50)"/><line x1="50" y1="13.799999999999997" x2="50" y2="14.799999999999997" transform="rotate(120 50 50)"/><line x1="50" y1="13.799999999999997" x2="50" y2="14.799999999999997" transform="rotate(150 50 50)"/><line x1="50" y1="13" x2="50" y2="14.799999999999997" transform="rotate(180 50 50)"/><line x1="50" y1="13.799999999999997" x2="50" y2="14.799999999999997" transform="rotate(210 50 50)"/><line x1="50" y1="13.799999999999997" x2="50" y2="14.799999999999997" transform="rotate(240 50 50)"/><line x1="50" y1="13" x2="50" y2="14.799999999999997" transform="rotate(270 50 50)"/><line x1="50" y1="13.799999999999997" x2="50" y2="14.799999999999997" transform="rotate(300 50 50)"/><line x1="50" y1="13.799999999999997" x2="50" y2="14.799999999999997" transform="rotate(330 50 50)"/></g><g class="hg"><line class="u" x1="50" y1="54" x2="50" y2="26"/><line class="m h1" x1="50" y1="54" x2="50" y2="26"/></g><g class="hg"><line class="u" x1="50" y1="55" x2="50" y2="15"/><line class="m h2" x1="50" y1="55" x2="50" y2="15"/></g><g class="hg"><line class="u" x1="50" y1="57" x2="50" y2="9"/><line class="m h3" x1="50" y1="57" x2="50" y2="9"/></g><circle class="cap" cx="50" cy="50" r="1.7"/></svg></div>
   </div>
-  <a class="scr" href="#siteT"><i></i>ЛИСТАЙ</a>
+  <a class="scr" href="#planT"><i></i>ЛИСТАЙ</a>
 </section>
-<div class="mqw"><div class="mq" aria-hidden="true"><div class="tk" id="tk"></div></div><button class="ibtn sm ed tked" id="tkEdit" type="button">✎ Бегущая строка</button></div>
+<div class="mqw"><div class="mq" aria-hidden="true"><div class="tk" id="tk"></div></div><button class="ibtn sm ed tked" id="tkEdit" type="button">✎ Бегущая строка</button><button class="ibtn sm ed tkhd" id="tkHide" type="button">Скрыть строку</button></div>
 
 <main class="wrap">
-  <section class="blk" id="siteT">
+  <section class="blk" id="planT">
+    <div class="sh2 rv"><span class="num">01</span><h2 class="sec">Куда <em>подключимся?</em></h2><p>Покрути систему пальцем и нажми на планету.</p></div>
+    <div class="pl rv" id="pl"><canvas class="pl3" aria-label="Направления СПЕКТРа: планеты вокруг логотипа"></canvas><div class="plLab"></div>
+      <div class="plCard" role="dialog" aria-live="polite"><h3></h3><p></p><div class="plRow"><button class="plGo" type="button"><span class="pwb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5v8.5"/><path d="M7.05 6.4a7.5 7.5 0 1 0 9.9 0"/></svg></span><em>Включить</em></button><button class="ibtn plBack" type="button">Назад</button></div></div>
+      <div class="plList" id="plList"></div></div>
+  </section>
+  <section class="blk" id="siteT" hidden>
     <div class="sh2 rv"><span class="num">01</span><h2 class="sec">Куда <em>подключимся?</em></h2><p>Начни с сайта ресурсного центра: направления, проекты, новости и контакты.</p></div>
     <a class="spk rv" id="spk" href="https://centrspektr.fun" target="_blank" rel="noopener">
       <span class="sk s1"></span><span class="sk s2"></span><span class="sk s3"></span><span class="neb"></span><span class="shoot"></span>
@@ -766,28 +796,23 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
       <span class="stx"><span class="lbl"><span>О центре</span><span>Новости</span><span>Контакты</span></span><b>Сайт Спектра</b><small>Всё о ресурсном центре: направления, проекты, новости, адрес и контакты.</small><span class="go"><i class="gsh"></i>Открыть <b>→</b></span></span>
     </a>
   </section>
-  <section class="blk" id="groupsT">
+  <section class="blk" id="groupsT" hidden>
     <div class="sh2 rv"><span class="num">02</span><h2 class="sec">Наши <em>кружки</em></h2><p id="gCount"></p><button class="ibtn sm pri ed add" data-new="groups">+ Кружок</button></div>
     <div class="groups" id="groups"></div>
   </section>
-  <section class="blk" id="dashT">
-    <div class="sh2 rv"><span class="num">03</span><h2 class="sec">Обучающие <em>дашборды</em></h2><p>Интерактивные: тесты, тренажёры и рейтинг. Нажми на карточку - и окажешься внутри.</p><p class="beta"><i>тестовая версия</i>Дашборды работают в тестовом режиме: мы их проверяем и дорабатываем. Если что-то работает не так, сообщи нам: мы быстро поправим.</p></div>
+  <section class="blk" id="dashT" hidden>
+    <div class="sh2 rv"><span class="num">03</span><h2 class="sec">Обучающие <em>дашборды</em></h2><p>Интерактивные: тесты, тренажёры и рейтинг. Нажми на карточку - и окажешься внутри.</p><p class="beta"><i>тестовая версия</i>Дашборды работают в тестовом режиме: мы их проверяем и дорабатываем. Если что-то работает не так, сообщи нам: мы быстро поправим.</p><button class="ibtn sm ed" id="btEdit" style="margin-left:auto">✎ Плашка БЕТА</button></div>
     <div class="dash" id="dash"></div>
   </section>
-  <section class="blk" id="joinT">
-    <div class="sh2 rv"><span class="num">04</span><h2 class="sec">Как <em>подключиться</em></h2><p>Ученик подключается сам, педагог подтверждает.</p></div>
-    <div class="join rv">
-      <div class="card stp"><b>1</b><span>Открой обучающий дашборд "Взлёт" или "Гитара и ИИ-студия" и нажми "👋 Подключиться".</span></div>
-      <div class="card stp"><b>2</b><span>Впиши имя и класс, отметь согласие.</span></div>
-      <div class="card stp"><b>3</b><span>Педагог подтвердит - и ты в группе: появится личный код и ссылка на группу в MAX.</span></div>
-      <div class="card stp"><b>4</b><span>Иди по пути новичка: короткие модули, тренировки и тесты. Очки сами идут в рейтинг.</span></div>
-    </div>
+  <section class="blk" id="joinT" hidden>
+    <div class="sh2 rv"><span class="num">04</span><h2 class="sec">Как <em>подключиться</em></h2><p id="joinP">Ученик подключается сам, педагог подтверждает.</p><button class="ibtn sm ed" id="joinEdit" style="margin-left:auto">✎ Шаги</button></div>
+    <div class="join rv" id="joinL"></div>
   </section>
-  <section class="blk" id="todayT">
+  <section class="blk" id="todayT" hidden>
     <div class="sh2 rv"><span class="num">05</span><h2 class="sec">Сегодня <em>в Спектре</em></h2><p id="todayD"></p></div>
     <div class="today rv"><div class="card"><div id="todayL"></div></div><div class="card nxt" id="nextC"></div></div>
   </section>
-  <section class="blk" id="weekT">
+  <section class="blk" id="weekT" hidden>
     <div class="sh2 rv"><span class="num">06</span><h2 class="sec wkt" id="wkT" role="button" tabindex="0" aria-expanded="false">Расписание <em>недели</em><i class="wkch">▾</i></h2><p>Нажми на надпись, и откроется расписание по дням.</p><button class="ibtn sm ed" id="seedBtn" style="margin-left:auto">⤓ Расписание Спектра</button><button class="ibtn sm pri ed" data-new="schedule">+ Занятие</button></div>
     <div class="rv"><button class="wkfold" id="wkFold" type="button" hidden><span>Расписание пока не опубликовано</span><b>Показать ▾</b></button><div id="wkBody"><div class="wkx" id="wkX"><div><div class="wkg on" id="wkG"></div></div></div><div hidden><div class="days" id="days"></div><div class="tl" id="tl"></div></div></div></div>
   </section>
@@ -799,7 +824,7 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
     </div>
   </section>
   <section class="blk" id="linksT">
-    <div class="sh2 rv"><span class="num">07</span><h2 class="sec">Сайт <em>и ссылки</em></h2><button class="ibtn sm pri ed add" data-new="links">+ Ссылка</button></div>
+    <div class="sh2 rv"><span class="num">02</span><h2 class="sec">Сайт <em>и ссылки</em></h2><button class="ibtn sm pri ed add" data-new="links">+ Ссылка</button></div>
     <div class="links" id="links"></div>
   </section>
 
@@ -820,7 +845,7 @@ window.skinReset=function(){ST=null;BL=null;shoot=null};
 <script src="ScrollTrigger.min.js"></script>
 <script src="SplitText.min.js"></script>
 <script>
-const HUB='spectr', API='https://script.google.com/macros/s/AKfycbwmh9Ksw7lm9pYZCy3ao-mvZ5ogKbFM7E66zJIAa5ZvorA6q7FLH8ZlFZvFK9RKHRM-/exec';
+const HUB='spectr', API='https://functions.yandexcloud.net/d4e4vhndceg7scc0mh3b';
 const LINKS={vzlet:'vzlet/', agro:'agroklass/', site:'https://centrspektr.fun', zan:'https://irtysh-zanyatiya.github.io/'};
 const SOCIAL={vkVideo:'https://vkvideo.ru/@club237916033', vkVzlet:'https://vk.ru/klubbplavzlet', max:'https://max.ru/join/vXgGYXzwh0p9R1_CUppOus_9Msui9Annkj4HHpaBHVU',
  maxVzlet:'https://max.ru/join/v0ZfpDIihnow9hdwq3vpjm0KiPFW7A0WDfkNlIt9JVs', maxStudio:'https://max.ru/join/x7bqQ0ZGLEmvUJso1aof3ylEJv5K-1x_4cbCWCHaf0A',
@@ -959,8 +984,8 @@ const VZ_SHEET='1GNVM7smAVzjOVK77FzJ_HfDQ9lI85DCSt0idMU8GJqk';let VZS=[];try{VZS
 const VZD={пн:'Пн',понедельник:'Пн',вт:'Вт',вторник:'Вт',ср:'Ср',среда:'Ср',чт:'Чт',четверг:'Чт',пт:'Пт',пятница:'Пт',сб:'Сб',суббота:'Сб',вс:'Вс',воскресенье:'Вс'};
 function vzCsv(t){const rows=[];let row=[],f='',q=false;for(let i=0;i<t.length;i++){const c=t[i];if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++}else q=false}else f+=c}else if(c==='"')q=true;else if(c===','){row.push(f);f=''}else if(c==='\n'){row.push(f);rows.push(row);row=[];f=''}else if(c!=='\r')f+=c}
   if(f!==''||row.length){row.push(f);rows.push(row)}if(!rows.length)return[];const h=rows[0].map(x=>x.trim());return rows.slice(1).filter(r=>r.some(x=>x.trim())).map(r=>Object.fromEntries(h.map((k,i)=>[k,(r[i]||'').trim()])))}
-async function loadVz(){try{const r=await fetch(`https://docs.google.com/spreadsheets/d/${VZ_SHEET}/gviz/tq?tqx=out:csv&headers=1&sheet=${encodeURIComponent('Расписание')}`,{cache:'no-store'});if(!r.ok)return;const t=await r.text();if(t.trim().startsWith('<'))return;
-  const L=[];vzCsv(t).forEach((x,i)=>{const d=VZD[String(x['День']||'').trim().toLowerCase().replace(/\.$/,'')];const m=String(x['Время']||'').match(/(\d{1,2})[:.](\d{2})(?:\s*[-–—]\s*(\d{1,2})[:.](\d{2}))?/);if(!d||!m)return;
+async function loadVz(){try{const r=await fetch('https://functions.yandexcloud.net/d4e4vhndceg7scc0mh3b?s=vzlet&op=data',{cache:'no-store'});if(!r.ok)return;const j=await r.json();if(!j.ok||!j.data)return;
+  const L=[];(j.data['Расписание']||[]).forEach((x,i)=>{const d=VZD[String(x['День']||'').trim().toLowerCase().replace(/\.$/,'')];const m=String(x['Время']||'').match(/(\d{1,2})[:.](\d{2})(?:\s*[-–—]\s*(\d{1,2})[:.](\d{2}))?/);if(!d||!m)return;
     const st=m[1].padStart(2,'0')+':'+m[2],e=m[3]?m[3].padStart(2,'0')+':'+m[4]:(()=>{const v=+m[1]*60+ +m[2]+60;return String(Math.floor(v/60)%24).padStart(2,'0')+':'+String(v%60).padStart(2,'0')})();
     L.push({id:'_vz'+i,day:d,start:st,end:e,place:'',tent:'',note:[x['Занятие'],x['Примечание']].filter(Boolean).join(' · '),_x:1})});
   VZS=L;ls.set('vz_sched',JSON.stringify(L));render()}catch(e){}}
@@ -985,7 +1010,7 @@ function render(){
     <span class="gmore">Нажми, чтобы раскрыть ›</span><div class="acts">${g.link?`<a class="ibtn sm pri" href="${esc(g.link)}" ${ext(g.link)?'target="_blank" rel="noopener"':''}>Открыть →</a>`:''}${JOIN(g)?`<a class="ibtn sm" href="${esc(JOIN(g))}" data-join="${esc(g.id)}">Записаться</a>`:''}${VKG(g)?`<a class="ibtn sm" href="${esc(VKG(g))}" target="_blank" rel="noopener">ВК ↗</a>`:''}${MAXG(g)?`<a class="ibtn sm" href="${esc(MAXG(g))}" target="_blank" rel="noopener">MAX ↗</a>`:''}${VIRT[g.id]?`<button class="ebtn ed" data-addv="${g.id}">+ добавить в таблицу</button>`:`<button class="ebtn ed" data-edit="groups" data-id="${esc(g.id)}">✎ изменить</button>`}</div></div></div>`}).join('')||'<div class="card"><p class="empty">Кружки скоро появятся.</p></div>';
   const ev=upcoming();
   $('#events').innerHTML=ev.length?ev.map(e=>{const d=pDate(e.date),days=d?Math.round((d-today0())/864e5):null;return `<div class="it"><div class="dd">${d?`<b>${d.getDate()}</b><small>${MON[d.getMonth()]}</small>`:'<b>!</b>'}</div><div class="tx"><b>${esc(e.title)}</b><br><small class="p">${esc(e.place||'')}${days!==null?(days===0?' · сегодня':days===1?' · завтра':` · через ${days} ${pl(days,'день','дня','дней')}`):''}</small></div><button class="ebtn ed" data-edit="events" data-id="${esc(e.id)}">✎</button></div>`}).join(''):'<p class="empty">Пока нет объявлений.</p>';
-  const NW=D.news.filter(x=>![TK_TAG,RW_TAG,FM_TAG,ST_TAG,DV_TAG].includes(x.date));$('#news').innerHTML=NW.length?NW.slice().reverse().map(x=>`<div class="it"><div class="tx"><small class="p">${esc(x.date)}</small><br>${esc(x.text)}</div><button class="ebtn ed" data-edit="news" data-id="${esc(x.id)}">✎</button></div>`).join(''):'<p class="empty">Новостей пока нет.</p>';
+  const NW=D.news.filter(x=>![TK_TAG,RW_TAG,FM_TAG,ST_TAG,DV_TAG,JN_TAG,BT_TAG].includes(x.date));$('#news').innerHTML=NW.length?NW.slice().reverse().map(x=>`<div class="it"><div class="tx"><small class="p">${esc(x.date)}</small><br>${esc(x.text)}</div><button class="ebtn ed" data-edit="news" data-id="${esc(x.id)}">✎</button></div>`).join(''):'<p class="empty">Новостей пока нет.</p>';
   const nu=u=>String(u||'').trim().toLowerCase().replace(/^https?:\/\//,'').replace(/^[a-z0-9.-]+\.github\.io\/?/,'').replace(/[#?].*$/,'').replace(/\/+$/,'');
   const fixU=new Set(FIXL.map(l=>nu(l.url))), bad=l=>(l.url&&!nu(l.url))||/школ/i.test(l.name||'')||(l.url&&fixU.has(nu(l.url)));
   const lnk=(l,i,h)=>`<a class="lnk ${h?'hid':''} ${l.url?'':'nolink'}" ${l.url?`href="${esc(l.url)}" ${ext(l.url)?'target="_blank" rel="noopener"':''}`:''}><span class="ic">${!l.url?'⏳':ext(l.url)?'↗':'→'}</span><span style="flex:1"><b>${esc(l.name)}</b><small>${h?'не показывается посетителям (дубль или ведёт на этот же сайт) - лучше удалить':esc(l.note||'')}</small></span>${stKey(l)?`<button class="ebtn ed" data-st="${esc(stKey(l))}" data-n="${esc(l.name)}" title="Открыть или закрыть">⏱</button>`:''}${l.id?`<button class="ebtn ed" data-edit="links" data-id="${esc(l.id)}">✎</button>`:''}</a>`;
@@ -997,7 +1022,7 @@ function render(){
   off('#evCard',!ev.length); off('#newsCard',!NW.length); 
   off('#groupsT',!GL().length); renderWeekAll(); $$('[data-addv]').forEach(b=>b.onclick=()=>addVirt(b)); covObs();
   { const none=!D.schedule.some(live), f=$('#wkFold'); f.hidden=!none; if(!none)WKOPEN=0; $('#wkBody').hidden=none&&!WKOPEN&&!canEdit(); f.querySelector('b').textContent=WKOPEN?'Скрыть ▴':'Показать ▾'; }
-  renderTicker(); wire(); applyUser();
+  renderTicker(); if(window.applyTk)applyTk(); renderJoin(); wire(); applyUser();
   // высота страницы поменялась - пересчитать точки появления блоков, иначе нижние разделы остаются невидимыми
   if(HAS_GSAP&&window.ScrollTrigger){clearTimeout(render._r);render._r=setTimeout(()=>ScrollTrigger.refresh(),150)}
 }
@@ -1208,6 +1233,46 @@ function renderTicker(){const t=(tkItem()?tkItem().text:TK_DEF),w=t.split(/[,\n]
 $('#tkEdit').onclick=()=>{if(!canEdit())return;const it=tkItem();$('#mbody').innerHTML=`<h3>Бегущая строка</h3><p style="color:var(--dim);font-size:14px">Слова через запятую.</p><label>Слова<textarea id="tkTxt">${esc(it?it.text:TK_DEF)}</textarea></label><div class="mbar"><button class="ibtn" onclick="closeM()">Отмена</button><button class="ibtn pri" id="tkSave">Сохранить</button></div>`;openM();
   $('#tkSave').onclick=async()=>{const b=$('#tkSave');b.disabled=true;b.textContent='Сохраняю…';try{const j=await api({op:'hput',hub:HUB,key:'news',item:{id:it?it.id:'',text:$('#tkTxt').value.trim()||TK_DEF,date:TK_TAG}});D=j.data;ls.set('hub_'+HUB,JSON.stringify(D));closeM();render();toast('Сохранено')}catch(e){toast(e.message);b.disabled=false;b.textContent='Сохранить'}}};
 renderTicker();
+/* выключатель бегущей строки: запись с датой "строка скрыта", текст 1 = скрыта для всех, правит администратор */
+const TKH_TAG='строка скрыта', tkhItem=()=>D.news.find(x=>x.date===TKH_TAG);
+function applyTk(){const off=!!(tkhItem()&&tkhItem().text==='1');$('.mqw').classList.toggle('tkoff',off);$('#tkHide').textContent=off?'Показать строку':'Скрыть строку'}
+$('#tkHide').onclick=async()=>{if(!canEdit())return;const it=tkhItem(),off=!!(it&&it.text==='1'),b=$('#tkHide');b.disabled=true;
+  try{const j=await api({op:'hput',hub:HUB,key:'news',item:{id:it?it.id:'',text:off?'0':'1',date:TKH_TAG}});D=j.data;ls.set('hub_'+HUB,JSON.stringify(D));render();toast(off?'Строка снова видна всем':'Строка скрыта для всех')}catch(e){toast(e.message)}b.disabled=false};
+applyTk();
+/* блок 04 "Как подключиться": подпись и шаги хранятся на сервере (запись с датой "шаги подключения"), правит администратор */
+const JN_TAG='шаги подключения', JN_DEF={p:'Ученик подключается сам, педагог подтверждает.',s:[
+  'Открой обучающий дашборд "Взлёт" или "Гитара и ИИ-студия" и нажми "👋 Подключиться".',
+  'Впиши имя и класс, отметь согласие.',
+  'Педагог подтвердит заявку - и на твоём телефоне сам появится личный код, вводить ничего не надо. Там же ссылка на группу в MAX.',
+  'Запиши код: он нужен, только чтобы войти с другого телефона (кнопка "У меня уже есть код").',
+  'Иди по пути новичка и курсу: короткие модули, тренировки и тесты. Очки сами идут в рейтинг.']};
+const jnItem=()=>D.news.find(x=>x.date===JN_TAG);
+function jnData(){const it=jnItem();if(it)try{const o=JSON.parse(it.text);if(o&&Array.isArray(o.s))return{p:String(o.p||''),s:o.s.map(String).filter(x=>x.trim())}}catch(e){}return JN_DEF}
+function renderJoin(){const d=jnData(),k=JSON.stringify(d);if(renderJoin._k===k)return;renderJoin._k=k;$('#joinP').textContent=d.p;$('#joinL').style.setProperty('--jn',d.s.length<=5?d.s.length:Math.ceil(d.s.length/2));$('#joinL').innerHTML=d.s.map((t,i)=>`<div class="card stp"><b>${i+1}</b><span>${esc(t)}</span></div>`).join('')}
+$('#joinEdit').onclick=()=>{if(!canEdit())return;const d=jnData();
+  const row=(t,i)=>`<div class="jnr" style="display:flex;gap:8px;align-items:flex-start;margin:8px 0"><b style="min-width:20px;padding-top:10px">${i+1}</b><textarea rows="2" style="flex:1">${esc(t)}</textarea><button class="ibtn sm" data-jx title="Убрать шаг">✕</button></div>`;
+  $('#mbody').innerHTML=`<h3>Как подключиться</h3><p style="color:var(--dim);font-size:14px">Подпись под заголовком и шаги. Шаг можно убрать крестиком или добавить новый.</p><label>Подпись<input id="jnP" value="${esc(d.p)}"></label><div id="jnS">${d.s.map(row).join('')}</div><button class="ibtn sm" id="jnAdd">+ Шаг</button><div class="mbar"><button class="ibtn" id="jnDef" title="Вернуть шаги по умолчанию">↺ Как было</button><button class="ibtn" onclick="closeM()">Отмена</button><button class="ibtn pri" id="jnSave">Сохранить</button></div>`;openM();
+  const num=()=>$$('#jnS .jnr b').forEach((b,i)=>b.textContent=i+1);
+  $('#jnS').onclick=e=>{const x=e.target.closest('[data-jx]');if(x){x.parentNode.remove();num()}};
+  $('#jnAdd').onclick=()=>{$('#jnS').insertAdjacentHTML('beforeend',row('',$$('#jnS .jnr').length));const t=$$('#jnS textarea');t[t.length-1].focus()};
+  $('#jnDef').onclick=()=>{$('#jnP').value=JN_DEF.p;$('#jnS').innerHTML=JN_DEF.s.map(row).join('')};
+  $('#jnSave').onclick=async()=>{const b=$('#jnSave'),s=$$('#jnS textarea').map(t=>t.value.trim()).filter(Boolean).slice(0,12);if(!s.length){toast('Нужен хотя бы один шаг');return}
+    b.disabled=true;b.textContent='Сохраняю…';try{await hSave(JN_TAG,JSON.stringify({p:$('#jnP').value.trim().slice(0,200),s:s.map(x=>x.slice(0,400))}),jnItem())}catch(e){toast(e.message);b.disabled=false;b.textContent='Сохранить'}}};
+/* плашка "БЕТА" на дашбордах Взлёта и студии (put.js): текст хранится здесь, запись "бета-плашка"; дашборды подхватывают его в течение часа */
+const BT_TAG='бета-плашка', BT_DEF={h:'Дашборд в бета-версии: тестируем вместе',top:'Ребята, вы первые! Дашборд ещё дорабатывается, и вы помогаете его тестировать.',
+  li:['Очки иногда могут обнуляться, а задания меняться.','Заявки подтверждаем быстро.','У заданий курса есть кнопки 👍 и 👎. Понравилось - жми 👍, скучно или непонятно - 👎. По ним тренер правит и меняет задания.','Вместе сделаем удобное место для зачётов, рейтинга, тестов, тренировок и шпаргалок.'],
+  bot:'Что-то не работает или есть идея? Жми "Нашёл ошибку?" внизу справа.'};
+const btItem=()=>D.news.find(x=>x.date===BT_TAG);
+function btData(){const it=btItem();if(it)try{const o=JSON.parse(it.text);if(o&&o.h&&Array.isArray(o.li))return o}catch(e){}return BT_DEF}
+$('#btEdit').onclick=()=>{if(!canEdit())return;const d=btData();
+  $('#mbody').innerHTML=`<h3>Плашка БЕТА на дашбордах</h3><p style="color:var(--dim);font-size:14px">Видна над главным блоком Взлёта и студии. Дашборды подхватывают новый текст в течение часа.</p>
+  <label>Строка на плашке<input id="btH" value="${esc(d.h)}"></label><label>Первая фраза (жирным)<input id="btT" value="${esc(d.top||'')}"></label>
+  <label>Пункты списка - каждый с новой строки<textarea id="btL" rows="7">${esc(d.li.join('\n'))}</textarea></label><label>Последняя фраза<input id="btB" value="${esc(d.bot||'')}"></label>
+  <div class="mbar"><button class="ibtn" id="btDef">↺ Как было</button><button class="ibtn" onclick="closeM()">Отмена</button><button class="ibtn pri" id="btSave">Сохранить</button></div>`;openM();
+  $('#btDef').onclick=()=>{$('#btH').value=BT_DEF.h;$('#btT').value=BT_DEF.top;$('#btL').value=BT_DEF.li.join('\n');$('#btB').value=BT_DEF.bot};
+  $('#btSave').onclick=async()=>{const b=$('#btSave'),h=$('#btH').value.trim();if(!h){toast('Нужна строка на плашке');return}
+    const o={h:h.slice(0,120),top:$('#btT').value.trim().slice(0,300),li:$('#btL').value.split(/\n+/).map(x=>x.trim()).filter(Boolean).slice(0,10).map(x=>x.slice(0,300)),bot:$('#btB').value.trim().slice(0,300)};
+    b.disabled=true;b.textContent='Сохраняю…';try{await hSave(BT_TAG,JSON.stringify(o),btItem())}catch(e){toast(e.message);b.disabled=false;b.textContent='Сохранить'}}};
 async function hSave(tag,text,it){const j=await api({op:'hput',hub:HUB,key:'news',item:{id:it?it.id:'',text,date:tag}});D=j.data;ls.set('hub_'+HUB,JSON.stringify(D));closeM();render();toast('Сохранено')}
 function openSt(key,name){if(!canEdit())return;const m=stMap(),cur=m[key]||'open';
   $('#mbody').innerHTML=`<h3>${esc(name||'Ссылка')}</h3><p style="color:var(--dim);font-size:14px">Что видят посетители.</p>${Object.keys(ST_L).map(v=>`<label style="display:flex;gap:10px;align-items:center;font-weight:700;margin:10px 0"><input type="radio" name="stv" value="${v}" ${v===cur?'checked':''} style="width:auto"> ${ST_L[v]}</label>`).join('')}<div class="mbar"><button class="ibtn" onclick="closeM()">Отмена</button><button class="ibtn pri" id="stSave">Сохранить</button></div>`;openM();
@@ -1557,6 +1622,20 @@ function showVis(n,anim){const el=$('#visC');n=+n;if(!el||!n)return;const i=el.q
   $('supX').onclick=close;M.onclick=function(e){if(e.target===M)close()};
   addEventListener('keydown',function(e){if(e.key==='Escape'&&M.classList.contains('on'))close()});
   if(location.hash==='#podderzhka'||/[?&]podderzhka\b/.test(location.search))setTimeout(open,700);
+})();
+</script>
+<script src="three.min.js"></script>
+<script src="planets.js"></script>
+<script>
+(function(){ var box=document.getElementById('pl'); if(!box) return;
+  var P=[
+   {n:'Спектр',d:'Ресурсный центр: кружки, расписание, "Сегодня", новости и сайт центра.',u:'spektr.html',img:'logo.webp',c1:'#ffd36e',c2:'#ff8a5c',r:3.4,s:.55,sz:.62,tilt:.10},
+   {n:'Клуб "Взлёт"',d:'FPV и БПЛА: курс по модулям, тренировки, тесты и рейтинг пилотов.',u:'vzlet/',img:'vzlet.webp',c1:'#7cf3ff',c2:'#3d7bff',r:4.7,s:.42,sz:.55,tilt:-.18,ring:true},
+   {n:'Гитара и ИИ-студия',d:'Уроки гитары, тюнер, метроном и музыка с нейросетями.',u:'studio/',img:'studio.webp',c1:'#ff7ce0',c2:'#8a5cff',r:6.0,s:.33,sz:.58,tilt:.22},
+   {n:'Агрокласс',d:'Агродроны, Python и ИИ в сельском хозяйстве.',u:'agroklass/',c1:'#9dff7c',c2:'#1fae6a',r:7.2,s:.26,sz:.52,tilt:-.08}];
+  document.getElementById('plList').innerHTML=P.map(function(p){return '<a href="'+p.u+'">'+p.n+'</a>';}).join('');
+  if(window.Planets) Planets.init(box,P,function(card,p){ if(window.dive) dive(card,p); else location.href=p.u; });
+  else box.classList.add('noGL');
 })();
 </script>
 </body>
