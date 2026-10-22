@@ -5,7 +5,7 @@
   "lang": "ru",
   "id": "/irtysh.html",
   "start_url": "/irtysh.html",
-  "scope": "/",
+  "scope": "/irtysh.html",
   "display": "standalone",
   "background_color": "#0b0914",
   "theme_color": "#0b0914",
