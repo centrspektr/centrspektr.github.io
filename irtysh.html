@@ -677,7 +677,9 @@ function enter(n){ if(n.kind==='set'){ setPanel(); return; } if(n.kind==='idea'|
       if(n.kind==='group'||n.kind==='support'){ (n.kind==='group'?atmEl:supEl).classList.add('on'); st='atm'; backB.classList.remove('on'); camP.copy(back0.p); camL.copy(back0.l); flashOff(); return; }
       warp.style.setProperty('--wc',n.c); document.getElementById('warpT').textContent=n.n; warp.classList.add('on'); flashOff();
       setTimeout(function(){
-        if(window.OPEN_SAME&&location.hostname==='centrspektr.github.io'&&n.u.indexOf('https://centrspektr.github.io/')===0){ /* на самом сайте - в этом окне; в превью переход внутри окна запрещён (был белый экран) - открываем новую вкладку */ location.href=n.u; return; } /* свои дашборды - в этом окне, соцсети и галерея - в новом */
+        if(window.OPEN_SAME&&location.hostname==='centrspektr.github.io'&&n.u.indexOf('https://centrspektr.github.io/')===0){ /* на самом сайте - в этом окне; в превью переход внутри окна запрещён (был белый экран) - открываем новую вкладку */
+          /* запоминаем планету: по кнопке "назад" (или крестику в приложении) вернёмся к ней, а не в начало */
+          try{ sessionStorage.setItem('irtysh_ret',n.id); }catch(e){} window.__ret=function(){ warp.classList.remove('on','ask'); camP.copy(back0.p); camL.copy(back0.l); cqSnap=true; settle(n); }; location.href=n.u; return; } /* свои дашборды - в этом окне, соцсети и галерея - в новом */
         /* сам браузер не даёт открыть новую вкладку без нажатия - показываем кнопку "Открыть" */
         var wa=document.getElementById('warpA'), done=function(){ warp.classList.remove('on','ask'); camP.copy(back0.p); camL.copy(back0.l); settle(n); };
         wa.href=n.u; warp.classList.add('ask'); wa.onclick=function(){ setTimeout(done,300); }; document.getElementById('warpX').onclick=done; },red?200:1100); }); }); }
@@ -842,7 +844,14 @@ function pen(dur){ if(!VOICE) return; try{ var A=window.__ac||(window.__ac=new (
   var s=A.createBufferSource(); s.buffer=b; var bp=A.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=3200; bp.Q.value=.7; var g=A.createGain(), t=A.currentTime; g.gain.setValueAtTime(0,t);
   for(var k=0,tt=t;tt<t+dur-.1;k++){ var L=.08+Math.random()*.22; g.gain.linearRampToValueAtTime(.05+Math.random()*.05,tt+.03); g.gain.linearRampToValueAtTime(.008,tt+L); bp.frequency.setValueAtTime(2600+Math.random()*1600,tt); tt+=L+Math.random()*.06; }
   g.gain.linearRampToValueAtTime(0,t+dur); s.connect(bp); bp.connect(g); g.connect(A.destination); s.start(t); s.stop(t+dur); }catch(e){} }
-setTimeout(runIntro,300);
+/* возврат из продукта (Спектр, Взлёт, Студия...) кнопкой "назад": страница из памяти браузера - убираем заставку перехода и стоим у той же планеты;
+   если браузер загрузил портал заново - без заставки сразу внутри, у планеты, из которой ушли */
+addEventListener('pageshow',function(e){ if(e.persisted&&window.__ret){ var f=window.__ret; window.__ret=null; try{ sessionStorage.removeItem('irtysh_ret'); }catch(x){} f(); } });
+function backIn(n){ hideIntro(); introSeen=true; skyK=gateK=starK=1; growT0=-1; gate.visible=false; inside.visible=true; mixT=1; rollT=.04; back=[]; acc=0;
+  var B=canon(n); camP.copy(B.p); camL.copy(B.l); cqSnap=true; cur=n; n.close=false; backB.classList.add('on'); hint.style.opacity=0; hint.style.pointerEvents='none';
+  flash.style.transition='none'; flash.style.opacity=1; settle(n); gateUI(); setTimeout(flashOff,60); }
+var RET=null; try{ RET=sessionStorage.getItem('irtysh_ret'); sessionStorage.removeItem('irtysh_ret'); }catch(e){}
+if(RET&&byId[RET]) setTimeout(function(){ backIn(byId[RET]); },60); else setTimeout(runIntro,300);
 /* фразы у портала: появляются и тают по очереди (на сайте - правка по PIN) */
 var SAY=window.SAY||['Здесь начинается путь','Выбирай направление','Дроны, музыка, ИИ и творчество','Полетели вперёд'];
 (function(){ var el=document.getElementById('say'), i=0;
