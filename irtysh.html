@@ -20,8 +20,6 @@ body{background:var(--bg);color:var(--fg);font-family:var(--body);overflow:hidde
 .mxl b{display:inline-block;width:1ch;text-align:center;font-weight:400;opacity:0}
 .mxl b.h{color:#d8ffe6;text-shadow:0 0 10px #9dffbf}.mxl b.m{opacity:.7}
 #mxA{top:31%}#mxB{top:65%}#mxM{top:calc(50% - .7em)}
-/* осыпающиеся знаки: падают вниз, перебираясь, и гаснут */
-.mxf{position:fixed;left:0;top:0;right:auto;width:auto;height:auto;overflow:visible;opacity:1;z-index:4;will-change:transform,opacity}
 /* "Иртыш-портал" внизу: чёрные буквы с белой обводкой, перо пишет то медленно, то быстрее */
 #ttl{position:fixed;left:50%;bottom:calc(110px + env(safe-area-inset-bottom,0px));width:min(62vw,300px);transform:translateX(-50%);pointer-events:none;z-index:4;transition:opacity .6s}
 #ttl svg{display:block;width:100%;height:auto;overflow:visible}
@@ -48,10 +46,8 @@ body{background:var(--bg);color:var(--fg);font-family:var(--body);overflow:hidde
 @keyframes bob{50%{transform:translateY(5px)}}
 #vis{display:none!important;position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:max(16px,env(safe-area-inset-right,0px));z-index:6;display:flex;align-items:center;gap:6px;font:700 13px var(--body);color:var(--dim);pointer-events:none;font-variant-numeric:tabular-nums}
 /* счётчик на старте: глаз и число внизу, +1 перебирается знаками "Матрицы" */
-#visB{position:fixed;left:50%;top:calc(65% - 2px);transform:translate(-50%,10px);z-index:4;display:flex;align-items:center;gap:8px;font:400 clamp(15px,4.2vw,19px) 'Roboto Mono',ui-monospace,monospace;color:#7dffb4;text-shadow:0 0 3px #00ff6a,0 0 10px #00ff6a,0 0 22px rgba(0,255,106,.7);opacity:0;transition:opacity .8s,transform .8s;pointer-events:none}
+#visB{position:fixed;left:50%;top:calc(71% - 2px);transform:translate(-50%,10px);z-index:4;display:flex;align-items:center;gap:8px;font:400 clamp(15px,4.2vw,19px) 'Roboto Mono',ui-monospace,monospace;color:#7dffb4;text-shadow:0 0 3px #00ff6a,0 0 10px #00ff6a,0 0 22px rgba(0,255,106,.7);opacity:0;transition:opacity .8s,transform .8s;pointer-events:none}
 #visB.on{opacity:1;transform:translate(-50%,0)} #visB svg{width:20px;height:20px;fill:none;stroke:#3dff8f;stroke-width:1.6;filter:drop-shadow(0 0 4px #00ff6a)}
-#visB i{position:absolute;right:-30px;top:0;font-style:normal;font-size:.8em;color:#d8ffe6;opacity:0}
-#visB i.up{animation:plus1 1.6s ease-out forwards} @keyframes plus1{0%{opacity:0;transform:translateY(6px)}25%{opacity:1}100%{opacity:0;transform:translateY(-22px)}}
 #vis svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2}
 #back{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));left:max(16px,env(safe-area-inset-left,0px));z-index:6;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--glass);color:var(--fg);font:700 20px var(--body);cursor:pointer;opacity:0;pointer-events:none;transition:opacity .4s}
 #back.on{opacity:1;pointer-events:auto}
@@ -156,7 +152,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--body);overflow:hidde
 <text class="tw t1" x="14" y="66" textLength="262" lengthAdjust="spacingAndGlyphs">Иртыш-</text><text class="tw t2" x="284" y="66" textLength="300" lengthAdjust="spacingAndGlyphs">портал</text>
 <circle id="nib" r="2.4" fill="#fff" opacity="0" style="filter:drop-shadow(0 0 5px #fff)"/></svg></div>
 <div id="say" aria-live="polite"></div>
-<div id="visB" aria-live="polite"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span id="visBN">-</span><i id="visP">+1</i></div>
+<div id="visB" aria-live="polite"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span id="visBN">-</span></div>
 <button id="hint" type="button">Полетели вперёд <b>↓</b></button>
 <div id="vis" title="Посещения сайтов"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span id="visN">-</span></div>
 <button id="back" type="button" aria-label="Назад">←</button>
@@ -741,11 +737,11 @@ function clockTxt(){ var d=new Date(); return pz(d.getHours())+':'+pz(d.getMinut
 function mxLine(id){ var el=document.getElementById(id), L={el:el};
   L.init=function(){ el.innerHTML='<b style="opacity:1">0</b>'; var cw=el.firstChild.getBoundingClientRect().width||12; L.N=Math.max(12,Math.floor(el.clientWidth/cw)); var h=''; for(var i=0;i<L.N;i++) h+='<b></b>'; el.innerHTML=h; L.c=[].slice.call(el.children); L.ch=[]; L.op=[]; L.cl=[]; for(i=0;i<L.N;i++){ L.ch.push(''); L.op.push(0); L.cl.push(''); } el.style.opacity=1; };
   L.set=function(i,ch,op,cl){ op=Math.round(op*20)/20; if(L.ch[i]!==ch){ L.c[i].textContent=ch; L.ch[i]=ch; } if(L.op[i]!==op){ L.c[i].style.opacity=op; L.op[i]=op; } cl=cl||''; if(L.cl[i]!==cl){ L.c[i].className=cl; L.cl[i]=cl; } };
-  L.place=function(txt){ var o=Math.max(0,Math.floor(L.N/2-txt.length/2)), t={}; for(var i=0;i<txt.length;i++) if(txt[i]!==' ') t[o+i]=txt[i]; return t; };
+  L.place=function(txt){ var o=Math.max(0,Math.floor(L.N/2-txt.length/2)+(L.dx||0)), t={}; for(var i=0;i<txt.length;i++) if(txt[i]!==' ') t[o+i]=txt[i]; return t; };
   return L; }
-var mxA=mxLine('mxA'), mxB=mxLine('mxB'), mxM=mxLine('mxM'), mxR=document.getElementById('mxR'), ttl=document.getElementById('ttl'), live=false;
+var mxA=mxLine('mxA'), mxB=mxLine('mxB'), mxM=mxLine('mxM'); mxA.dx=2; var mxR=document.getElementById('mxR'), ttl=document.getElementById('ttl'), live=false;
 /* фронт идёт слева направо: впереди - прежние знаки, в окне фронта - перебор, позади - нужные знаки встают (иногда на миг "ошибаются"), лишние тают */
-function scan(L,txt,id,cb){ var tg=L.place(txt), N=L.N, W=4, SP=mob?44:50, pc=L.ch.slice(), po=L.op.slice(), gl={}, t0=performance.now(), endF=N+W+SP*.6;
+function scan(L,txt,id,cb,sp){ var tg=L.place(txt), N=L.N, W=4, SP=sp||(mob?44:50), pc=L.ch.slice(), po=L.op.slice(), gl={}, t0=performance.now(), endF=N+W+SP*.6;
   (function f(now){ if(id!==intro) return; var e=(now-t0)/1000, fr=e*SP-1;
     for(var c=0;c<N;c++){ var k=tg[c];
       if(c>fr) L.set(c,pc[c],po[c]);
@@ -753,31 +749,31 @@ function scan(L,txt,id,cb){ var tg=L.place(txt), N=L.N, W=4, SP=mob?44:50, pc=L.
       else if(k){ if(!gl[c]&&Math.random()<.012&&fr<endF) gl[c]=e+.12+Math.random()*.12; var bad=gl[c]&&e<gl[c]; if(gl[c]&&e>=gl[c]) gl[c]=-1; L.set(c,bad?g2(k):k,1,bad?'h':''); }
       else { var tp=(fr-W-c)/SP; L.set(c,L.ch[c],Math.max(0,.85-tp/.45)); } }
     if(fr<endF) requestAnimationFrame(f); else { for(c=0;c<N;c++) L.set(c,tg[c]||'',tg[c]?1:0); cb&&cb(); } })(t0); }
-/* старт: посередине печатается дата с годом и осыпается; растёт портал; над порталом встают часы, под ним "Иртыш-портал" и не спеша три "_";
-   иногда с букв сыплются знаки, "_" на миг становятся иероглифами; потом надпись осыпается, и на её месте глаз и счётчик делают +1 */
+/* старт: посередине печатается дата с годом и тает перебором знаков; ещё в темноте над центром встают часы, под ним "Иртыш-портал" и не спеша три "_";
+   знаки иногда быстро перебираются на месте, "_" на миг становятся иероглифами; потом рост портала, и надпись перепечатывается в глаз со счётчиком */
 function runIntro(){ var id=++intro, d=new Date(), w=function(ms,f){ setTimeout(function(){ if(id===intro) f(); },ms); };
   live=false; mxA.init(); mxB.init(); mxM.init(); mxB.el.style.transition=''; penSet(-200); nib.setAttribute('opacity',0); ttl.style.opacity=0; clearInterval(neonT); NT.forEach(function(e){ e.style.opacity=0; }); visB.classList.remove('on');
   hint.style.opacity=0; hint.style.pointerEvents='none';
   /* первый раз - тёмный экран и рост портала; при возврате из портала космос уже есть */
   if(!introSeen){ skyK=0; gateK=0; starK=0; } else { skyK=1; gateK=1; starK=1; }
-  var T='Иртыш-портал', TT=T+'___';
-  introEnd=function(){ introSeen=true;
-    scan(mxA,clockTxt(),id,function(){ live=true; tick(id);
-      w(400,function(){ scan(mxB,TT.replace(/_/g,' '),id,function(){ var o=Math.max(0,Math.floor(mxB.N/2-TT.length/2))+T.length;
-        [0,1,2].forEach(function(k){ w(700+k*800,function(){ mxB.set(o+k,'_',1); }); });
-        var drip=setInterval(function(){ if(id!==intro){ clearInterval(drip); return; } dripOne(mxB); if(Math.random()<.5) dripOne(mxA); },420);
-        var gl=setInterval(function(){ if(id!==intro){ clearInterval(gl); return; } var k=o+(Math.random()*3|0); if(mxB.ch[k]!=='_') return; mxB.set(k,g1(),1,'h'); setTimeout(function(){ if(id===intro&&mxB.op[k]>0) mxB.set(k,'_',1); },140+Math.random()*120); },650);
-        w(5600,function(){ clearInterval(drip); clearInterval(gl); crumble(mxB); w(900,function(){ visShow(); }); }); }); }); }); };
-  scan(mxM,String(d.getDate())+' '+MON[d.getMonth()]+' '+d.getFullYear(),id,function(){ w(900,function(){ crumble(mxM);
-    w(700,function(){ if(introSeen) introEnd(); else { gFl.t=0; w(450,function(){ growT0=tm; }); } }); }); }); }
-/* один знак срывается с надписи и падает вниз, перебираясь (сама надпись остаётся) */
-function dripOne(L){ var ks=[]; for(var i=0;i<L.N;i++) if(L.op[i]>0&&L.ch[i]&&L.ch[i]!==' ') ks.push(i); if(!ks.length) return; var i2=ks[Math.random()*ks.length|0];
-  fallGlyph(L.c[i2].getBoundingClientRect(),g1(),30+Math.random()*60,900+Math.random()*700,0,.7); }
-/* надпись осыпается: каждый знак падает вниз, перебираясь, и гаснет */
-function crumble(L){ for(var i=0;i<L.N;i++){ if(L.op[i]>0&&L.ch[i]&&L.ch[i]!==' ') fallGlyph(L.c[i].getBoundingClientRect(),L.ch[i],40+Math.random()*110,700+Math.random()*700,Math.random()*350,1); L.set(i,'',0); } }
-function fallGlyph(rc,ch,dist,dur,delay,a0){ var sp=document.createElement('div'); sp.className='mxl mxf'; sp.textContent=ch; sp.style.transform='translate('+rc.left+'px,'+rc.top+'px)'; sp.style.opacity=a0; document.body.appendChild(sp);
-  var t0=performance.now()+delay; (function f(now){ var k=(now-t0)/dur; if(k<0){ requestAnimationFrame(f); return; } if(k>=1){ sp.remove(); return; }
-    if(Math.random()<.18) sp.textContent=g1(); sp.style.transform='translate('+rc.left+'px,'+(rc.top+dist*k*k)+'px)'; sp.style.opacity=a0*(1-k); requestAnimationFrame(f); })(performance.now()); }
+  var T='Иртыш-портал', TT=T+'___', fx=[], stopFx=function(){ fx.forEach(clearInterval); fx=[]; };
+  introEnd=function(){ introSeen=true; w(1800,function(){ stopFx(); var n=dissolve(mxB,id,true); w(Math.round(n*55/2+150),visShow); }); };
+  scan(mxM,String(d.getDate())+' '+MON[d.getMonth()]+' '+d.getFullYear(),id,function(){ w(900,function(){ dissolve(mxM,id);
+    w(900,function(){ scan(mxA,clockTxt(),id,function(){ live=true; tick(id); });
+      w(250,function(){ scan(mxB,TT.replace(/_/g,' '),id,function(){ var o=mxB.place(TT), u=[]; for(var c in o) if(o[c]==='_') u.push(+c);
+        u.forEach(function(k,j){ w(700+j*800,function(){ mxB.set(k,'_',1); }); });
+        fx.push(setInterval(function(){ if(id!==intro){ stopFx(); return; } if(Math.random()<.7) flick(mxB,id); },480));
+        fx.push(setInterval(function(){ if(id!==intro){ stopFx(); return; } var k=u[Math.random()*3|0]; if(mxB.ch[k]!=='_') return; mxB.set(k,g1(),1,'h'); setTimeout(function(){ if(id===intro&&mxB.ch[k]!=='_'&&mxB.op[k]>0) mxB.set(k,'_',1); },140+Math.random()*120); },650));
+        w(700+3*800+500,function(){ if(introSeen) introEnd(); else { gFl.t=0; w(450,function(){ growT0=tm; }); } }); }); }); }); }); }); }
+/* один знак надписи быстро перебирается на месте и возвращается */
+function flick(L,id){ var ks=[]; for(var i=0;i<L.N;i++) if(L.op[i]>0&&L.ch[i]&&L.ch[i]!==' '&&L.ch[i]!=='_'&&!L.cl[i]) ks.push(i); if(!ks.length) return;
+  var i2=ks[Math.random()*ks.length|0], orig=L.ch[i2], n=2+Math.random()*3|0;
+  (function f(){ if(id!==intro) return; if(n-->0){ L.set(i2,g1(),1,'h'); setTimeout(f,45+Math.random()*35); } else L.set(i2,orig,1); })(); }
+/* надпись тает: каждый знак быстро перебирается на месте и гаснет (seq - по очереди слева направо) */
+function dissolve(L,id,seq){ var ks=[], t0=performance.now(); for(var i=0;i<L.N;i++) if(L.op[i]>0&&L.ch[i]&&L.ch[i]!==' ') ks.push({i:i,d:seq?ks.length*55:Math.random()*350,u:seq?380:350+Math.random()*450});
+  (function f(now){ if(id!==intro) return; var e=now-t0, left=0;
+    ks.forEach(function(k){ var q=(e-k.d)/k.u; if(q<0){ left++; return; } if(q>=1){ L.set(k.i,'',0); return; } left++; L.set(k.i,Math.random()<.6?g1():L.ch[k.i],1-q*q,q<.3?'h':''); });
+    if(left) requestAnimationFrame(f); })(t0); return ks.length; }
 var introEnd=function(){};
 /* неоновая вывеска: включение с перебоями, дальше горит ровно; раз в 5-10 секунд коротко моргает одна из половин (как вывеска, которая замыкает) */
 var NT=[].slice.call(document.querySelectorAll('#ttl .tw'));
@@ -816,13 +812,13 @@ var SAY=window.SAY||['Здесь начинается путь','Выбирай 
   function next(){ if(st!=='gate'){ el.classList.remove('on'); setTimeout(next,1500); return; }
     el.textContent=SAY[i++%SAY.length]; el.classList.add('on'); setTimeout(function(){ el.classList.remove('on'); setTimeout(next,1400); },3200); }
   setTimeout(next,4600); })();
-/* счётчик внизу старта: сначала прежнее число, потом знаки перебираются и встают в новое (+1) */
-var visB=document.getElementById('visB'), visBN=document.getElementById('visBN'), visP=document.getElementById('visP'), VIS_N=null;
+/* счётчик внизу старта: сначала прежнее число, потом изменившиеся цифры быстро перебираются и встают на новое (+1) */
+var visB=document.getElementById('visB'), visBN=document.getElementById('visBN'), VIS_N=null;
 function visShow(){ visB.classList.add('on'); var n=VIS_N; if(n==null){ visBN.textContent='-'; return; }
-  var from=(n-1).toLocaleString('ru-RU'), to=n.toLocaleString('ru-RU'), t0=performance.now(), D=1300; visBN.textContent=from;
-  setTimeout(function(){ visP.classList.remove('up'); void visP.offsetWidth; visP.classList.add('up');
-    (function f(now){ var k=(now-t0-500)/D, out=''; for(var i=0;i<to.length;i++){ var ch=to[i]; out+=(!/\d/.test(ch)||k>(i+1)/to.length)?ch:(Math.random()<.5?g1():String(Math.random()*10|0)); }
-      visBN.textContent=out; if(k<1) requestAnimationFrame(f); else visBN.textContent=to; })(performance.now()); },500); }
+  var from=(n-1).toLocaleString('ru-RU'), to=n.toLocaleString('ru-RU'), D=1100; visBN.textContent=from;
+  setTimeout(function(){ var t0=performance.now(), last=0; (function f(now){ var k=(now-t0)/D, out='';
+      if(now-last>55){ last=now; for(var i=0;i<to.length;i++){ var ch=to[i]; out+=(ch===from[i]&&from.length===to.length)||!/\d/.test(ch)?ch:String(Math.random()*10|0); } visBN.textContent=out; }
+      if(k<1) requestAnimationFrame(f); else visBN.textContent=to; })(t0); },900); }
 /* счётчик посещений: общий для сайтов СПЕКТРа, как на портале */
 (function(page){ try{ var el=document.getElementById('visN'), k='irtysh_hit_'+page, ss=sessionStorage, ls=localStorage, f=function(n){ el.textContent=(+n).toLocaleString('ru-RU'); VIS_N=+n||null; };
   if(ss.getItem(k)){ f(ss.getItem(k)); return; } var d=new Date().toDateString(), fresh=!ls.getItem('irtysh_new_'+page), today=ls.getItem('irtysh_day_'+page)!==d;
