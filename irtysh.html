@@ -619,7 +619,7 @@ function topOff(now){ if(!topSave) return; var sv=topSave; topSave=null; if(now)
 /* сдвиг карты сверху: палец тянет карту, камера едет в обратную сторону (не дальше краёв карты) */
 function topPan(dx,dy){ var k=2*Math.tan(C.fov*Math.PI/360)*camP.y/innerHeight, ox=Math.max(-110,Math.min(110,camP.x-TOP_P.x-dx*k)), oz=Math.max(-150,Math.min(70,camP.z-TOP_P.z+dy*k));
   camP.x=TOP_P.x+ox; camP.z=TOP_P.z+oz; camL.x=TOP_L.x+ox; camL.z=TOP_L.z+oz; }
-function topZoom(f){ var y=Math.max(80,Math.min(260,camP.y*f)), r=y/camP.y; camP.y=y; camL.y*=r; }
+function topZoom(f){ var y=Math.max(80,Math.min(480,camP.y*f)), r=y/camP.y; camP.y=y; camL.y*=r; }
 topB.onclick=function(){ if(fly) return; if(st==='top') topOff(); else topOn(); };
 var tL=document.getElementById('tL'), tR=document.getElementById('tR');
 function turnUI(off){ tL.classList.remove('on'); tR.classList.remove('on'); navUI(off); } /* боковые стрелки поворота больше не нужны: крутим пальцем */
