@@ -1,0 +1,17 @@
+{
+  "name": "Иртыш-портал",
+  "short_name": "Иртыш",
+  "description": "Иртыш-портал: полёт по планетам СПЕКТРа",
+  "lang": "ru",
+  "id": "/irtysh.html",
+  "start_url": "/irtysh.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0b0914",
+  "theme_color": "#0b0914",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
