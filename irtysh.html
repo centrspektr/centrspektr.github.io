@@ -19,7 +19,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--body);overflow:hidde
 .mxl{position:fixed;left:5%;right:5%;height:1.4em;font:400 clamp(17px,5vw,24px)/1.4 'Roboto Mono','Courier New',ui-monospace,monospace;color:#7dffb4;text-shadow:0 0 3px #00ff6a,0 0 10px #00ff6a,0 0 22px rgba(0,255,106,.75),0 0 40px rgba(0,220,100,.45);white-space:nowrap;overflow:hidden;pointer-events:none;z-index:4;transition:opacity .6s}
 .mxl b{display:inline-block;width:1ch;text-align:center;font-weight:400;opacity:0}
 .mxl b.h{color:#d8ffe6;text-shadow:0 0 10px #9dffbf}.mxl b.m{opacity:.7}
-#mxA{top:31%}#mxB{top:65%}#mxM{top:calc(50% - .7em)}
+#mxA{top:37.5%}#mxB{top:71%}#mxM{top:calc(50% - .7em)}
 /* "Иртыш-портал" внизу: чёрные буквы с белой обводкой, перо пишет то медленно, то быстрее */
 #ttl{position:fixed;left:50%;bottom:calc(110px + env(safe-area-inset-bottom,0px));width:min(62vw,300px);transform:translateX(-50%);pointer-events:none;z-index:4;transition:opacity .6s}
 #ttl svg{display:block;width:100%;height:auto;overflow:visible}
@@ -46,7 +46,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--body);overflow:hidde
 @keyframes bob{50%{transform:translateY(5px)}}
 #vis{display:none!important;position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:max(16px,env(safe-area-inset-right,0px));z-index:6;display:flex;align-items:center;gap:6px;font:700 13px var(--body);color:var(--dim);pointer-events:none;font-variant-numeric:tabular-nums}
 /* счётчик на старте: глаз и число внизу, +1 перебирается знаками "Матрицы" */
-#visB{position:fixed;left:50%;top:calc(71% - 2px);transform:translate(-50%,10px);z-index:4;display:flex;align-items:center;gap:8px;font:400 clamp(15px,4.2vw,19px) 'Roboto Mono',ui-monospace,monospace;color:#7dffb4;text-shadow:0 0 3px #00ff6a,0 0 10px #00ff6a,0 0 22px rgba(0,255,106,.7);opacity:0;transition:opacity .8s,transform .8s;pointer-events:none}
+#visB{position:fixed;left:50%;top:calc(71% + .35em);transform:translate(-50%,10px);z-index:4;display:flex;align-items:center;gap:8px;font:400 clamp(15px,4.2vw,19px) 'Roboto Mono',ui-monospace,monospace;color:#7dffb4;text-shadow:0 0 3px #00ff6a,0 0 10px #00ff6a,0 0 22px rgba(0,255,106,.7);opacity:0;transition:opacity .8s,transform .8s;pointer-events:none}
 #visB.on{opacity:1;transform:translate(-50%,0)} #visB svg{width:20px;height:20px;fill:none;stroke:#3dff8f;stroke-width:1.6;filter:drop-shadow(0 0 4px #00ff6a)}
 #vis svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2}
 #back{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));left:max(16px,env(safe-area-inset-left,0px));z-index:6;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--glass);color:var(--fg);font:700 20px var(--body);cursor:pointer;opacity:0;pointer-events:none;transition:opacity .4s}
@@ -739,7 +739,7 @@ function mxLine(id){ var el=document.getElementById(id), L={el:el};
   L.set=function(i,ch,op,cl){ op=Math.round(op*20)/20; if(L.ch[i]!==ch){ L.c[i].textContent=ch; L.ch[i]=ch; } if(L.op[i]!==op){ L.c[i].style.opacity=op; L.op[i]=op; } cl=cl||''; if(L.cl[i]!==cl){ L.c[i].className=cl; L.cl[i]=cl; } };
   L.place=function(txt){ var o=Math.max(0,Math.floor(L.N/2-txt.length/2)+(L.dx||0)), t={}; for(var i=0;i<txt.length;i++) if(txt[i]!==' ') t[o+i]=txt[i]; return t; };
   return L; }
-var mxA=mxLine('mxA'), mxB=mxLine('mxB'), mxM=mxLine('mxM'); mxA.dx=2; var mxR=document.getElementById('mxR'), ttl=document.getElementById('ttl'), live=false;
+var mxA=mxLine('mxA'), mxB=mxLine('mxB'), mxM=mxLine('mxM'); mxA.dx=1; var mxR=document.getElementById('mxR'), ttl=document.getElementById('ttl'), live=false;
 /* фронт идёт слева направо: впереди - прежние знаки, в окне фронта - перебор, позади - нужные знаки встают (иногда на миг "ошибаются"), лишние тают */
 function scan(L,txt,id,cb,sp){ var tg=L.place(txt), N=L.N, W=4, SP=sp||(mob?44:50), pc=L.ch.slice(), po=L.op.slice(), gl={}, t0=performance.now(), endF=N+W+SP*.6;
   (function f(now){ if(id!==intro) return; var e=(now-t0)/1000, fr=e*SP-1;
