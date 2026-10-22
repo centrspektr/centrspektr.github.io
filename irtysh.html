@@ -57,6 +57,9 @@ body{background:var(--bg);color:var(--fg);font-family:var(--body);overflow:hidde
 #warp.on{opacity:1}
 #warp b{font:700 clamp(26px,8vw,48px) var(--display);color:#fff;text-shadow:0 0 30px var(--wc,#7cf3ff);transform:scale(.9);transition:transform 1.1s}
 #warp.on b{transform:scale(1.06)}
+.wbox{display:flex;flex-direction:column;align-items:center;gap:22px;text-align:center;padding:0 16px}
+#warpGo{display:none;gap:10px;flex-wrap:wrap;justify-content:center}#warp.ask{pointer-events:auto}#warp.ask #warpGo{display:flex}
+#warpA{text-decoration:none;font-size:16px;padding:13px 26px;border-color:#fff;background:rgba(5,8,25,.85);color:#fff;box-shadow:0 0 22px rgba(255,255,255,.35)}
 #snd{position:fixed;top:calc(44px + env(safe-area-inset-top,0px));right:max(10px,env(safe-area-inset-right,0px));z-index:6;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--glass);color:var(--dim);cursor:pointer;display:grid;place-items:center;padding:0}
 #snd svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
 #snd .w{opacity:.25}#snd.on{color:#fff;border-color:rgba(167,139,250,.7)}#snd.on .w{opacity:1}
@@ -156,7 +159,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--body);overflow:hidde
   <button class="btn" id="supBack" type="button">← Назад в портал</button>
 </div></div>
 <div id="flash"></div>
-<div id="warp" aria-hidden="true"><b id="warpT"></b></div>
+<div id="warp"><div class="wbox"><b id="warpT"></b><div id="warpGo"><a id="warpA" class="btn" target="_blank" rel="noopener">Открыть ›</a><button id="warpX" class="btn" type="button">← Назад в портал</button></div></div></div>
 <div id="nav"><button id="nPrev" class="nb" type="button"></button><button id="nNext" class="nb" type="button"></button></div>
 <button id="inst" class="tb" type="button">📲 Установить</button>
 <button id="edB" class="tb" type="button" aria-label="Правка портала" title="Правка портала">✎</button>
@@ -599,8 +602,9 @@ function enter(n){ if(n.kind==='idea'||n.kind==='hub'||soon(n)){ cap.animate([{t
       warp.style.setProperty('--wc',n.c); document.getElementById('warpT').textContent=n.n; warp.classList.add('on'); flashOff();
       setTimeout(function(){
         if(window.OPEN_SAME&&location.hostname==='centrspektr.github.io'&&n.u.indexOf('https://centrspektr.github.io/')===0){ /* на самом сайте - в этом окне; в превью переход внутри окна запрещён (был белый экран) - открываем новую вкладку */ location.href=n.u; return; } /* свои дашборды - в этом окне, соцсети и галерея - в новом */
-        var A=document.createElement('a'); A.href=n.u; A.target='_blank'; A.rel='noopener'; document.body.appendChild(A); A.click(); A.remove();
-        setTimeout(function(){ warp.classList.remove('on'); camP.copy(back0.p); camL.copy(back0.l); settle(n); },700); },red?200:1100); }); }); }
+        /* сам браузер не даёт открыть новую вкладку без нажатия - показываем кнопку "Открыть" */
+        var wa=document.getElementById('warpA'), done=function(){ warp.classList.remove('on','ask'); camP.copy(back0.p); camL.copy(back0.l); settle(n); };
+        wa.href=n.u; warp.classList.add('ask'); wa.onclick=function(){ setTimeout(done,300); }; document.getElementById('warpX').onclick=done; },red?200:1100); }); }); }
 document.getElementById('atBack').onclick=function(){ flashOn('rgba(134,239,172,.85)',function(){ atmEl.classList.remove('on'); backB.classList.add('on'); settle(byId.max); flashOff(); }); };
 document.getElementById('supBack').onclick=function(){ flashOn('rgba(255,207,110,.85)',function(){ supEl.classList.remove('on'); backB.classList.add('on'); settle(byId.help); flashOff(); }); };
 /* поворот камеры у узла: пальцем влево-вправо или кнопками ‹ › */
