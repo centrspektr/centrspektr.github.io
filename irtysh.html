@@ -757,7 +757,7 @@ function runIntro(){ var id=++intro, d=new Date(), w=function(ms,f){ setTimeout(
   /* первый раз - тёмный экран и рост портала; при возврате из портала космос уже есть */
   if(!introSeen){ skyK=0; gateK=0; starK=0; } else { skyK=1; gateK=1; starK=1; }
   var T='Иртыш-портал', TT=T+'___', fx=[], stopFx=function(){ fx.forEach(clearInterval); fx=[]; };
-  introEnd=function(){ introSeen=true; w(1800,function(){ stopFx(); var n=dissolve(mxB,id,true); w(Math.round(n*55/2+150),visShow); }); };
+  introEnd=function(){ introSeen=true; w(1300,function(){ stopFx(); var n=dissolve(mxB,id,true); w(Math.round(n*35/2+100),visShow); }); };
   scan(mxM,String(d.getDate())+' '+MON[d.getMonth()]+' '+d.getFullYear(),id,function(){ w(900,function(){ dissolve(mxM,id);
     w(900,function(){ scan(mxA,clockTxt(),id,function(){ live=true; tick(id); });
       w(250,function(){ scan(mxB,TT.replace(/_/g,' '),id,function(){ var o=mxB.place(TT), u=[]; for(var c in o) if(o[c]==='_') u.push(+c);
@@ -770,7 +770,7 @@ function flick(L,id){ var ks=[]; for(var i=0;i<L.N;i++) if(L.op[i]>0&&L.ch[i]&&L
   var i2=ks[Math.random()*ks.length|0], orig=L.ch[i2], n=2+Math.random()*3|0;
   (function f(){ if(id!==intro) return; if(n-->0){ L.set(i2,g1(),1,'h'); setTimeout(f,45+Math.random()*35); } else L.set(i2,orig,1); })(); }
 /* надпись тает: каждый знак быстро перебирается на месте и гаснет (seq - по очереди слева направо) */
-function dissolve(L,id,seq){ var ks=[], t0=performance.now(); for(var i=0;i<L.N;i++) if(L.op[i]>0&&L.ch[i]&&L.ch[i]!==' ') ks.push({i:i,d:seq?ks.length*55:Math.random()*350,u:seq?380:350+Math.random()*450});
+function dissolve(L,id,seq){ var ks=[], t0=performance.now(); for(var i=0;i<L.N;i++) if(L.op[i]>0&&L.ch[i]&&L.ch[i]!==' ') ks.push({i:i,d:seq?ks.length*35:Math.random()*350,u:seq?260:350+Math.random()*450});
   (function f(now){ if(id!==intro) return; var e=now-t0, left=0;
     ks.forEach(function(k){ var q=(e-k.d)/k.u; if(q<0){ left++; return; } if(q>=1){ L.set(k.i,'',0); return; } left++; L.set(k.i,Math.random()<.6?g1():L.ch[k.i],1-q*q,q<.3?'h':''); });
     if(left) requestAnimationFrame(f); })(t0); return ks.length; }
