@@ -26,12 +26,10 @@ body{background:var(--bg);color:var(--fg);font-family:var(--body);overflow:hidde
 /* "Иртыш-портал" - розовая неоновая вывеска: включается с перебоями, горит, иногда "замыкает" и гаснет */
 #ttl .tw{font-family:'Bad Script','Marck Script','Segoe Script',cursive;font-size:62px;fill:#ffe6f7;stroke:#ff4fd8;stroke-width:1.3;paint-order:stroke;opacity:0;
   filter:drop-shadow(0 0 2px #ff7be3) drop-shadow(0 0 9px #ff2fc8) drop-shadow(0 0 24px rgba(255,40,190,.65))}
-#ttl.neon .t1{animation:neonOn 2.2s linear forwards,neonLife 9s linear 2.2s infinite}
-#ttl.neon .t2{animation:neonOn 2.6s linear .25s forwards,neonGlitch 6.4s linear 2.9s infinite}
 @keyframes neonOn{0%{opacity:0}8%{opacity:.9}11%{opacity:.05}19%{opacity:1}23%{opacity:.15}38%{opacity:.95}42%{opacity:.3}55%,100%{opacity:1}}
 @keyframes neonLife{0%,84%{opacity:1}85%{opacity:.2}86%{opacity:1}88%{opacity:.1}89%,94%{opacity:.04}96%{opacity:.85}97%{opacity:.25}100%{opacity:1}}
 @keyframes neonGlitch{0%,62%{opacity:1}63%{opacity:.15}64%{opacity:1}66%{opacity:.3}67%{opacity:1}80%{opacity:1}81%{opacity:.08}83%{opacity:.6}84%{opacity:1}}
-@media (prefers-reduced-motion:reduce){#ttl.neon .tw{animation:none;opacity:1}}
+
 #mxR{position:fixed;left:0;top:0;width:100%;height:30%;pointer-events:none;z-index:3;transition:opacity 1.4s;filter:drop-shadow(0 0 3px rgba(0,255,106,.8));-webkit-mask-image:linear-gradient(#000 55%,transparent);mask-image:linear-gradient(#000 55%,transparent)}
 .co{background:none!important;border:0!important;padding:0!important;border-radius:0!important;overflow:visible}
 .co svg{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none} /* svg линии не ловит пальцы - иначе мешает двигать карту */
@@ -214,9 +212,9 @@ var NODES=(window.KOSMOS&&KOSMOS.nodes)||[
  {id:'vk',kind:'link',from:'social',n:'ВК',ab:'ВК',say:'ВКонтакте',u:'',c:'#2787f5',p:[-87,-15,-80],s:.85},
  {id:'gallery',kind:'dash',from:'me',n:'Галерея Иртыша',say:'Галерея Иртыша. Фото и видео села',u:'',img:window.VILLAGE||'selo.jpg',c:'#38bdf8',p:[64,9,-66],s:1.4},
  {id:'idea1',kind:'idea',from:'me',n:'Твоя идея',cap:'Здесь может быть твоя идея',c:'#a78bfa',p:[94,-14,-50],s:1.3},
- {id:'idea2',kind:'idea',from:'spektr',n:'Новый проект',cap:'Создаётся проект',c:'#94a3b8',p:[-68,2,-172],s:1.2},
- {id:'idea3',kind:'idea',from:'spektr',n:'Новый проект',cap:'Создаётся проект',c:'#94a3b8',p:[68,14,-182],s:1.2},
- {id:'nastr',kind:'set',from:'me',n:'Настройки',say:'Настройки портала',c:'#cbd5e1',p:[-24,-20,-22],s:1.1},
+ {id:'idea2',kind:'idea',from:'spektr',n:'Новый проект',cap:'Создаётся проект',c:'#94a3b8',p:[-88,2,-172],s:1.2},
+ {id:'idea3',kind:'idea',from:'spektr',n:'Новый проект',cap:'Создаётся проект',c:'#94a3b8',p:[98,14,-176],s:1.2},
+ {id:'nastr',kind:'set',from:'me',n:'Настройки',say:'Настройки портала',c:'#cbd5e1',p:[-122,-16,-34],s:1.1},
  {id:'help',kind:'support',from:null,n:'Поддержать проект',say:'Поддержать проект',c:'#ffcf6e',p:[0,30,-235],s:1.5}
 ];
 var ORDER=(window.KOSMOS&&KOSMOS.order)||['spektr','kursy','vzlet','fpv','agro','studio','idea2','idea3','social','max','ok','vk','gallery','idea1','nastr','help'];
@@ -351,6 +349,8 @@ function applyQ(){ var h=hiQ(); twg.setDrawRange(0,h?TWN:Math.floor(TWN*.4)); NE
 applyQ();
 /* старт: тёмный экран -> портал растёт, звёзды летят на нас -> всё замирает, проявляется космос */
 var skyK=0, gateK=0, starK=0, introV=0, growT0=-1, introSeen=false;
+/* маленькая вспышка в центре перед ростом портала */
+var gFl={t:-1,sp:new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex('#e9d5ff'),blending:THREE.AdditiveBlending,depthWrite:false,transparent:true,opacity:0}))}; gFl.sp.position.set(0,0,-30); gFl.sp.visible=false; S.add(gFl.sp);
 /* падающие звёзды: иногда тонкий след пролетает по небу */
 var metG=new THREE.BufferGeometry(); metG.setAttribute('position',new THREE.BufferAttribute(new Float32Array(6),3)); metG.setAttribute('color',new THREE.BufferAttribute(new Float32Array([1,1,1,0,0,0]),3));
 var met=new THREE.Line(metG,new THREE.LineBasicMaterial({vertexColors:true,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false})); met.frustumCulled=false; met.visible=false; S.add(met);
@@ -533,6 +533,11 @@ NODES.forEach(function(n){ if(!n.from) return; var me=n.from==='me', a=me?J:byId
   var ln=new THREE.Line(lgm,new THREE.LineBasicMaterial({vertexColors:true,transparent:true,opacity:.55,blending:THREE.AdditiveBlending,depthWrite:false})); inside.add(ln);
   threads.push({ln:ln,mid:n.curve.getPoint(.5),seed:Math.random()*10,base:new THREE.Color(n.c)});
   var k=spark(n.c,.9); k.vis(false); pulses.push({k:k,cv:n.curve,t:-Math.random()*4,dur:3.2+Math.random()*1.6}); });
+/* нить от "Твоей идеи" к "Новому проекту" справа: идея растёт в проект */
+(function(){ var a=byId.idea1, b=byId.idea3; if(!a||!b) return; var m=a.g.position.clone().lerp(b.g.position,.5); m.y+=10; var cvI=new THREE.QuadraticBezierCurve3(a.g.position.clone(),m,b.g.position.clone());
+  var g=new THREE.BufferGeometry().setFromPoints(cvI.getPoints(NP-1)); g.setAttribute('color',new THREE.BufferAttribute(new Float32Array(NP*3),3));
+  var ln=new THREE.Line(g,new THREE.LineBasicMaterial({vertexColors:true,transparent:true,opacity:.55,blending:THREE.AdditiveBlending,depthWrite:false})); inside.add(ln);
+  threads.push({ln:ln,mid:cvI.getPoint(.5),seed:7,base:new THREE.Color(a.c)}); var k=spark(a.c,.8); k.vis(false); pulses.push({k:k,cv:cvI,t:-2,dur:4.5}); })();
 /* тонкие нити к "Поддержать проект" от всех настоящих планет (не пустых и не спутников), по ним изредка бегут золотые искры */
 var HELP=byId.help; if(HELP) NODES.forEach(function(n){ if(n===HELP||n.kind==='set'||n.kind==='idea'||n.kind==='link'||n.kind==='group') return;
   var a=n.g.position, b=HELP.g.position, m=a.clone().lerp(b,.5); m.y+=14; var cvT=new THREE.QuadraticBezierCurve3(a.clone(),m,b.clone());
@@ -660,14 +665,14 @@ meSw.add(new THREE.Points(swirl.geometry,swirl.material)); meSw.add(new THREE.Po
 var meGlow=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex('#a78bfa'),blending:THREE.AdditiveBlending,depthWrite:false,opacity:.7})); meGlow.scale.set(18,18,1); meGlow.position.copy(ME); meGlow.visible=false; inside.add(meGlow);
 function topUI(){ navUI(); topB.classList.toggle('on',inside.visible&&(st==='over'||st==='node'||st==='top')); topB.setAttribute('aria-pressed',st==='top'?'true':'false');
   topB.querySelector('span').textContent=st==='top'?'3D':'Сверху'; topB.setAttribute('aria-label',st==='top'?'Вернуться в объём':'Посмотреть сверху'); }
-function topOn(){ if(fly||(st!=='over'&&st!=='node')) return; topSave={p:camP.clone(),l:camL.clone(),st:st}; hideCap(); turnUI(true); st='fly'; /* портал сверху остаётся таким же, не ложится плашмя */
+function topOn(){ if(fly||(st!=='over'&&st!=='node')) return; topZT=TOP_P.y; topSave={p:camP.clone(),l:camL.clone(),st:st}; hideCap(); turnUI(true); st='fly'; /* портал сверху остаётся таким же, не ложится плашмя */
   startFly(TOP_P.clone(),TOP_L.clone(),null,red?.5:2.4,function(){ st='top'; topUI(); }); topUI(); }
 function topOff(now){ if(!topSave) return; var sv=topSave; topSave=null; if(now){ meSw.visible=meGlow.visible=false; return; } st='fly';
   startFly(sv.p,sv.l,null,red?.5:2.2,function(){ meSw.visible=meGlow.visible=false; if(sv.st==='node'&&cur) settle(cur); else { st='over'; acc=0; } topUI(); }); }
 /* сдвиг карты сверху: палец тянет карту, камера едет в обратную сторону (не дальше краёв карты) */
 function topPan(dx,dy){ var k=2*Math.tan(C.fov*Math.PI/360)*camP.y/innerHeight, ox=Math.max(-110,Math.min(110,camP.x-TOP_P.x-dx*k)), oz=Math.max(-150,Math.min(70,camP.z-TOP_P.z+dy*k));
   camP.x=TOP_P.x+ox; camP.z=TOP_P.z+oz; camL.x=TOP_L.x+ox; camL.z=TOP_L.z+oz; }
-function topZoom(f){ var y=Math.max(80,Math.min(480,camP.y*f)), r=y/camP.y; camP.y=y; camL.y*=r; }
+var topZT=185; function topZoom(f){ topZT=Math.max(80,Math.min(480,topZT*f)); } /* сверху: задаём нужную высоту, камера плавно к ней едет */
 topB.onclick=function(){ if(fly) return; if(st==='top') topOff(); else topOn(); };
 var tL=document.getElementById('tL'), tR=document.getElementById('tR');
 function turnUI(off){ tL.classList.remove('on'); tR.classList.remove('on'); navUI(off); } /* боковые стрелки поворота больше не нужны: крутим пальцем */
@@ -749,13 +754,21 @@ function runIntro(){ var id=++intro, d=new Date(), w=function(ms,f){ setTimeout(
   hint.style.opacity=0; hint.style.pointerEvents='none';
   /* первый раз - тёмный экран и рост портала; при возврате из портала космос уже есть */
   if(!introSeen){ skyK=0; gateK=0; starK=0; } else { skyK=1; gateK=1; starK=1; }
-  introEnd=function(){ introSeen=true; visShow(); w(700,function(){ ttl.classList.add('neon'); }); }; /* кнопки "Полетели вперёд" нет: входим тапом по порталу или свайпом */
+  introEnd=function(){ introSeen=true; visShow(); w(700,function(){ neonGo(id); }); }; /* кнопки "Полетели вперёд" нет: входим тапом по порталу или свайпом */
   var sp=function(t,g){ return t.split('').join(g); };
   scan(mxA,sp(String(d.getFullYear()),'  '),id,function(){ w(500,function(){
     scan(mxB,sp(String(d.getDate()),' ')+'   '+sp(MON[d.getMonth()],' '),id,function(){ w(900,function(){
       scan(mxA,clockTxt(),id,function(){ live=true; tick(id); w(700,function(){ mxB.el.style.transition='opacity 1.2s'; mxB.el.style.opacity=0; });
-        w(500,function(){ if(introSeen) introEnd(); else growT0=tm; }); }); }); }); }); }); }
+        w(500,function(){ if(introSeen) introEnd(); else { gFl.t=0; w(450,function(){ growT0=tm; }); } }); }); }); }); }); }); }
 var introEnd=function(){};
+/* неоновая вывеска: включение с перебоями, дальше горит ровно; раз в 5-10 секунд коротко моргает одна из половин (как вывеска, которая замыкает) */
+var NT=[].slice.call(document.querySelectorAll('#ttl .tw'));
+function neonGo(id){ var t0=performance.now(), ON=[[0,.9],[90,.05],[180,1],[240,.15],[380,.95],[430,.3],[560,1]], nx=[t0+4000,t0+6500];
+  (function f(now){ if(id!==intro) { NT.forEach(function(e){ e.style.opacity=0; }); return; } var e=now-t0;
+    NT.forEach(function(el,i){ var o=1, ei=e-i*250; if(ei<560){ o=0; for(var k=0;k<ON.length;k++) if(ei>=ON[k][0]) o=ON[k][1]; }
+      else if(!red&&now>nx[i]){ var g=now-nx[i]; o=g<70?.15:g<140?1:g<200?.08:g<420?.05:g<480?.8:g<530?.25:1; if(g>560) nx[i]=now+5000+Math.random()*5000; }
+      el.style.opacity=o; });
+    requestAnimationFrame(f); })(t0); }
 function tick(id){ if(id!==intro||!live) return; var t=clockTxt(), tg=mxA.place(t), i=0; for(var c in tg){ mxA.set(+c,tg[c],i>8?.7:1); i++; } requestAnimationFrame(function(){ tick(id); }); }
 /* перо: ведёт строку слева направо то медленно, то быстрее, на кончике светится точка */
 var mgA=document.getElementById('mgA'), nib=document.getElementById('nib');
@@ -917,6 +930,7 @@ function frame(){ var rdt=clock.getDelta(), dt=Math.min(rdt,.05); tm+=dt; fc++; 
   if(fly) stepFly(dt);
   else if(st==='gate'){ camP.lerp(new THREE.Vector3(0,0,46-gp*62),Math.min(1,dt*4)); camL.set(0,0,-30); speed=Math.max(Math.abs(46-gp*62-camP.z)*6,introV*.5); }
   else if(st==='over'){ ovView(); camP.lerp(ovP,Math.min(1,dt*3)); camL.lerp(ovL,Math.min(1,dt*3)); speed*=.9; }
+  else if(st==='top'&&!fly){ camP.y+=(topZT-camP.y)*Math.min(1,dt*4); speed*=.9; }
   else { speed*=.9; if(st==='node'&&cur){ turn+=(turnT-turn)*Math.min(1,dt*3); var cp=cur.g.position, cs=Math.cos(turn), sn=Math.sin(turn);
     tq.copy(baseP).sub(cp); camP.set(cp.x+tq.x*cs+tq.z*sn,baseP.y,cp.z-tq.x*sn+tq.z*cs); tq.copy(baseL).sub(cp); camL.set(cp.x+tq.x*cs+tq.z*sn,baseL.y,cp.z-tq.x*sn+tq.z*cs); } }
   var fT=FOV0+(cur&&cur.close&&!fly?12:0); if(Math.abs(C.fov-fT)>.05){ C.fov+=(fT-C.fov)*Math.min(1,dt*2); C.updateProjectionMatrix(); }
@@ -924,7 +938,8 @@ function frame(){ var rdt=clock.getDelta(), dt=Math.min(rdt,.05); tm+=dt; fc++; 
   S.background.copy(BG_A).lerp(BG_B,mix).multiplyScalar(.12+.88*skyK);
   if(growT0>=0&&st==='gate'){ var gg=(tm-growT0)/(red?1.2:4.2), g1c=Math.min(1,gg); gateK=g1c<.5?4*g1c*g1c*g1c:1-Math.pow(-2*g1c+2,3)/2; starK=Math.min(1,gg*4); introV=red?0:240*Math.pow(Math.sin(Math.PI*g1c),1.6); skyK=Math.max(skyK,Math.min(1,Math.max(0,(gg-.55)/.6)));
     if(gg>=1.15){ growT0=-1; introV=0; skyK=1; introEnd(); } }
-  gate.scale.setScalar(Math.max(.001,gateK)); flyPts.material.opacity=Math.max(starK,skyK); dust.visible=skyK>.05; streak.visible=starK>0;
+  gate.scale.setScalar(Math.max(.001,gateK)); var gOn=gateK>.004; if(gate.children[0].visible!==gOn) gate.children.forEach(function(c){ if(c!==tun1&&c!==tun2) c.visible=gOn; });
+  if(gFl.t>=0){ gFl.t+=dt/.7; if(gFl.t>1){ gFl.t=-1; gFl.sp.visible=false; } else { gFl.sp.visible=true; var fk=Math.sin(Math.PI*gFl.t); gFl.sp.scale.setScalar(2+fk*16); gFl.sp.material.opacity=fk; } } flyPts.material.opacity=Math.max(starK,skyK); dust.visible=skyK>.05; streak.visible=starK>0;
   document.getElementById('cm').style.opacity=skyK;
   NEB.forEach(function(q){ q.sp.position.copy(camP).add(q.d); q.sp.material.opacity=(q.on?1:0)*skyK*(.5+.2*Math.sin(tm*.35+q.ph)); q.sp.material.color.setHSL((q.ph*.13+tm*.025+.5*Math.sin(tm*.07+q.ph))%1,1,.58); /* перелив, как неон */ q.sp.material.rotation=q.ph+tm*.012; q.sp.scale.setScalar(q.s*(1+.05*Math.sin(tm*.27+q.ph))); });
   CONS.position.copy(camP); CONS.rotation.y=tm*.006; CONSL.forEach(function(q){ q.m.opacity=(q.on?1:0)*skyK*(.06+.22*Math.pow(.5+.5*Math.sin(tm*q.sp+q.ph),3)); }); CONS.children[CONS.children.length-1].material.opacity=skyK;
@@ -937,7 +952,7 @@ function frame(){ var rdt=clock.getDelta(), dt=Math.min(rdt,.05); tm+=dt; fc++; 
   if(introV>.1){ for(var p0=0;p0<N;p0++) SP[p0*3+2]+=introV*dt; } /* старт: звёзды летят на нас */
   for(var p=0;p<N;p++){ var zi=p*3+2; if(SP[zi]>camP.z+40) SP[zi]-=360; else if(SP[zi]<camP.z-320) SP[zi]+=360; } sg.attributes.position.needsUpdate=true;
   if(gate.visible){ swirl.rotation.z-=dt*(.22+gp*1.6); swirl2.rotation.z+=dt*(.08+gp*.6); if((fc&1)===0){ tint(swirl,tm); tint(swirl2,tm+.5); tint(ring,tm*3); }
-    ring.rotation.z-=dt*(.9+gp*2); var rp=1+Math.sin(tm*2.2)*.03+gp*.15; ring.scale.set(rp,rp,1); tun1.rotation.z+=dt*.5; tun2.rotation.z-=dt*.8; rays.material.rotation+=dt*.05; var tk=Math.max(0,Math.min(1,(camP.z-4)/22)); tun1.scale.setScalar(.55*tk+.001); tun2.scale.setScalar(.32*tk+.001); tun1.visible=tun2.visible=tk>.02; rays.material.opacity=(.22+Math.sin(tm*1.3)*.08+gp*.2)*tk;
+    ring.rotation.z-=dt*(.9+gp*2); var rp=1+Math.sin(tm*2.2)*.03+gp*.15; ring.scale.set(rp,rp,1); tun1.rotation.z+=dt*.5; tun2.rotation.z-=dt*.8; rays.material.rotation+=dt*.05; var tk=Math.max(0,Math.min(1,(camP.z-4)/22)); tun1.scale.setScalar(.55*tk+.001); tun2.scale.setScalar(.32*tk+.001); tun1.visible=tun2.visible=tk>.02&&gateK>.004; rays.material.opacity=(.22+Math.sin(tm*1.3)*.08+gp*.2)*tk;
     glowA.material.rotation=tm*.15; glowA.scale.setScalar(24+Math.sin(tm*.9)*2.5+gp*10); glowB.scale.setScalar(12+Math.sin(tm*1.7)*1.2+gp*7); eye.scale.setScalar(5.5+Math.sin(tm*2.6)*.7+gp*4); glowB.material.color.setHSL((tm*.05)%1,.6,.75); }
   twStars.position.copy(camP); twM.uniforms.t.value=tm; twM.uniforms.op.value=skyK; twStars.rotation.y=tm*.006; skyOut.rotation.y=tm*.006; skyIn.rotation.y=1.2+tm*.006; meteor(dt);
   skyOut.position.copy(camP); skyOut.material.opacity=(1-mix)*skyK; skyIn.position.copy(camP); skyIn.material.opacity=mix; shell.position.copy(camP); mwStars.position.copy(camP); if(SKY) mwStars.material.opacity=.35; glints.position.copy(camP); glints.material.opacity=(.75+Math.sin(tm*2.3)*.2)*skyK; shell.material.opacity=skyK; mwStars.material.opacity=(SKY?.35:1)*skyK; mwStars.material.color.setRGB(.9,.95,1);
@@ -981,7 +996,7 @@ function frame(){ var rdt=clock.getDelta(), dt=Math.min(rdt,.05); tm+=dt; fc++; 
   if(inside.visible&&!fly&&(st==='node'||st==='over')){ farP.getWorldPosition(v); v.project(C); var fon=v.z<1&&Math.abs(v.x)<1&&Math.abs(v.y)<1; farL.style.opacity=fon?1:0; farL.style.pointerEvents=fon?'auto':'none';
     if(fon) farL.style.transform='translate('+((v.x*.5+.5)*innerWidth)+'px,'+((-v.y*.5+.5)*innerHeight+26)+'px) translate(-50%,0)'; } else { farL.style.opacity=0; farL.style.pointerEvents='none'; }
   requestAnimationFrame(frame); }
-if(/[?&]dbg/.test(location.search)) window.__dbg={camP:camP,st:function(){ return st; }};
+if(/[?&]dbg/.test(location.search)) window.__dbg={camP:camP,S:S,gate:gate,st:function(){ return st; }};
 try{ inside.visible=true; R.compile(S,C); }catch(e){} inside.visible=false;
 frame();
 };
