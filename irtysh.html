@@ -757,14 +757,16 @@ function runIntro(){ var id=++intro, d=new Date(), w=function(ms,f){ setTimeout(
   /* первый раз - тёмный экран и рост портала; при возврате из портала космос уже есть */
   if(!introSeen){ skyK=0; gateK=0; starK=0; } else { skyK=1; gateK=1; starK=1; }
   var T='Иртыш-портал', TT=T+'___', fx=[], stopFx=function(){ fx.forEach(clearInterval); fx=[]; };
-  introEnd=function(){ introSeen=true; w(1300,function(){ stopFx(); var n=dissolve(mxB,id,true); w(Math.round(n*35/2+100),visShow); }); };
+  /* надпись перепечатывается в глаз со счётчиком ещё во время подлёта портала */
+  var rp=false, reprint=function(){ if(rp) return; rp=true; stopFx(); var n=dissolve(mxB,id,true); w(Math.round(n*35/2+100),visShow); };
+  introEnd=function(){ introSeen=true; if(!rp) w(1300,reprint); };
   scan(mxM,String(d.getDate())+' '+MON[d.getMonth()]+' '+d.getFullYear(),id,function(){ w(900,function(){ dissolve(mxM,id);
     w(900,function(){ scan(mxA,clockTxt(),id,function(){ live=true; tick(id); });
       w(250,function(){ scan(mxB,TT.replace(/_/g,' '),id,function(){ var o=mxB.place(TT), u=[]; for(var c in o) if(o[c]==='_') u.push(+c);
         u.forEach(function(k,j){ w(700+j*800,function(){ mxB.set(k,'_',1); }); });
         fx.push(setInterval(function(){ if(id!==intro){ stopFx(); return; } if(Math.random()<.7) flick(mxB,id); },480));
         fx.push(setInterval(function(){ if(id!==intro){ stopFx(); return; } var k=u[Math.random()*3|0]; if(mxB.ch[k]!=='_') return; mxB.set(k,g1(),1,'h'); setTimeout(function(){ if(id===intro&&mxB.ch[k]!=='_'&&mxB.op[k]>0) mxB.set(k,'_',1); },140+Math.random()*120); },650));
-        w(700+3*800+500,function(){ if(introSeen) introEnd(); else { gFl.t=0; w(450,function(){ growT0=tm; }); } }); }); }); }); }); }); }
+        w(700+3*800+500,function(){ if(introSeen) introEnd(); else { gFl.t=0; w(450,function(){ growT0=tm; w(red?500:2700,reprint); }); } }); }); }); }); }); }); }
 /* один знак надписи быстро перебирается на месте и возвращается */
 function flick(L,id){ var ks=[]; for(var i=0;i<L.N;i++) if(L.op[i]>0&&L.ch[i]&&L.ch[i]!==' '&&L.ch[i]!=='_'&&!L.cl[i]) ks.push(i); if(!ks.length) return;
   var i2=ks[Math.random()*ks.length|0], orig=L.ch[i2], n=2+Math.random()*3|0;
@@ -941,7 +943,7 @@ function perf(dt){ fpsAcc+=dt; fpsN++; if(fpsAcc<2) return; var fps=fpsN/fpsAcc;
 function frame(){ var rdt=clock.getDelta(), dt=Math.min(rdt,.05); tm+=dt; fc++; if(!document.hidden) perf(rdt);
   if(st==='atm'){ requestAnimationFrame(frame); return; }
   if(fly) stepFly(dt);
-  else if(st==='gate'){ camP.lerp(new THREE.Vector3(0,0,46-gp*62),Math.min(1,dt*4)); camL.set(0,0,-30); speed=Math.max(Math.abs(46-gp*62-camP.z)*6,introV*.5); }
+  else if(st==='gate'){ camP.lerp(new THREE.Vector3(0,0,46-gp*62),Math.min(1,dt*4)); camL.set(0,6*(1-gp),-30); speed=Math.max(Math.abs(46-gp*62-camP.z)*6,introV*.5); }
   else if(st==='over'){ ovView(); camP.lerp(ovP,Math.min(1,dt*3)); camL.lerp(ovL,Math.min(1,dt*3)); speed*=.9; }
   else if(st==='top'&&!fly){ camP.y+=(topZT-camP.y)*Math.min(1,dt*4); speed*=.9; }
   else { speed*=.9; if(st==='node'&&cur){ turn+=(turnT-turn)*Math.min(1,dt*3); var cp=cur.g.position, cs=Math.cos(turn), sn=Math.sin(turn);
