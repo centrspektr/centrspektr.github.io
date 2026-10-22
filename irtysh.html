@@ -174,11 +174,12 @@ window.IRTYSH_BOOT=function(CFG){ CFG=CFG||{};
    from: к какому узлу тянется нить; img: картинка на планете; cap: надпись у пустой планеты; u: '' = ссылка-заглушка */
 var IMG=window.IMG||{};
 var NODES=(window.KOSMOS&&KOSMOS.nodes)||[
- {id:'spektr',kind:'center',from:'me',n:'Спектр',say:'Ресурсный центр Спектр',u:'spektr/',c:'#ffd36e',p:[0,0,-40],s:2.2},
+ {id:'spektr',kind:'center',from:'me',n:'Спектр',say:'Ресурсный центр Спектр',u:'https://centrspektr.github.io/spektr/',c:'#ffd36e',p:[0,0,-40],s:2.2},
  {id:'kursy',kind:'hub',from:'spektr',n:'Обучающие курсы',say:'Обучающие курсы',c:'#60a5fa',p:[2,9,-80],s:1.7},
- {id:'vzlet',kind:'dash',from:'kursy',n:'Взлёт',say:'Курс FPV Взлёт',u:'vzlet/',img:IMG.vzlet||'vzlet.webp',c:'#7cf3ff',p:[-34,8,-120],s:1.5},
- {id:'agro',kind:'dash',from:'kursy',n:'Агрокласс',say:'Курс Агрокласс',u:'agroklass/',c:'#9dff7c',p:[6,24,-140],s:1.4},
- {id:'studio',kind:'dash',from:'kursy',n:'Гитара и ИИ',say:'Курс Гитара и ИИ',u:'studio/',img:IMG.studio||'studio.webp',c:'#ff7ce0',p:[42,-4,-124],s:1.5},
+ {id:'vzlet',kind:'dash',from:'spektr',n:'Взлёт',say:'Клуб Взлёт',u:'https://centrspektr.github.io/vzlet/',img:IMG.vzlet||'vzlet.webp',c:'#7cf3ff',p:[-40,4,-96],s:1.5},
+ {id:'fpv',kind:'dash',from:'kursy',n:'Курс FPV',say:'Курс FPV Взлёт',u:'',c:'#22d3ee',p:[-22,14,-130],s:1.4}, /* адрес курса FPV владелец сообщит позже */
+ {id:'agro',kind:'dash',from:'kursy',n:'Агрокласс',say:'Курс Агрокласс',u:'https://centrspektr.github.io/agroklass/',c:'#9dff7c',p:[6,24,-140],s:1.4},
+ {id:'studio',kind:'dash',from:'kursy',n:'Гитара и ИИ',say:'Курс Гитара и ИИ',u:'https://centrspektr.github.io/studio/',img:IMG.studio||'studio.webp',c:'#ff7ce0',p:[42,-4,-124],s:1.5},
  {id:'social',kind:'hub',from:'me',n:'Соцсети',say:'Соцсети Спектра',c:'#34d399',p:[-60,-12,-58],s:1.6},
  {id:'max',kind:'group',from:'social',n:'MAX',say:'Группы в МАКС',c:'#4ade80',p:[-78,-6,-62],s:.95,
    /* 8 групп по полкам; номер полки - последний элемент */
@@ -199,7 +200,7 @@ var NODES=(window.KOSMOS&&KOSMOS.nodes)||[
  {id:'idea3',kind:'idea',from:'spektr',n:'Новый проект',cap:'Создаётся проект',c:'#94a3b8',p:[68,14,-182],s:1.2},
  {id:'help',kind:'support',from:null,n:'Поддержать проект',say:'Поддержать проект',c:'#ffcf6e',p:[0,30,-235],s:1.5}
 ];
-var ORDER=(window.KOSMOS&&KOSMOS.order)||['spektr','kursy','vzlet','agro','studio','idea2','idea3','social','max','ok','vk','gallery','idea1','help'];
+var ORDER=(window.KOSMOS&&KOSMOS.order)||['spektr','vzlet','kursy','fpv','agro','studio','idea2','idea3','social','max','ok','vk','gallery','idea1','help'];
 /* ---- настройки с сервера: скрытые планеты и свои пустые планеты (правятся по PIN, см. "правка портала" внизу) ---- */
 var NODES0=NODES.slice(), HIDE=Array.isArray(CFG.hide)?CFG.hide:[];
 if(Array.isArray(CFG.ideas)){ var BI={}; NODES.forEach(function(n){ if(n.kind==='idea') BI[n.id]=n; });
@@ -584,7 +585,7 @@ function enter(n){ if(n.kind==='idea'||n.kind==='hub'||soon(n)){ cap.animate([{t
       if(n.kind==='group'||n.kind==='support'){ (n.kind==='group'?atmEl:supEl).classList.add('on'); st='atm'; backB.classList.remove('on'); camP.copy(back0.p); camL.copy(back0.l); flashOff(); return; }
       warp.style.setProperty('--wc',n.c); document.getElementById('warpT').textContent=n.n; warp.classList.add('on'); flashOff();
       setTimeout(function(){
-        if(window.OPEN_SAME&&!/^https?:/.test(n.u)){ location.href=n.u; return; } /* свои дашборды - в этом окне, соцсети и галерея - в новом */
+        if(window.OPEN_SAME&&n.u.indexOf('https://centrspektr.github.io/')===0){ location.href=n.u; return; } /* свои дашборды - в этом окне, соцсети и галерея - в новом */
         var A=document.createElement('a'); A.href=n.u; A.target='_blank'; A.rel='noopener'; document.body.appendChild(A); A.click(); A.remove();
         setTimeout(function(){ warp.classList.remove('on'); camP.copy(back0.p); camL.copy(back0.l); settle(n); },700); },red?200:1100); }); }); }
 document.getElementById('atBack').onclick=function(){ flashOn('rgba(134,239,172,.85)',function(){ atmEl.classList.remove('on'); backB.classList.add('on'); settle(byId.max); flashOff(); }); };
