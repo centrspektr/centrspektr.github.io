@@ -585,12 +585,34 @@ function canon(n){ return kids(n)||n.kind==='support'?viewOf(n):backView(n); }
 function orbit(n,B,done){ var p=n.g.position, oa=camP.clone().sub(p), ob=B.p.clone().sub(p);
   var aa=Math.atan2(oa.x,oa.z), da=Math.atan2(ob.x,ob.z)-aa; while(da>Math.PI) da-=6.283; while(da<-Math.PI) da+=6.283;
   fly={orb:true,c:p.clone(),aa:aa,da:da,ra:Math.hypot(oa.x,oa.z),rb:Math.hypot(ob.x,ob.z),ya:oa.y,yb:ob.y,al:camL.clone(),bl:B.l.clone(),t:0,d:red?.5:Math.max(1.3,Math.abs(da)/Math.PI*2.8),done:done}; }
+/* полёт между планетами, как FPV-дрон: плавная дуга (каждый раз своя - вбок, вверх или вниз), камера смотрит по ходу полёта,
+   иногда кренится или делает бочку; в начале продолжает смотреть туда, куда смотрела, в конце мягко встаёт в нужный вид.
+   "Верх" камеры переносится по дуге без скачков - поэтому нет резких разворотов на 180 даже при петле вверх или вниз */
+var CQ2=new THREE.PerspectiveCamera(), FQ=new THREE.Quaternion(), fM=new THREE.Matrix4(), fX=new THREE.Vector3(), fY=new THREE.Vector3(), fZ=new THREE.Vector3(), qR=new THREE.Quaternion(), ZAX=new THREE.Vector3(0,0,1);
+function lookQ(p,l){ CQ2.position.copy(p); CQ2.lookAt(l); CQ2.rotateZ(roll*.6); return CQ2.quaternion.clone(); }
+function fpvFly(toP,toL,curve,rev,done){ var a=camP.clone(), b=toP.clone(), ab=b.clone().sub(a), D=ab.length(), q0=C.quaternion.clone(), q1=lookQ(b,toL),
+    f0=new THREE.Vector3(0,0,-1).applyQuaternion(q0), f1=new THREE.Vector3(0,0,-1).applyQuaternion(q1), k=Math.max(5,D*.4), p1=a.clone().addScaledVector(f0,k), p2=b.clone().addScaledVector(f1,-k);
+  if(curve){ /* вдоль нити: дуга тянется к её середине */ p1.lerp(curve.getPoint(rev?2/3:1/3).addScaledVector(UP,2.2),.5); p2.lerp(curve.getPoint(rev?1/3:2/3).addScaledVector(UP,2.2),.5); }
+  if(!red){ var sd=new THREE.Vector3().crossVectors(ab,UP); if(sd.lengthSq()<1e-6) sd.set(1,0,0); sd.normalize(); var uv=new THREE.Vector3().crossVectors(sd,ab).normalize(), an=Math.random()*6.2832, m=D*(.12+Math.random()*.2);
+    var off=sd.multiplyScalar(Math.cos(an)*m).addScaledVector(uv,Math.sin(an)*m); p1.add(off); p2.addScaledVector(off,.6); }
+  var rk=0, rl=0; if(!red&&D>30){ var r=Math.random(); if(r<.35){ rk=1; rl=(r<.17?-1:1)*(.35+Math.random()*.3); } else if(r<.6){ rk=2; rl=(r<.48?-1:1)*6.2832; } }
+  fly={fpv:true,a:a,b:b,p1:p1,p2:p2,al:camL.clone(),bl:toL.clone(),q0:q0,q1:q1,up:new THREE.Vector3(0,1,0).applyQuaternion(q0),rk:rk,rl:rl,Q:q0.clone(),t:0,
+    d:red?.6:Math.max(2.2,Math.min(4.8,1.4+D/55+f0.angleTo(ab.clone().normalize())*.5)),done:done}; }
+function sstep(a,b,x){ x=Math.max(0,Math.min(1,(x-a)/(b-a))); return x*x*(3-2*x); }
+var bzT=[new THREE.Vector3(),new THREE.Vector3(),new THREE.Vector3()];
+function fpvStep(f,e){ var v=1-e; camP.set(0,0,0).addScaledVector(f.a,v*v*v).addScaledVector(f.p1,3*v*v*e).addScaledVector(f.p2,3*v*e*e).addScaledVector(f.b,e*e*e); camL.copy(f.al).lerp(f.bl,e);
+  var u=Math.max(.002,Math.min(.998,e)), w=1-u; tt.copy(bzT[0].subVectors(f.p1,f.a)).multiplyScalar(3*w*w).addScaledVector(bzT[1].subVectors(f.p2,f.p1),6*w*u).addScaledVector(bzT[2].subVectors(f.b,f.p2),3*u*u);
+  if(tt.lengthSq()>1e-8){ tt.normalize(); f.up.addScaledVector(tt,-tt.dot(f.up)); if(f.up.lengthSq()<1e-6) f.up.set(0,1,0); f.up.normalize();
+    fX.crossVectors(tt,f.up).normalize(); fZ.copy(tt).negate(); fY.crossVectors(fZ,fX); fM.makeBasis(fX,fY,fZ); FQ.setFromRotationMatrix(fM); }
+  var ph=f.rk===1?f.rl*Math.sin(Math.PI*e):f.rk===2?f.rl*sstep(.28,.72,e):0; if(ph){ qR.setFromAxisAngle(ZAX,ph); FQ.multiply(qR); }
+  f.Q.copy(f.q0).slerp(FQ,sstep(0,.2,e)).slerp(f.q1,sstep(.72,1,e)); }
 function startFly(toP,toL,curve,dur,done,rev){ fly={a:camP.clone(),al:camL.clone(),b:toP,bl:toL,cv:curve,rev:!!rev,t:0,d:red?.6:dur,done:done};
   if(curve){ /* к концу нити камера плавно отстаёт до точки прилёта - без перелёта и отката назад */
     var E=curve.getPoint(rev?0:1), tE=curve.getTangent(rev?0:1); if(rev) tE.negate(); fly.L=curve.getLength(); fly.dN=Math.max(7,toP.clone().sub(E).dot(tE)*-1); fly.hN=toP.y-E.y; } }
 function ease(t){ return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2; }
 var UP=new THREE.Vector3(0,1,0), tq=new THREE.Vector3(), tt=new THREE.Vector3(), tl=new THREE.Vector3();
 function stepFly(dt){ var o=camP.clone(); fly.t=Math.min(1,fly.t+dt/fly.d); var e=ease(fly.t);
+  if(fly.fpv){ fpvStep(fly,e); speed=o.distanceTo(camP)/Math.max(dt,.001); if(fly.t>=1){ var df=fly.done; fly=null; speed=0; df&&df(); } return; }
   if(fly.orb){ var f=fly, ang=f.aa+f.da*e, r=(f.ra+(f.rb-f.ra)*e)*(1+.18*Math.sin(Math.PI*e)); camP.set(f.c.x+Math.sin(ang)*r,f.c.y+f.ya+(f.yb-f.ya)*e,f.c.z+Math.cos(ang)*r); camL.copy(f.al).lerp(f.bl,e); speed=0;
     if(f.t>=1){ fly=null; f.done&&f.done(); } return; }
   if(fly.cv){ /* камера идёт за точкой нити, чуть сзади и выше по ходу движения, и смотрит вперёд по нити */
@@ -614,27 +636,31 @@ function capText(n){ if(n.kind==='idea') return 'Пиши нам - подклю�
 function showCap(n){ document.getElementById('capT').textContent=n.kind==='idea'?n.cap:n.n; cap.style.setProperty('--pc',n.c);
   document.getElementById('capP').innerHTML=capText(n); cap.classList.toggle('hi',!!n.close); cap.classList.add('on'); }
 function hideCap(){ cap.classList.remove('on'); }
-document.getElementById('capT').onclick=function(){ if(cur) tapNode(cur.id); };
-document.getElementById('capP').onclick=function(e){ if(cur&&e.target.classList.contains('go')) tapNode(cur.id); };
+document.getElementById('capT').onclick=function(){ if(sel) tapNode(sel.id); else if(cur) tapNode(cur.id); };
+document.getElementById('capP').onclick=function(e){ if(!e.target.classList.contains('go')) return; if(sel) tapNode(sel.id); else if(cur) tapNode(cur.id); };
 /* прилёт: если подлетели не с той стороны - плавный облёт к нужному виду; затем можно крутиться вокруг узла */
 var baseP=new THREE.Vector3(), baseL=new THREE.Vector3(), turn=0, turnT=0;
 function settle(n){ st='node'; topUI(); baseP.copy(camP); baseL.copy(camL); turn=turnT=0; showCap(n); speakNode(n); turnUI(); }
 function arrive(n){ cur=n; acc=0; n.close=false; var B=canon(n); if(camP.distanceTo(B.p)>n.s*1.5){ st='fly'; orbit(n,B,function(){ settle(n); }); } else settle(n); }
 function goClose(n){ hideCap(); st='fly'; var B=closeView(n); startFly(B.p,B.l,null,red?.5:1.8,function(){ n.close=true; settle(n); }); }
 /* нажатие на узел: первое - летим к нему, у Спектра второе - ближе, последнее - провал внутрь */
+/* первое нажатие - выбор: планета подсвечивается и оживает, второе - летим; у планеты, где мы, нажатие - вход */
+var sel=null;
+function selCap(n){ document.getElementById('capT').textContent=n.kind==='idea'?n.cap:n.n; cap.style.setProperty('--pc',n.c); document.getElementById('capP').innerHTML='Нажми ещё раз - <b class="go">полетели</b>'; cap.classList.remove('hi'); cap.classList.add('on'); }
+function unsel(){ if(!sel) return; sel=null; if(cur&&st==='node') showCap(cur); else hideCap(); }
 function tapNode(id){ if(st==='gate'||st==='falling'||st==='atm'||fly) return; var n=byId[id];
+  if(st==='node'&&cur===n){ sel=null; enter(n); return; }
+  if(sel!==n){ sel=n; n.bst=1; selCap(n); speak(n.kind==='idea'?n.cap:(n.say||n.n)); return; }
+  sel=null;
   if(st==='top'){ meSw.visible=meGlow.visible=false; var sv=topSave; topSave=null; st=sv.st; if(cur===n&&st==='node'){ var B=canon(n); st='fly'; startFly(B.p,B.l,null,2.2,function(){ settle(n); }); return; } goTo(n); return; }
-  if(cur===n){ enter(n); return; } goTo(n); } /* у Спектра больше нет лишнего шага "ближе" */
+  goTo(n); }
 function goTo(n,isBack){ if(n.kind==='set') setTimeout(setPanel,250); /* Настройки: окно сразу, камера летит и разворачивается уже за ним */ hideCap(); turnUI(true); topB.classList.remove('on'); if(!isBack) back.push(cur?cur.id:null);
-  var curve=null, rev=false, B;
+  sel=null; var curve=null, rev=false;
   if(cur&&n.from===cur.id||!cur&&n.from==='me') curve=n.curve; else if(cur&&cur.from===n.id){ curve=cur.curve; rev=true; }
-  if(curve){ /* конец нити: встаём за узлом по ходу полёта, потом облёт к нужному виду */
-    curve.getTangent(rev?0:1,tt); if(rev) tt.negate(); var p=n.g.position, Cn=canon(n), hd=Cn.p.clone().sub(p).setY(0).normalize(), ht=tt.clone().setY(0).normalize();
-    B=(isBack||hd.dot(ht)<-.6)?Cn:{p:p.clone().addScaledVector(tt,-n.s*6.5).addScaledVector(UP,n.s*1.6),l:p.clone()}; }
-  else B=canon(n);
-  st='fly'; startFly(B.p,B.l,curve,curve?3.2:2.6,isBack?function(){ cur=n; acc=0; n.close=false; settle(n); }:function(){ arrive(n); },rev); } /* назад: камера разворачивается по ходу полёта, без облёта после прилёта */
+  /* летим сразу к нужному виду - без облёта после прилёта (раньше камера подлетала, а потом отъезжала) */
+  st='fly'; fpvFly(canon(n).p,canon(n).l,curve,rev,function(){ cur=n; acc=0; n.close=false; settle(n); }); }
 /* шаг назад: нить тянет к предыдущему узлу; у Спектра вблизи - сперва отъезд; из обзора - выход из портала */
-function goBack(){ if(fly||st==='atm') return; if(st==='top'){ topOff(); return; } if(st==='over'){ exitPortal(); return; }
+function goBack(){ if(fly||st==='atm') return; sel=null; if(st==='top'){ topOff(); return; } if(st==='over'){ exitPortal(); return; }
   if(cur&&cur.close){ hideCap(); st='fly'; var B0=canon(cur), n0=cur; startFly(B0.p,B0.l,null,red?.5:1.6,function(){ n0.close=false; settle(n0); }); return; }
   hideCap(); turnUI(true); var prev=back.pop();
   if(prev){ goTo(byId[prev],true); }
@@ -666,7 +692,7 @@ meSw.add(new THREE.Points(swirl.geometry,swirl.material)); meSw.add(new THREE.Po
 var meGlow=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex('#a78bfa'),blending:THREE.AdditiveBlending,depthWrite:false,opacity:.7})); meGlow.scale.set(18,18,1); meGlow.position.copy(ME); meGlow.visible=false; inside.add(meGlow);
 function topUI(){ navUI(); topB.classList.toggle('on',inside.visible&&(st==='over'||st==='node'||st==='top')); topB.setAttribute('aria-pressed',st==='top'?'true':'false');
   topB.querySelector('span').textContent=st==='top'?'3D':'Сверху'; topB.setAttribute('aria-label',st==='top'?'Вернуться в объём':'Посмотреть сверху'); }
-function topOn(){ if(fly||(st!=='over'&&st!=='node')) return; topZT=TOP_P.y; topA=topAc=0; topSave={p:camP.clone(),l:camL.clone(),st:st}; hideCap(); turnUI(true); st='fly'; /* портал сверху остаётся таким же, не ложится плашмя */
+function topOn(){ if(fly||(st!=='over'&&st!=='node')) return; sel=null; topZT=TOP_P.y; topA=topAc=0; topSave={p:camP.clone(),l:camL.clone(),st:st}; hideCap(); turnUI(true); st='fly'; /* портал сверху остаётся таким же, не ложится плашмя */
   startFly(TOP_P.clone(),TOP_L.clone(),null,red?.5:2.4,function(){ st='top'; topUI(); }); topUI(); }
 function topOff(now){ if(!topSave) return; var sv=topSave; topSave=null; if(now){ meSw.visible=meGlow.visible=false; return; } st='fly';
   startFly(sv.p,sv.l,null,red?.5:2.2,function(){ meSw.visible=meGlow.visible=false; if(sv.st==='node'&&cur) settle(cur); else { st='over'; acc=0; } topUI(); }); }
@@ -722,7 +748,7 @@ addEventListener('pointerup',ptUp); addEventListener('pointercancel',ptUp);
 /* палец, поставленный на сноску, тоже двигает карту (раньше сноска "съедала" касание, и карта не реагировала) */
 addEventListener('pointerdown',function(e){ if(e.target!==cv&&!(e.target.closest&&e.target.closest('.co'))) return; PT[e.pointerId]={x:e.clientX,y:e.clientY}; pinReset(); ty=e.clientY; tx=e.clientX; if(Object.keys(PT).length===1){ moved=0; t0=Date.now(); } });
 addEventListener('pointermove',function(e){ if(PT[e.pointerId]){ PT[e.pointerId]={x:e.clientX,y:e.clientY}; var q=pin2(); if(q&&pinD){ var f=pinD/q.d, da=q.a-pinA; if(da>Math.PI) da-=2*Math.PI; if(da<-Math.PI) da+=2*Math.PI;
-    if(st==='over'&&!fly) ovR=Math.max(35,Math.min(OVR_MAX,ovR*f)); if(st==='top'&&!fly){ topZoom(f); topA+=da; topPan(q.x-pinM.x,q.y-pinM.y); }
+    if(st==='over'&&!fly){ ovR=Math.max(35,Math.min(OVR_MAX,ovR*f)); ovA+=da; } if(st==='node'&&!fly) turnT+=da; if(st==='top'&&!fly){ topZoom(f); topA+=da; topPan(q.x-pinM.x,q.y-pinM.y); }
     pinD=q.d; pinA=q.a; pinM=q; moved+=99; return; } if(Object.keys(PT).length>1) return; }
   if(ty===null) return; var dy=ty-e.clientY, dx=e.clientX-tx; ty=e.clientY; tx=e.clientX; moved+=Math.abs(dy)+Math.abs(dx);
   if(st==='gate'){ scrollBy(dy*2.2); return; } /* палец больше не запускает перелёт: только поворот камеры */
@@ -732,6 +758,7 @@ addEventListener('pointerup',function(e){ var was=moved; ty=null; if(was>=8||e.t
   var r=new THREE.Raycaster(), m=new THREE.Vector2(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1); r.setFromCamera(m,C);
   if(st==='gate'){ if(r.intersectObject(hit).length) fall(); return; }
   var h=r.intersectObjects(hits,false)[0]; if(h){ tapNode(h.object.userData.id); return; }
+  if(sel){ unsel(); return; } /* тап мимо планет снимает выбор */
   if((st==='node'||st==='over')&&!fly&&farP.visible&&r.intersectObject(farHit).length) exitPortal(); });
 addEventListener('keydown',function(e){ if(e.key==='ArrowDown'||e.key===' ') scrollBy(300); if(e.key==='ArrowUp') scrollBy(-300); if(e.key==='Escape') goBack(); if(e.key==='Enter'&&cur) tapNode(cur.id); });
 
@@ -969,8 +996,8 @@ function frame(){ var rdt=clock.getDelta(), dt=Math.min(rdt,.05); tm+=dt; fc++; 
   CONS.position.copy(camP); CONS.rotation.y=tm*.006; CONSL.forEach(function(q){ q.m.opacity=(q.on?1:0)*skyK*(.06+.22*Math.pow(.5+.5*Math.sin(tm*q.sp+q.ph),3)); }); CONS.children[CONS.children.length-1].material.opacity=skyK;
   if(Math.abs(mixT-mix)>.002){ for(var i=0;i<N*3;i++) CC[i]=CA[i]+(CB[i]-CA[i])*mix; sg.attributes.color.needsUpdate=true; dust.material.color.setRGB(.81+.19*mix,.84-.12*mix,1-.04*mix); dust.material.opacity=.55+.3*mix; }
   /* камера всегда поворачивается мягко: считаем, куда надо смотреть, и плавно доворачиваем (без резких разворотов) */
-  C.position.copy(camP); CQ.position.copy(camP); CQ.lookAt(camL.x+yaw*20,camL.y,camL.z); CQ.rotateZ(roll*Math.sin(tm*.08)+roll*.6); yaw*=.985;
-  if(cqSnap||st==='falling'&&!inside.visible){ C.quaternion.copy(CQ.quaternion); cqSnap=false; } else C.quaternion.slerp(CQ.quaternion,1-Math.exp(-dt*(fly?4.5:6)));
+  C.position.copy(camP); CQ.position.copy(camP); CQ.lookAt(camL.x+yaw*20,camL.y,camL.z); CQ.rotateZ(roll*Math.sin(tm*.08)+roll*.6); yaw*=.985; if(fly&&fly.Q) CQ.quaternion.copy(fly.Q);
+  if(cqSnap||st==='falling'&&!inside.visible){ C.quaternion.copy(CQ.quaternion); cqSnap=false; } else C.quaternion.slerp(CQ.quaternion,1-Math.exp(-dt*(fly?(fly.Q?10:4.5):6)));
   var sv=Math.min(1,speed/60); streak.material.opacity=sv*.85;
   if(sv>.02){ C.getWorldDirection(fw); for(var k=0;k<M;k++){ var si=k*3%(N*3), X=SP[si],Y=SP[si+1],Z=SP[si+2]; LP[k*6]=X; LP[k*6+1]=Y; LP[k*6+2]=Z;
       var L=2+sv*14; LP[k*6+3]=X-fw.x*L; LP[k*6+4]=Y-fw.y*L; LP[k*6+5]=Z-fw.z*L; for(var j=0;j<3;j++){ LC[k*6+j]=CC[si+j]; LC[k*6+3+j]=0; } }
@@ -1002,7 +1029,7 @@ function frame(){ var rdt=clock.getDelta(), dt=Math.min(rdt,.05); tm+=dt; fc++; 
     NODES.forEach(function(n){ n.halo.material.rotation=tm*.2; var gs0=n.g.scale.x; if(Math.abs(gs0-gS)>.005) n.g.scale.setScalar(gs0+(gS-gs0)*Math.min(1,dt*3));
       if(n.kind==='idea'){ n.spin.material.opacity=.3+.7*n.bst; n.halo.material.opacity=.3+.8*n.bst; } /* долетел нейрон - пустая планета вспыхивает и гаснет */ n.halo.scale.setScalar(n.s*(5.6+Math.sin(tm*1.4+n.p[0])*.4)*(1+n.bst*.28)*(n.close?1.35:1)); n.bst*=Math.pow(.25,dt); if(n.spin) n.spin.rotation.z+=dt*.25;
       if(n.star){ /* издалека - яркая мерцающая звезда, вблизи лучи и ореол становятся скромнее */
-        var tw=.6+.4*Math.abs(Math.sin(tm*2.3)*Math.sin(tm*.9+1.7)), nk=Math.min(1,Math.max(.3,n.g.position.distanceTo(camP)/90)); n.star.material.opacity=tw; n.star.material.rotation=tm*.15; n.star.scale.setScalar(n.s*9*nk); n.halo.material.opacity=.45+.5*tw; n.halo.scale.multiplyScalar((1.6+.5*tw)*nk); } if(n.pearl&&(fc&7)===0){ n.pearl.color.setHSL(((Date.now()/160)%360)/360,.7,.95); n.pearl.emissive.copy(n.pearl.color); } }); }
+        var tw=.6+.4*Math.abs(Math.sin(tm*2.3)*Math.sin(tm*.9+1.7)), nk=Math.min(1,Math.max(.3,n.g.position.distanceTo(camP)/90)); n.star.material.opacity=tw; n.star.material.rotation=tm*.15; n.star.scale.setScalar(n.s*9*nk); n.halo.material.opacity=.45+.5*tw; n.halo.scale.multiplyScalar((1.6+.5*tw)*nk); } if(n===sel){ var pz2=Math.sin(tm*5); n.bst=Math.max(n.bst,.55+.45*pz2); n.halo.scale.multiplyScalar(1.3+.18*pz2); if(n.spin) n.spin.rotation.z+=dt*1.8; n.coOn=true; } if(n.pearl&&(fc&7)===0){ n.pearl.color.setHSL(((Date.now()/160)%360)/360,.7,.95); n.pearl.emissive.copy(n.pearl.color); } }); }
   R.render(S,C);
   var fpx=innerHeight/2/Math.tan(C.fov*Math.PI/360), cx0=-9, cy0=-9, cr=0;
   if(cur&&st==='node'){ cur.g.getWorldPosition(v); var dc=v.distanceTo(C.position); v.project(C); cx0=(v.x*.5+.5)*innerWidth; cy0=(-v.y*.5+.5)*innerHeight; cr=cur.s*1.7/dc*fpx+30; }
