@@ -162,7 +162,13 @@ body{background:var(--bg);color:var(--fg);font-family:var(--body);overflow:hidde
 .kc{display:flex;align-items:center;gap:8px;font-size:14px}.kc input{width:20px;height:20px;flex:none;accent-color:#a78bfa}
 .kl{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.08)}
 .kdel{color:#ff8a8a!important;border-color:rgba(255,138,138,.45)!important}
-body.kedit #cap,body.kedit #nav,body.kedit #back{display:none!important}
+body.kedit #cap,body.kedit #nav,body.kedit #back,body.kedit #side{display:none!important}
+#side{position:fixed;right:max(10px,env(safe-area-inset-right,0px));top:50%;transform:translate(8px,-50%);z-index:5;display:flex;flex-direction:column;align-items:flex-end;gap:6px;max-height:52vh;overflow-y:auto;opacity:0;transition:opacity .35s,transform .35s;pointer-events:none;padding:4px 2px;scrollbar-width:none}
+#side.on{opacity:1;transform:translate(0,-50%)}#side.on button{pointer-events:auto}
+#side button{display:flex;align-items:center;gap:8px;max-width:46vw;padding:7px 12px 7px 10px;border-radius:99px;border:1px solid color-mix(in srgb,var(--pc) 55%,transparent);background:rgba(6,10,28,.6);color:var(--fg);font:700 13px/1.15 var(--body);text-align:left;cursor:pointer;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);transition:opacity .25s,border-color .25s}
+#side button span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#side button i{flex:none;width:10px;height:10px;border-radius:50%;background:var(--pc);box-shadow:0 0 8px var(--pc);transition:all .25s}
+#side button.in{opacity:.7;color:var(--dim);border-style:dashed}#side button.in i{background:transparent;box-shadow:none;border:2px solid var(--pc);width:6px;height:6px}
+#side button:focus-visible{outline:2px solid #7cf3ff;outline-offset:2px}#side small{font:600 11px var(--body);color:var(--dim);padding:0 6px;text-shadow:0 1px 4px #000}
 #kd .btn:focus-visible,#kd .x:focus-visible,#kd input:focus-visible,#kd select:focus-visible,#kd textarea:focus-visible{outline:2px solid #7cf3ff;outline-offset:2px}
 /* кнопки приближения справа вверху */
 #zm{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:max(16px,env(safe-area-inset-right,0px));z-index:6;display:none;flex-direction:column;gap:8px}#zm.on{display:flex}
@@ -190,6 +196,7 @@ body.kedit #cap,body.kedit #nav,body.kedit #back{display:none!important}
 <button id="topB" type="button" aria-label="Посмотреть сверху" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg><span>Сверху</span></button>
 <button id="snd" type="button" aria-label="Голос-проводник" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path class="w" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12"/></svg></button>
 <div id="labels"><button id="farL" class="lb idea" type="button">Иртыш-портал</button></div>
+<div id="side" aria-label="Что держит планета"></div>
 <div id="cap" aria-live="polite"><h2 id="capT"></h2><p id="capP"></p></div>
 <div id="atm" role="dialog" aria-label="Группы MAX"><div class="atin"><h2>Группы MAX</h2><p>Выбери свою группу и вступай</p><div class="avs" id="avs"></div><button class="btn" id="atBack" type="button">← Назад в портал</button></div></div>
 <div id="sup" role="dialog" aria-label="Поддержать проект"><div class="sbox">
@@ -744,7 +751,7 @@ function stepFly(dt){ var o=camP.clone(); fly.t=Math.min(1,fly.t+dt/fly.d); var 
 var hint=document.getElementById('hint'), backB=document.getElementById('back'), flash=document.getElementById('flash'), cap=document.getElementById('cap'), atmEl=document.getElementById('atm');
 function soon(n){ return (n.kind==='dash'||n.kind==='link')&&!n.u&&!n.html; } /* ссылка-заглушка: владелец добавит позже */
 function capText(n){ if(n.kind==='idea') return 'Пиши нам - подключим к порталу'; if(n.kind==='off') return 'Скоро здесь зажжётся проект';
-  if(holds(n)){ var ks=kidsOf(n.id); return boxCap(n)+(SHUT[n.id]?'':'<br>'+ks.map(function(m){ return '<b>'+esc(m.n)+'</b>'; }).join(', ')); }
+  if(holds(n)){ var ks=kidsOf(n.id); return boxCap(n)+(mob?'':'<br>'+ks.filter(function(m){ return !inBox(n,m); }).map(function(m){ return '<b>'+esc(m.n)+'</b>'; }).join(', ')); }
 
   if(n.close) return '<b class="go">Войти</b>';
   if(n.kind==='set') return 'Нажми ещё раз - <b>открыть</b>: установка, голос, графика';
@@ -769,12 +776,22 @@ function selCap(n){ document.getElementById('capT').textContent=n.n+(n.kind==='o
 function canEnter(n){ return !(n.kind==='idea'||n.kind==='off'||n.kind==='hub'||n.kind==='set'||soon(n)); }
 var hl=null; /* что сейчас подсвечено кольцом */
 /* хранилище: собрать всё, что держит, внутрь или выпустить обратно */
-function toggleBox(n){ var ks=kidsOf(n.id), open=!SHUT[n.id]&&ks.some(function(m){ return !TUCK[m.id]; });
+function toggleBox(n){ var ks=kidsOf(n.id), open=!allIn(n);
   if(open) SHUT[n.id]=1; else { delete SHUT[n.id]; ks.forEach(function(m){ delete TUCK[m.id]; }); }
   (open?ks.slice().reverse():ks).forEach(function(m,i){ m.wait=tm+i*.17; }); /* нити уходят внутрь и выходят по очереди */
   n.bst=1; rip.n=n; rip.t=0; speak(n.n+(open?'. Собрано.':'. Выпущено.')); return open; }
+/* выборочно: одну нить из списка справа - внутрь или наружу */
+function toggleKid(p,k){ if(SHUT[p.id]){ delete SHUT[p.id]; kidsOf(p.id).forEach(function(m){ if(m!==k) TUCK[m.id]=1; }); delete TUCK[k.id]; } else if(TUCK[k.id]) delete TUCK[k.id]; else TUCK[k.id]=1;
+  k.wait=0; p.bst=1; rip.n=p; rip.t=0; speak(k.n+(inBox(p,k)?'. Внутри.':'. Снаружи.')); try{ navigator.vibrate&&navigator.vibrate(12); }catch(e){} if(sel===p) selCap(p); else if(cur===p&&st==='node') showCap(p); sideKey=''; }
+var sideEl=document.getElementById('side'), sideN=null, sideKey='';
+function sideUI(n){ var ks=n?kidsOf(n.id):[], key=n?n.id+':'+ks.map(function(m){ return m.id+(inBox(n,m)?1:0); }).join(','):''; if(key===sideKey) return; sideKey=key;
+  if(!n){ sideEl.classList.remove('on'); sideN=null; return; } var re=sideN!==n||sideEl.children.length!==ks.length+1; sideN=n;
+  if(re){ sideEl.innerHTML='<small>нажми - свернуть или развернуть</small>'; ks.forEach(function(m){ var b=document.createElement('button'); b.type='button'; b.style.setProperty('--pc',m.c); b.innerHTML='<i></i><span>'+esc(m.n)+(kidsOf(m.id).length?' ('+kidsOf(m.id).length+')':'')+'</span>'; b.onclick=function(){ if(sideN&&byId[m.id]) toggleKid(sideN,m); }; sideEl.appendChild(b); }); }
+  ks.forEach(function(m,i){ var b=sideEl.children[i+1]; b.classList.toggle('in',inBox(n,m)); b.setAttribute('aria-pressed',inBox(n,m)?'false':'true'); b.title=inBox(n,m)?'Развернуть':'Свернуть'; }); sideEl.classList.add('on'); }
 function holds(n){ return n.kind!=='off'&&n.kind!=='set'&&n.kind!=='support'&&kidsOf(n.id).length>0; } /* держит нити - нажатием собирает и выпускает (Спектр тоже) */
-function boxCap(n){ return 'Нажми ещё раз - <b class="go">'+(SHUT[n.id]?'выпустить':'собрать')+' ('+kidsOf(n.id).length+')</b>'+(canEnter(n)?' · <b class="go in">'+(n.kind==='support'?'открыть':'войти')+'</b>':''); } /* куда можно провалиться сразу со второго нажатия */
+function inBox(p,k){ return !!(SHUT[p.id]||TUCK[k.id]); }
+function allIn(n){ return kidsOf(n.id).every(function(m){ return inBox(n,m); }); }
+function boxCap(n){ return 'Нажми ещё раз - <b class="go">'+(allIn(n)?'выпустить':'собрать')+' ('+kidsOf(n.id).length+')</b>'+(canEnter(n)?' · <b class="go in">'+(n.kind==='support'?'открыть':'войти')+'</b>':''); } /* куда можно провалиться сразу со второго нажатия */
 function unsel(){ hl=null; if(!sel) return; sel=null; if(cur&&st==='node') showCap(cur); else hideCap(); }
 function tapNode(id){ var n=byId[id]; if(!n) return; if(EDW){ edPick(n); return; } if(st==='gate'||st==='falling'||st==='atm'||fly||n.k>.5) return; hl=n; n.bst=1;
   if(st==='node'&&cur===n){ sel=null; if(holds(n)){ toggleBox(n); showCap(n); return; } enter(n); return; }
@@ -1297,6 +1314,7 @@ function frame(){ var rdt=clock.getDelta(), dt=Math.min(rdt,.05); tm+=dt; fc++; 
   skyOut.position.copy(camP); skyOut.material.opacity=(1-mix)*skyK; skyIn.position.copy(camP); skyIn.material.opacity=mix; shell.position.copy(camP); mwStars.position.copy(camP); if(SKY) mwStars.material.opacity=.35; glints.position.copy(camP); glints.material.opacity=(.75+Math.sin(tm*2.3)*.2)*skyK; shell.material.opacity=skyK; mwStars.material.opacity=(SKY?.35:1)*skyK; mwStars.material.color.setRGB(.9,.95,1);
   gal.position.set(camP.x-150,camP.y+70,camP.z-420); gal.material.opacity=mix*.55; gal2.position.set(camP.x+170,camP.y-60,camP.z-440); gal2.material.opacity=mix*.45; gal3.position.set(camP.x+130,camP.y+60,camP.z+430); gal3.material.opacity=mix*.5;
   farP.visible=!meSw.visible&&st!=='falling'&&camP.distanceTo(PF)>34; /* вблизи (обзор, влёт) портал под нами не мешает виду */ /* сверху вместо него лежит плоский вихрь */
+  if(!inside.visible&&sideKey) sideUI(null);
   if(inside.visible){ farP.rotation.z-=dt*.25; farGlow.scale.setScalar(20+Math.sin(tm*1.6)*4); farGlow.material.opacity=.7+Math.sin(tm*1.6)*.25; farRing.rotation.z-=dt*.6; if((fc&3)===0) tint(ring,tm*3); sunHalo.material.rotation=tm*.02;
     pulses.forEach(function(q){ q.t+=dt/q.dur; if(q.t>1.6) q.t=-Math.random()*2.5; var on=q.t>=0&&q.t<=1&&!(q.n&&q.n.k>.3); q.k.vis(on); if(!on) return; drawSpark(q.k,q.cv,q.t,.07,Math.min(1,q.t*6,(1-q.t)*6)); });
     /* нейрон: от нас к Спектру, в обзоре повторяется */
@@ -1310,7 +1328,7 @@ function frame(){ var rdt=clock.getDelta(), dt=Math.min(rdt,.05); tm+=dt; fc++; 
       for(var i=0;i<NP;i++){ var u=i/(NP-1), w=.5+.5*Math.sin(u*9-tm*1.6+T.seed), hue=.33+.42*(.5+.5*Math.sin(u*3.1+tm*.35+T.seed));
         hc2.setHSL(hue%1,.85,.55); hc2.lerp(T.base,.25); var k=fd*(.35+.65*w); col.array[i*3]=hc2.r*k; col.array[i*3+1]=hc2.g*k; col.array[i*3+2]=hc2.b*k; } col.needsUpdate=true; });
     if((fc&3)===0&&!gate.visible){ tint(swirl,tm); tint(swirl2,tm+.5); } if(meSw.visible){ meSw.rotation.z-=dt*.3; }
-    var rn=EDW?(kSel&&byId[kSel]):(sel||(hl&&hl===cur&&st==='node'?hl:null)); if(rn&&rn.g.visible&&rn.k<.5&&!(fly&&!EDW&&rn!==aim)){ var rs=rn.s0*rn.g.scale.x*4.4*(1+.07*Math.sin(tm*4)); selR.visible=true; selR.position.copy(rn.g.position); selR.scale.set(rs,rs,1); selR.material.color.set(rn.c); selR.material.opacity=.75+.25*Math.sin(tm*4); selR.material.rotation=-tm*.6; } else selR.visible=false;
+    var rn=EDW?(kSel&&byId[kSel]):(sel||(hl&&hl===cur&&st==='node'?hl:null)); if((fc&3)===0) sideUI(!EDW&&!fly&&rn&&rn.k<.5&&(st==='top'||st==='node'||st==='over')&&holds(rn)?rn:null); if(rn&&rn.g.visible&&rn.k<.5&&!(fly&&!EDW&&rn!==aim)){ var rs=rn.s0*rn.g.scale.x*4.4*(1+.07*Math.sin(tm*4)); selR.visible=true; selR.position.copy(rn.g.position); selR.scale.set(rs,rs,1); selR.material.color.set(rn.c); selR.material.opacity=.75+.25*Math.sin(tm*4); selR.material.rotation=-tm*.6; } else selR.visible=false;
     if(rip.t>=0){ rip.t+=dt/.9; if(rip.t>1){ rip.t=-1; rip.visible=false; } else { rip.visible=true; rip.position.copy(rip.n.g.position); var rs=rip.n.s*(2.2+rip.t*3.5); rip.scale.set(rs,rs,1); rip.material.opacity=(1-rip.t)*.8; } }
     var gS=st==='top'?1.9:1; /* сверху планеты крупнее, чтобы их было видно */
     NODES.forEach(function(n){ n.halo.material.rotation=tm*.2; if(Math.abs(n.gs-gS)>.005) n.gs+=(gS-n.gs)*Math.min(1,dt*3); var sc=n.gs*(n.s/n.s0)*(1-n.k); n.g.scale.setScalar(Math.max(sc,.001)); n.g.visible=sc>.01; /* собранное хранилище: всё внутри уменьшается и пропадает */
