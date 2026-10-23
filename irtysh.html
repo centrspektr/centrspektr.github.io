@@ -31,7 +31,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--body);overflow:hidde
 @keyframes neonGlitch{0%,62%{opacity:1}63%{opacity:.15}64%{opacity:1}66%{opacity:.3}67%{opacity:1}80%{opacity:1}81%{opacity:.08}83%{opacity:.6}84%{opacity:1}}
 
 #mxR{position:fixed;left:0;top:0;width:100%;height:30%;pointer-events:none;z-index:3;transition:opacity 1.4s;filter:drop-shadow(0 0 3px rgba(0,255,106,.8));-webkit-mask-image:linear-gradient(#000 55%,transparent);mask-image:linear-gradient(#000 55%,transparent)}
-.co{background:none!important;border:0!important;padding:0!important;border-radius:0!important;overflow:visible;touch-action:none} /* палец на сноске двигает карту, а не страницу */
+.co{background:none!important;border:0!important;padding:0!important;border-radius:0!important;overflow:visible;touch-action:none;pointer-events:none!important}.co.pe span{pointer-events:auto;touch-action:none} /* палец на сноске двигает карту, а не страницу */
 .co svg{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none} /* svg линии не ловит пальцы - иначе мешает двигать карту */
 .co path{fill:none;stroke:var(--pc);stroke-width:1.4;filter:drop-shadow(0 0 4px var(--pc))}
 .co span{position:absolute;top:0;left:24px;font:700 13px var(--body);color:#fff;text-shadow:0 0 10px var(--pc),0 0 2px #000;white-space:nowrap}
@@ -242,28 +242,30 @@ var MAXG=['https://max.ru/join/vXgGYXzwh0p9R1_CUppOus_9Msui9Annkj4HHpaBHVU','htt
   'https://max.ru/join/kbsZa2PtRYEwK3ZyDq2WHbf9LNJpv5Wayfh5aRuNz6Y','https://max.ru/join/ssNE1a7VgnRlJd58qOwncUx_051PJLlzmEa6thFGnss'];
 /* карта по умолчанию (пока владелец не сохранил свою): координаты здесь - где планета стоит в космосе, при запуске они пересчитываются в off */
 function defMap(){ var N=[
-  /* Иртыш в центре: от него нити к Соцсетям и к Спектру; вокруг него спутники - группы села (адреса владелец пришлёт) */
+  /* Иртыш в центре, от него 2 нити: Соцсети села и Спектр */
   Pn('irtysh','Иртыш',null,[0,6,-34],{img:'selo.jpg',c:'#2dd4bf',sz:2.4,say:'Село Иртыш'}),
-  Sn('ir1','ВК: село Иртыш','irtysh',.4,{c:'#2787f5'}), Sn('ir2','ОК: село Иртыш','irtysh',1.97,{c:'#f7931e'}), Sn('ir3','MAX: село Иртыш','irtysh',3.54,{c:'#4ade80'}),
-  Sn('gallery','Галерея Иртыша','irtysh',5.11,{c:'#38bdf8',say:'Галерея Иртыша. Фото и видео села'}),
-  /* соцсети Спектра: MAX (8 групп на полках), ОК, ВК */
-  Pn('social','Соцсети',null,[-40,-8,-62],{from:'irtysh',c:'#34d399',sz:2.15,say:'Соцсети Спектра'}),
+  /* соцсети села: спутники-группы (адреса владелец пришлёт) */
+  Pn('vsoc','Соцсети села','irtysh',[36,-6,-58],{c:'#38bdf8',sz:1.9,say:'Группы села Иртыш'}),
+  Sn('ir1','ВК: село Иртыш','vsoc',.4,{c:'#2787f5',dist:7}), Sn('ir2','ОК: село Иртыш','vsoc',1.97,{c:'#f7931e',dist:7}), Sn('ir3','MAX: село Иртыш','vsoc',3.54,{c:'#4ade80',dist:7}),
+  Sn('gallery','Галерея Иртыша','vsoc',5.11,{c:'#38bdf8',dist:7,say:'Галерея Иртыша. Фото и видео села'}),
+  Pn('spektr','Спектр','irtysh',[-6,0,-90],{url:A0+'spektr/',c:'#ffd36e',sz:2.75,say:'Ресурсный центр Спектр'}),
+  /* от Спектра 4 нити: Соцсети Спектра, Кружки, Обучающие курсы, Твой проект */
+  Pn('social','Соцсети Спектра','spektr',[-46,-8,-104],{c:'#34d399',sz:2.15,say:'Соцсети Спектра'}),
   Sn('max','MAX','social',.3,{c:'#4ade80',dist:9,sz:1.2,say:'Группы в МАКС'}), Sn('ok','ОК','social',2.4,{c:'#f7931e',dist:9,sz:1.05,say:'Одноклассники'}), Sn('vk','ВК','social',4.5,{c:'#2787f5',dist:9,sz:1.05,say:'ВКонтакте'}),
-  Pn('spektr','Спектр','irtysh',[14,0,-88],{url:A0+'spektr/',c:'#ffd36e',sz:2.75,say:'Ресурсный центр Спектр'}),
-  /* Кружки - хранилище: кружки со своим сайтом - планеты, без сайта - спутники (ведут в свои группы MAX) */
-  Pn('kruzhki','Кружки','spektr',[-22,8,-130],{c:'#f472b6',sz:2.1}),
-  Sn('k1','Скульптура и рисование','kruzhki',0,{c:'#f97316',dist:8,sz:.8,url:MAXG[3]}), Sn('k2','Лит.ra','kruzhki',1.26,{c:'#8b5cf6',dist:8,sz:.8,url:MAXG[4]}),
-  Sn('k3','Околица','kruzhki',2.51,{c:'#dc2626',dist:8,sz:.8,url:MAXG[5]}), Sn('k4','Задоринки','kruzhki',3.77,{c:'#ca8a04',dist:8,sz:.8,url:MAXG[6]}), Sn('k5','Ладушки','kruzhki',5.03,{c:'#16a34a',dist:8,sz:.8,url:MAXG[7]}),
-  Pn('vzlet','Взлёт','kruzhki',[-48,8,-154],{url:A0+'vzlet/',img:'vzlet.webp',c:'#7cf3ff',sz:1.9,say:'Клуб Взлёт'}),
-  Pn('studio','Гитара и ИИ','kruzhki',[-10,-2,-166],{url:A0+'studio/',img:'studio.webp',c:'#ff7ce0',sz:1.9,say:'Гитара и ИИ-студия'}),
-  Pn('agro','Агрокласс','kruzhki',[-36,20,-184],{url:A0+'agroklass/',c:'#9dff7c',sz:1.75}),
+  /* Кружки - хранилище, все кружки в нём - спутники (у кого есть свой сайт - ведут на него, остальные - в свои группы MAX) */
+  Pn('kruzhki','Кружки','spektr',[-16,8,-146],{c:'#f472b6',sz:2.1}),
+  Sn('vzlet','Взлёт','kruzhki',0,{url:A0+'vzlet/',c:'#7cf3ff',dist:10,sz:1.15,say:'Клуб Взлёт'}),
+  Sn('studio','Гитара и ИИ','kruzhki',.785,{url:A0+'studio/',c:'#ff7ce0',dist:10,sz:1.15,say:'Гитара и ИИ-студия'}),
+  Sn('agro','Агрокласс','kruzhki',1.57,{url:A0+'agroklass/',c:'#9dff7c',dist:10,sz:1.15}),
+  Sn('k1','Скульптура и рисование','kruzhki',2.36,{c:'#f97316',dist:10,sz:.85,url:MAXG[3]}), Sn('k2','Лит.ra','kruzhki',3.14,{c:'#8b5cf6',dist:10,sz:.85,url:MAXG[4]}),
+  Sn('k3','Околица','kruzhki',3.93,{c:'#dc2626',dist:10,sz:.85,url:MAXG[5]}), Sn('k4','Задоринки','kruzhki',4.71,{c:'#ca8a04',dist:10,sz:.85,url:MAXG[6]}), Sn('k5','Ладушки','kruzhki',5.5,{c:'#16a34a',dist:10,sz:.85,url:MAXG[7]}),
   /* Обучающие курсы - хранилище, курсы - отдельные продукты; от кружка к его курсу пунктир */
-  Pn('kursy','Обучающие курсы','spektr',[30,6,-132],{c:'#60a5fa',sz:2.3,shut:true}),
-  Pn('fpv','Курс FPV','kursy',[14,14,-168],{c:'#22d3ee',sz:1.6,say:'Курс FPV Взлёт'}),
-  Pn('kgit','Курс Гитара и ИИ','kursy',[42,0,-170],{c:'#e879f9',sz:1.6}),
-  Pn('kagro','Курс Агрокласса','kursy',[28,22,-194],{c:'#86efac',sz:1.6}),
-  Pn('kpy','Python с ИИ','kursy',[48,-6,-122],{c:'#facc15',sz:1.6,on:false}),
-  Pn('idea1','Здесь может быть твоя идея',null,[46,-14,-34],{c:'#a78bfa',sz:1.6}),
+  Pn('kursy','Обучающие курсы','spektr',[26,6,-142],{c:'#60a5fa',sz:2.3,shut:true}),
+  Pn('fpv','Курс FPV','kursy',[12,14,-176],{c:'#22d3ee',sz:1.6,say:'Курс FPV Взлёт'}),
+  Pn('kgit','Курс Гитара и ИИ','kursy',[40,0,-178],{c:'#e879f9',sz:1.6}),
+  Pn('kagro','Курс Агрокласса','kursy',[26,22,-200],{c:'#86efac',sz:1.6}),
+  Pn('kpy','Python с ИИ','kursy',[46,-6,-130],{c:'#facc15',sz:1.6,on:false}),
+  Pn('idea1','Твой проект','spektr',[40,-12,-98],{c:'#a78bfa',sz:1.6,say:'Твой проект. Пиши нам - подключим к порталу'}),
   Pn('nastr','Настройки',null,[-26,-7,-8],{c:'#cbd5e1',sz:1.4,say:'Настройки портала'}),
   Pn('help','Поддержать проект',null,[0,30,-235],{c:'#ffcf6e',sz:1.9})
  ]; absToOff(N); return {v:2,nodes:N,links:[['vzlet','fpv'],['studio','kgit'],['agro','kagro']]}; }
@@ -1298,13 +1300,13 @@ function frame(){ var rdt=clock.getDelta(), dt=Math.min(rdt,.05); tm+=dt; fc++; 
   R.render(S,C);
   var fpx=innerHeight/2/Math.tan(C.fov*Math.PI/360), cx0=-9, cy0=-9, cr=0;
   if(cur&&st==='node'){ cur.g.getWorldPosition(v); var dc=v.distanceTo(C.position); v.project(C); cx0=(v.x*.5+.5)*innerWidth; cy0=(-v.y*.5+.5)*innerHeight; cr=cur.s*1.7/dc*fpx+30; }
-  var coR=[]; NODES.slice().sort(function(a,b){ return a.s<b.s?1:-1; }).forEach(function(n){ var el=n.el; if(!inside.visible||st==='falling'||n.k>.4){ el.style.opacity=0; el.style.pointerEvents='none'; return; }
+  var coR=[]; NODES.slice().sort(function(a,b){ return a.s<b.s?1:-1; }).forEach(function(n){ var el=n.el; if(!inside.visible||st==='falling'||n.k>.4){ el.style.opacity=0; el.classList.remove('pe'); return; }
     if(n.n!==n.ln0){ n.ln0=n.n; n.tw=null; n.fl=null; n.cc=0; }
     n.g.getWorldPosition(v); var d=v.distanceTo(C.position); v.project(C); var sx=(v.x*.5+.5)*innerWidth, sy=(-v.y*.5+.5)*innerHeight;
     if(n.coOn){ n.cl=Math.min(1,n.cl+dt/.4); if(n.cl>=1) n.cc=Math.min(n.n.length,n.cc+dt*16); } else { n.cc=Math.max(0,n.cc-dt*28); if(n.cc<=0) n.cl=Math.max(0,n.cl-dt/.35); }
     var top=st==='top', cl=top?1:n.cl, cc=top?n.n.length:Math.ceil(n.cc);
     var op=top?1:Math.max(0,Math.min(1,((st==='over'?Math.max(300,ovR+170):300)-d)/140)), on=cl>0&&v.z<1&&Math.abs(v.x)<1.1&&Math.abs(v.y)<1.1&&(top||cur!==n)&&!fly&&op>.05&&(top||Math.hypot(sx-cx0,sy-cy0)>cr); /* сверху видны все подписи, и у планеты, где были */
-    el.style.opacity=on?op:0; el.style.pointerEvents=on&&cc>0?'auto':'none'; if(!on) return;
+    el.style.opacity=on?op:0; el.classList.toggle('pe',on&&cc>0); if(!on) return; /* нажимается только надпись, а не вся рамка сноски - рамка закрывала соседние планеты */
     if(n.tw==null){ n.coSp.textContent=n.n; n.tw=n.coSp.offsetWidth||n.n.length*8; n.coSp.textContent=''; }
     var rp=n.s*.95/d*fpx, sf=top?.72:1, B=top?28:40, LH=top?18:24, W=Math.round(n.tw*sf)+30, fl=n.m.t==='s'&&n.m.from==='social', /* сноски не прыгают: у спутников Соцсетей всегда влево, у остальных всегда вправо */ ax=fl?sx-rp*.7-W:sx+rp*.7, ay=sy-rp*.7-B, bump=0;
     /* сноски не налезают друг на друга: если место занято - поднимаем выше, линия становится длиннее */
@@ -1315,7 +1317,7 @@ function frame(){ var rdt=clock.getDelta(), dt=Math.min(rdt,.05); tm+=dt; fc++; 
   if(inside.visible&&!fly&&(st==='node'||st==='over')){ farP.getWorldPosition(v); v.project(C); var fon=v.z<1&&Math.abs(v.x)<1&&Math.abs(v.y)<1; farL.style.opacity=fon?1:0; farL.style.pointerEvents=fon?'auto':'none';
     if(fon) farL.style.transform='translate('+((v.x*.5+.5)*innerWidth)+'px,'+((-v.y*.5+.5)*innerHeight+26)+'px) translate(-50%,0)'; } else { farL.style.opacity=0; farL.style.pointerEvents='none'; }
   requestAnimationFrame(frame); }
-if(/[?&]dbg/.test(location.search)) window.__dbg={camP:camP,S:S,gate:gate,tap:function(id){ tapNode(id); },st:function(){ return st; },map:function(){ return MAP; },cam:function(){ return [camP.x,camP.y,camP.z,ovR]; },ks:function(){ return kSel; },mv:function(id,x,y){ kMove(byId[id],x,y); },kd:function(){ return !!kdrag; },k:function(id){ return byId[id]&&byId[id].k; },
+if(/[?&]dbg/.test(location.search)) window.__dbg={camP:camP,S:S,gate:gate,tap:function(id){ tapNode(id); },st:function(){ return st; },map:function(){ return MAP; },info:function(){ return {st:st,cur:cur&&cur.id,sel:sel&&sel.id,aim:aim&&aim.id,kind:byId.kursy.kind}; },cam:function(){ return [camP.x,camP.y,camP.z,ovR]; },ks:function(){ return kSel; },mv:function(id,x,y){ kMove(byId[id],x,y); },kd:function(){ return !!kdrag; },k:function(id){ return byId[id]&&byId[id].k; },
   scr:function(id){ var n=byId[id]; if(!n) return null; n.g.getWorldPosition(v); v.project(C); return [(v.x*.5+.5)*innerWidth,(-v.y*.5+.5)*innerHeight,v.z]; }};
 try{ inside.visible=true; R.compile(S,C); }catch(e){} inside.visible=false;
 frame();
