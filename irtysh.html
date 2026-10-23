@@ -280,7 +280,7 @@ function cleanMap(x){ var M={v:2,nodes:[],links:[]}, seen={}; if(!x||!Array.isAr
     var D=n.t==='s'?DEF_S:DEF_P, m={id:id,t:D.t,n:String(n.n==null?'Без названия':n.n).slice(0,48),from:n.from?String(n.from):null,url:safeUrl(n.url),html:String(n.html||'').slice(0,20000),img:safeUrl(n.img),
       sz:num(n.sz,D.sz,.3,7),c:/^#[0-9a-f]{6}$/i.test(n.c)?n.c:D.c,glow:num(n.glow,D.glow,0,1.6),on:n.on!==false,shut:!!n.shut,bend:num(n.bend,D.bend,-1,1)};
     if(n.say) m.say=String(n.say).slice(0,80);
-    if(m.t==='s'){ m.dist=num(n.dist,8,1.5,40); m.ang=num(n.ang,0,-100,100); m.tilt=num(n.tilt,.35,-1.5,1.5); m.spd=0; }
+    if(m.t==='s'){ m.dist=num(n.dist,8,1.5,80); m.ang=num(n.ang,0,-100,100); m.tilt=num(n.tilt,.35,-1.5,1.5); m.spd=0; }
     else { var o=Array.isArray(n.off)?n.off:[0,0,-30]; m.off=[num(o[0],0,-400,400),num(o[1],0,-200,200),num(o[2],-30,-400,400)]; }
     M.nodes.push(m); });
   var by={}; M.nodes.forEach(function(n){ by[n.id]=n; });
@@ -617,7 +617,7 @@ function dropSpark(k){ inside.remove(k.tail); inside.remove(k.head); k.tail.geom
 function dropLine(T){ inside.remove(T.ln); T.ln.geometry.dispose(); T.ln.material.dispose(); threads=threads.filter(function(q){ return q!==T; }); }
 function dropView(n){ inside.remove(n.g); n.g.traverse(function(o){ if(o.geometry) o.geometry.dispose(); if(o.material){ if(o.material.map&&o.material.map!==clkT&&o.material.map!==GLINT) o.material.map.dispose(); o.material.dispose(); } });
   n.el.remove(); hits=hits.filter(function(h){ return h!==n.hm; }); if(n.thr) dropLine(n.thr); if(n.pulse){ dropSpark(n.pulse.k); pulses=pulses.filter(function(q){ return q!==n.pulse; }); }
-  neus=neus.filter(function(J){ if(J.n!==n) return true; J.k.busy=false; J.k.vis(false); return false; }); if(sel===n) sel=null; if(cur===n) cur=null; if(rip.n===n){ rip.n=null; rip.t=-1; rip.visible=false; } delete byId[n.id]; }
+  neus=neus.filter(function(J){ if(J.n!==n) return true; J.k.busy=false; J.k.vis(false); return false; }); if(sel===n) sel=null; if(hl===n) hl=null; if(cur===n) cur=null; if(rip.n===n){ rip.n=null; rip.t=-1; rip.visible=false; } delete byId[n.id]; }
 /* пунктир "связан" и тонкие нити к "Поддержать проект" - пересобираются вместе с картой */
 var EXTRA=[], DASH=[];
 function rebuildExtras(){ EXTRA.forEach(function(q){ inside.remove(q.ln); q.ln.geometry.dispose(); q.ln.material.dispose(); if(q.k){ dropSpark(q.k); pulses=pulses.filter(function(p){ return p!==q.pl; }); } }); EXTRA=[]; DASH=[];
@@ -644,7 +644,8 @@ var SHUT={}, TUCK={}, otime=0, /* TUCK - сам ушёл внутрь того, 
 MAP.nodes.forEach(function(m){ if(m.shut) SHUT[m.id]=1; });
 function placeN(n,dt,d){ if(PW[n.id]) return n.g.position; var m=n.m, par=m.from?byId[m.from]:null; d=d||0; var base=par&&d<40?placeN(par,dt,d+1):PJ;
   var tgt=TUCK[n.id]?1:0; for(var x=par,i=0; x&&i<40&&!tgt; x=x.m.from?byId[x.m.from]:null,i++) if(SHUT[x.id]||TUCK[x.id]){ tgt=1; break; }
-  if(dt<0) n.k=tgt; else { n.k+=(tgt-n.k)*Math.min(1,dt*(red?20:3)); if(Math.abs(tgt-n.k)<.002) n.k=tgt; }
+  var wt=n.wait||0; for(var y=par,j=0; y&&j<40; y=y.m.from?byId[y.m.from]:null,j++) if(y.wait>wt) wt=y.wait; /* по очереди: ждёт своей очереди (и всё, что у него внутри) */
+  if(dt<0) n.k=tgt; else if(tm>=wt){ n.k+=(tgt-n.k)*Math.min(1,dt*(red?20:3)); if(Math.abs(tgt-n.k)<.002) n.k=tgt; }
   var w=n.g.position, e=1-n.k*n.k*(3-2*n.k);
   if(m.t==='s'){ var a=m.ang+otime*m.spd, r=m.dist*e, x0=Math.cos(a)*r, z0=Math.sin(a)*r; w.set(x0,-z0*Math.sin(m.tilt),z0*Math.cos(m.tilt)).add(base); }
   else w.set(m.off[0]*e,m.off[1]*e,m.off[2]*e).add(base);
@@ -660,6 +661,9 @@ var neu=spark('#4ade80',1.3); neu.vis(false);
 var rip=new THREE.Sprite(new THREE.SpriteMaterial({map:tex(function(x,sz){ var c=sz/2, g=x.createRadialGradient(c,c,sz*.3,c,c,sz*.5); g.addColorStop(0,'rgba(134,239,172,0)'); g.addColorStop(.6,'rgba(134,239,172,.9)'); g.addColorStop(1,'rgba(134,239,172,0)'); x.fillStyle=g; x.fillRect(0,0,sz,sz); },256),blending:THREE.AdditiveBlending,depthWrite:false,transparent:true}));
 rip.visible=false; rip.t=-1; inside.add(rip);
 rip.n=null;
+/* кольцо подсветки: нажатая планета (в правке - выбранная) */
+var selR=new THREE.Sprite(new THREE.SpriteMaterial({map:tex(function(x,sz){ var c=sz/2; x.shadowColor='#fff'; x.shadowBlur=sz*.05; x.strokeStyle='rgba(255,255,255,.95)'; x.lineWidth=sz*.03; x.beginPath(); x.arc(c,c,sz*.4,0,6.283); x.stroke(); x.globalAlpha=.45; x.lineWidth=sz*.012; x.setLineDash([sz*.03,sz*.025]); x.beginPath(); x.arc(c,c,sz*.46,0,6.283); x.stroke(); },256),blending:THREE.AdditiveBlending,depthWrite:false,depthTest:false,transparent:true}));
+selR.visible=false; selR.renderOrder=9; inside.add(selR);
 /* нейроны по очереди летят от нас к каждой планете (через Спектр); долетел - свечение и сноска с названием, следующий к той же планете сноску тушит */
 function chainOf(n){ var c=[]; while(n&&n.curve){ c.unshift(n.curve); n=n.from==='me'?null:byId[n.from]; } return c; }
 /* волна A: нейрон к Спектру, от него сразу веером ко всем его планетам (долетают в разное время - нити разной длины);
@@ -740,7 +744,7 @@ function stepFly(dt){ var o=camP.clone(); fly.t=Math.min(1,fly.t+dt/fly.d); var 
 var hint=document.getElementById('hint'), backB=document.getElementById('back'), flash=document.getElementById('flash'), cap=document.getElementById('cap'), atmEl=document.getElementById('atm');
 function soon(n){ return (n.kind==='dash'||n.kind==='link')&&!n.u&&!n.html; } /* ссылка-заглушка: владелец добавит позже */
 function capText(n){ if(n.kind==='idea') return 'Пиши нам - подключим к порталу'; if(n.kind==='off') return 'Скоро здесь зажжётся проект';
-  if(n.kind==='hub'){ var ks=kidsOf(n.id); return 'Нажми ещё раз - <b class="go">'+(SHUT[n.id]?'выпустить':'собрать')+' ('+ks.length+')</b>'+(SHUT[n.id]?'':'<br>'+ks.map(function(m){ return '<b>'+esc(m.n)+'</b>'; }).join(', ')); }
+  if(holds(n)){ var ks=kidsOf(n.id); return boxCap(n)+(SHUT[n.id]?'':'<br>'+ks.map(function(m){ return '<b>'+esc(m.n)+'</b>'; }).join(', ')); }
 
   if(n.close) return '<b class="go">Войти</b>';
   if(n.kind==='set') return 'Нажми ещё раз - <b>открыть</b>: установка, голос, графика';
@@ -750,7 +754,8 @@ function showCap(n){ document.getElementById('capT').textContent=n.n+(n.kind==='
   document.getElementById('capP').innerHTML=capText(n); cap.classList.toggle('hi',!!n.close); cap.classList.add('on'); }
 function hideCap(){ cap.classList.remove('on'); }
 document.getElementById('capT').onclick=function(){ if(sel) tapNode(sel.id); else if(cur) tapNode(cur.id); };
-document.getElementById('capP').onclick=function(e){ if(!e.target.classList.contains('go')) return; if(sel) tapNode(sel.id); else if(cur) tapNode(cur.id); };
+document.getElementById('capP').onclick=function(e){ if(!e.target.classList.contains('go')) return; if(e.target.classList.contains('in')){ var n=sel||cur; if(!n||fly) return; if(sel){ sel=null; flyTo(n,true); } else enter(n); return; } /* у планеты с нитями и адресом - отдельная кнопка "войти" */
+  if(sel) tapNode(sel.id); else if(cur) tapNode(cur.id); };
 /* прилёт: если подлетели не с той стороны - плавный облёт к нужному виду; затем можно крутиться вокруг узла */
 var baseP=new THREE.Vector3(), baseL=new THREE.Vector3(), turn=0, turnT=0;
 var nz=1, nzT=1; /* у планеты: щипок или кнопки +/- подвигают камеру ближе или дальше */
@@ -760,16 +765,23 @@ function goClose(n){ hideCap(); st='fly'; var B=closeView(n); startFly(B.p,B.l,n
 /* нажатие на узел: первое - летим к нему, у Спектра второе - ближе, последнее - провал внутрь */
 /* первое нажатие - выбор: планета подсвечивается и оживает, второе - летим; у планеты, где мы, нажатие - вход */
 var sel=null, aim=null; /* aim - куда сейчас летим */
-function selCap(n){ document.getElementById('capT').textContent=n.n+(n.kind==='off'?' · скоро':''); cap.style.setProperty('--pc',n.c); document.getElementById('capP').innerHTML='Нажми ещё раз - <b class="go">'+(n.kind==='hub'?(SHUT[n.id]?'выпустить':'собрать')+' ('+kidsOf(n.id).length+')':canEnter(n)?(n.kind==='support'?'открыть':'войти'):'полетели')+'</b>'; cap.classList.remove('hi'); cap.classList.add('on'); }
+function selCap(n){ document.getElementById('capT').textContent=n.n+(n.kind==='off'?' · скоро':''); cap.style.setProperty('--pc',n.c); document.getElementById('capP').innerHTML=holds(n)?boxCap(n):'Нажми ещё раз - <b class="go">'+(canEnter(n)?(n.kind==='support'?'открыть':'войти'):'полетели')+'</b>'; cap.classList.remove('hi'); cap.classList.add('on'); }
 function canEnter(n){ return !(n.kind==='idea'||n.kind==='off'||n.kind==='hub'||n.kind==='set'||soon(n)); }
+var hl=null; /* что сейчас подсвечено кольцом */
 /* хранилище: собрать всё, что держит, внутрь или выпустить обратно */
-function toggleBox(n){ if(SHUT[n.id]){ delete SHUT[n.id]; kidsOf(n.id).forEach(function(m){ delete TUCK[m.id]; }); } else SHUT[n.id]=1; n.bst=1; rip.n=n; rip.t=0; speak(n.n+(SHUT[n.id]?'. Собрано.':'. Выпущено.')); } /* куда можно провалиться сразу со второго нажатия */
-function unsel(){ if(!sel) return; sel=null; if(cur&&st==='node') showCap(cur); else hideCap(); }
-function tapNode(id){ var n=byId[id]; if(!n) return; if(EDW){ edPick(n); return; } if(st==='gate'||st==='falling'||st==='atm'||fly||n.k>.5) return;
-  if(st==='node'&&cur===n){ sel=null; if(n.kind==='hub'){ toggleBox(n); showCap(n); return; } enter(n); return; }
-  if(sel!==n){ sel=n; n.bst=1; selCap(n); speak(n.say||n.n); return; }
-  if(n.kind==='hub'){ toggleBox(n); selCap(n); return; } /* второе нажатие по хранилищу: собрать, третье - выпустить */
-  sel=null; var dive=canEnter(n);
+function toggleBox(n){ var ks=kidsOf(n.id), open=!SHUT[n.id]&&ks.some(function(m){ return !TUCK[m.id]; });
+  if(open) SHUT[n.id]=1; else { delete SHUT[n.id]; ks.forEach(function(m){ delete TUCK[m.id]; }); }
+  (open?ks.slice().reverse():ks).forEach(function(m,i){ m.wait=tm+i*.17; }); /* нити уходят внутрь и выходят по очереди */
+  n.bst=1; rip.n=n; rip.t=0; speak(n.n+(open?'. Собрано.':'. Выпущено.')); return open; }
+function holds(n){ return n.kind!=='off'&&n.kind!=='set'&&n.kind!=='support'&&kidsOf(n.id).length>0; } /* держит нити - нажатием собирает и выпускает (Спектр тоже) */
+function boxCap(n){ return 'Нажми ещё раз - <b class="go">'+(SHUT[n.id]?'выпустить':'собрать')+' ('+kidsOf(n.id).length+')</b>'+(canEnter(n)?' · <b class="go in">'+(n.kind==='support'?'открыть':'войти')+'</b>':''); } /* куда можно провалиться сразу со второго нажатия */
+function unsel(){ hl=null; if(!sel) return; sel=null; if(cur&&st==='node') showCap(cur); else hideCap(); }
+function tapNode(id){ var n=byId[id]; if(!n) return; if(EDW){ edPick(n); return; } if(st==='gate'||st==='falling'||st==='atm'||fly||n.k>.5) return; hl=n; n.bst=1;
+  if(st==='node'&&cur===n){ sel=null; if(holds(n)){ toggleBox(n); showCap(n); return; } enter(n); return; }
+  if(sel!==n){ sel=n; selCap(n); speak(n.say||n.n); return; }
+  if(holds(n)){ toggleBox(n); selCap(n); return; } /* второе нажатие по планете с нитями: собрать, третье - выпустить; войти - кнопкой в подписи */
+  sel=null; flyTo(n,canEnter(n)); }
+function flyTo(n,dive){
   if(st==='top'){ meSw.visible=meGlow.visible=false; var sv=topSave; topSave=null; st=sv.st; if(cur===n&&st==='node'){ var B=canon(n); st='fly'; startFly(B.p,B.l,null,2.2,function(){ if(dive){ st='node'; enter(n); } else settle(n); }); return; } goTo(n,false,dive); return; }
   goTo(n,false,dive); }
 function goTo(n,isBack,dive){ if(n.kind==='set') setTimeout(setPanel,250); /* Настройки: окно сразу, камера летит и разворачивается уже за ним */ hideCap(); turnUI(true); topB.classList.remove('on'); if(!isBack) back.push(cur?cur.id:null);
@@ -778,7 +790,7 @@ function goTo(n,isBack,dive){ if(n.kind==='set') setTimeout(setPanel,250); /* Н
   /* летим сразу к нужному виду - без облёта после прилёта (раньше камера подлетала, а потом отъезжала) */
   st='fly'; fpvFly(canon(n).p,canon(n).l,curve,rev,function(){ cur=n; acc=0; n.close=false; if(dive){ st='node'; topUI(); enter(n); } else settle(n); }); } /* второе нажатие: долетели - и сразу проваливаемся, без остановки */
 /* шаг назад: нить тянет к предыдущему узлу; у Спектра вблизи - сперва отъезд; из обзора - выход из портала */
-function goBack(){ if(fly||st==='atm') return; sel=null; if(st==='top'){ topOff(); return; } if(st==='over'){ exitPortal(); return; }
+function goBack(){ if(fly||st==='atm') return; sel=null; hl=null; if(st==='top'){ topOff(); return; } if(st==='over'){ exitPortal(); return; }
   if(cur&&cur.close){ hideCap(); st='fly'; var B0=canon(cur), n0=cur; startFly(B0.p,B0.l,null,red?.5:1.6,function(){ n0.close=false; settle(n0); }); return; }
   hideCap(); turnUI(true); var prev=back.pop();
   if(prev){ goTo(byId[prev],true); }
@@ -903,11 +915,11 @@ function nodeAt(x,y,lb){ var n=null;
   var r=new THREE.Raycaster(); r.setFromCamera(new THREE.Vector2(x/innerWidth*2-1,-(y/innerHeight)*2+1),C); var h=r.intersectObjects(hits,false).filter(function(q){ var m=byId[q.object.userData.id]; return m&&m.k<.5; })[0]; if(h) n=byId[h.object.userData.id];
   if(!n&&lb) NODES.forEach(function(m){ if(m.el===lb) n=m; }); /* палец на самой планете важнее, чем на чужой сноске рядом */
   return n; }
-function gather(n){ var ks=kidsOf(n.id);
-  if(ks.length){ var open=!SHUT[n.id]&&ks.some(function(m){ return !TUCK[m.id]; }); if(open) SHUT[n.id]=1; else { delete SHUT[n.id]; ks.forEach(function(m){ delete TUCK[m.id]; }); } speak(n.n+(open?'. Собрано.':'. Выпущено.')); }
-  else if(n.m.from){ TUCK[n.id]=1; if(sel===n) unsel(); speak(n.n+'. Ушла внутрь.'); n=byId[n.m.from]; }
+function gather(n){ hl=n;
+  if(kidsOf(n.id).length) toggleBox(n);
+  else if(n.m.from){ TUCK[n.id]=1; if(sel===n) unsel(); speak(n.n+'. Ушла внутрь.'); n=byId[n.m.from]; hl=n; n.bst=1; rip.n=n; rip.t=0; }
   else return;
-  n.bst=1; rip.n=n; rip.t=0; moved=99; try{ navigator.vibrate&&navigator.vibrate(25); }catch(e){} if(sel===n) selCap(n); else if(cur===n&&st==='node') showCap(n); }
+  moved=99; try{ navigator.vibrate&&navigator.vibrate(25); }catch(e){} if(sel===n) selCap(n); else if(cur===n&&st==='node') showCap(n); }
 addEventListener('keydown',function(e){ if(e.target.closest&&e.target.closest('input,textarea,select')) return; if(EDW){ if(e.key==='Escape'){ edM.classList.remove('on'); pgM.classList.remove('on'); } return; } if(e.key==='ArrowDown'||e.key===' ') scrollBy(300); if(e.key==='ArrowUp') scrollBy(-300); if(e.key==='Escape') goBack(); if(e.key==='Enter'&&cur) tapNode(cur.id); });
 
 /* начало: строка "Матрицы" слева направо - фронт перебирает знаки, позади он тает, а нужные знаки остаются (2  0  2  6);
@@ -1134,9 +1146,9 @@ function pickThread(x,y){ var best=null, bd=mob?18:11, pr=function(cv,o){ for(va
 var kRay=new THREE.Raycaster(), kPl=new THREE.Plane(), kHit=new THREE.Vector3(), kV2=new THREE.Vector2(), kDir=new THREE.Vector3();
 function kMove(n,x,y){ var m=n.m, base=m.from&&byId[m.from]?byId[m.from].g.position:PJ; kV2.set(x/innerWidth*2-1,-(y/innerHeight)*2+1); kRay.setFromCamera(kV2,C);
   if(st==='top') kDir.set(0,1,0); else C.getWorldDirection(kDir); kPl.setFromNormalAndCoplanarPoint(kDir,n.g.position); if(!kRay.ray.intersectPlane(kPl,kHit)) return; kHit.sub(base);
-  if(m.t==='s'){ var z0=kHit.z*Math.cos(m.tilt)-kHit.y*Math.sin(m.tilt), d=Math.hypot(kHit.x,z0); if(!EDW){ if(m._d0==null) m._d0=m.dist; d=Math.max(m._d0*.8,Math.min(m._d0*1.5+1,d)); } /* гость: спутник только чуть ближе или дальше */
-    m.dist=Math.max(1.5,Math.min(40,d)); m.ang=Math.atan2(z0,kHit.x)-otime*m.spd; }
-  else { if(!EDW){ if(!m._o0) m._o0=m.off.slice(); var L0=Math.hypot(m._o0[0],m._o0[2]), dl=Math.hypot(kHit.x,kHit.z), R=Math.max(25,L0*1.5), r0=Math.min(6,L0); if(dl>R){ kHit.x*=R/dl; kHit.z*=R/dl; } else if(dl<r0&&dl>0){ kHit.x*=r0/dl; kHit.z*=r0/dl; } kHit.y=m._o0[1]; } /* гость: планету можно увести вокруг того, кто её держит, но нить длиннее чем в полтора раза не тянется */
+  if(m.t==='s'){ var z0=kHit.z*Math.cos(m.tilt)-kHit.y*Math.sin(m.tilt), d=Math.hypot(kHit.x,z0); if(!EDW){ if(m._d0==null) m._d0=m.dist; d=Math.max(m._d0*.5,Math.min(Math.max(m._d0*4,m._d0+25),d)); } /* гость: спутник можно отвести далеко (до 4 своих расстояний) */
+    m.dist=Math.max(1.5,Math.min(80,d)); m.ang=Math.atan2(z0,kHit.x)-otime*m.spd; }
+  else { if(!EDW){ if(!m._o0) m._o0=m.off.slice(); var L0=Math.hypot(m._o0[0],m._o0[2]), dl=Math.hypot(kHit.x,kHit.z), R=Math.max(60,L0*3), r0=Math.min(6,L0); if(dl>R){ kHit.x*=R/dl; kHit.z*=R/dl; } else if(dl<r0&&dl>0){ kHit.x*=r0/dl; kHit.z*=r0/dl; } kHit.y=m._o0[1]; } /* гость: планету можно увести вокруг того, кто её держит, нить тянется до 3 раз длиннее */
     m.off=[+kHit.x.toFixed(1),+kHit.y.toFixed(1),+kHit.z.toFixed(1)]; } }
 function under(a,b){ for(var x=a,i=0; x&&i<60; x=x.from?byIdM(x.from):null,i++) if(x===b) return true; return false; } /* a где-то внутри b */
 function planetsM(ex){ return MAP.nodes.filter(function(m){ return m.t==='p'&&(!ex||!under(m,ex)); }); }
@@ -1168,7 +1180,7 @@ function kForm(){ var h='', m=kNode(); kHint('');
   h+='<label class="kc"><input type="checkbox" id="kO"'+(m.on?' checked':'')+'> Горит (выключенная - тёмная, '+(OFF_SHOW?'с подписью "скоро"':'гости её не видят')+')</label>';
   if(ks.length) h+='<label class="kc"><input type="checkbox" id="kS"'+(m.shut?' checked':'')+'> При входе собрана ('+ks.length+' внутри)</label>';
   h+='<div class="k2">'+rng('kZ','Размер',.4,6,.05,m.sz)+'<label class="kf"><span>Цвет</span><input type="color" id="kC" value="'+m.c+'"></label></div>'+rng('kG','Свечение',0,1.6,.05,m.glow);
-  if(m.t==='s') h+='<div class="k2">'+rng('kD','Расстояние от планеты',1.5,40,.1,m.dist)+rng('kTl','Наклон круга',-1.5,1.5,.05,m.tilt)+'</div>';
+  if(m.t==='s') h+='<div class="k2">'+rng('kD','Расстояние от планеты',1.5,80,.1,m.dist)+rng('kTl','Наклон круга',-1.5,1.5,.05,m.tilt)+'</div>';
   else h+='<div class="k2">'+rng('kD','Расстояние',2,250,.5,Math.hypot(m.off[0],m.off[1],m.off[2]).toFixed(1))+rng('kY','Высота',-80,80,.5,m.off[1])+'</div>';
   if(m.id!=='help'||m.from) h+=rng('kB','Изгиб нити',-1,1,.05,m.bend);
   h+='<label class="kf"><span>Картинка на планете (адрес, можно пусто)</span><input type="url" id="kI" placeholder="https://...jpg или файл.webp" value="'+esc(m.img)+'"></label>';
@@ -1298,6 +1310,7 @@ function frame(){ var rdt=clock.getDelta(), dt=Math.min(rdt,.05); tm+=dt; fc++; 
       for(var i=0;i<NP;i++){ var u=i/(NP-1), w=.5+.5*Math.sin(u*9-tm*1.6+T.seed), hue=.33+.42*(.5+.5*Math.sin(u*3.1+tm*.35+T.seed));
         hc2.setHSL(hue%1,.85,.55); hc2.lerp(T.base,.25); var k=fd*(.35+.65*w); col.array[i*3]=hc2.r*k; col.array[i*3+1]=hc2.g*k; col.array[i*3+2]=hc2.b*k; } col.needsUpdate=true; });
     if((fc&3)===0&&!gate.visible){ tint(swirl,tm); tint(swirl2,tm+.5); } if(meSw.visible){ meSw.rotation.z-=dt*.3; }
+    var rn=EDW?(kSel&&byId[kSel]):(sel||(hl&&hl===cur&&st==='node'?hl:null)); if(rn&&rn.g.visible&&rn.k<.5&&!(fly&&!EDW&&rn!==aim)){ var rs=rn.s0*rn.g.scale.x*4.4*(1+.07*Math.sin(tm*4)); selR.visible=true; selR.position.copy(rn.g.position); selR.scale.set(rs,rs,1); selR.material.color.set(rn.c); selR.material.opacity=.75+.25*Math.sin(tm*4); selR.material.rotation=-tm*.6; } else selR.visible=false;
     if(rip.t>=0){ rip.t+=dt/.9; if(rip.t>1){ rip.t=-1; rip.visible=false; } else { rip.visible=true; rip.position.copy(rip.n.g.position); var rs=rip.n.s*(2.2+rip.t*3.5); rip.scale.set(rs,rs,1); rip.material.opacity=(1-rip.t)*.8; } }
     var gS=st==='top'?1.9:1; /* сверху планеты крупнее, чтобы их было видно */
     NODES.forEach(function(n){ n.halo.material.rotation=tm*.2; if(Math.abs(n.gs-gS)>.005) n.gs+=(gS-n.gs)*Math.min(1,dt*3); var sc=n.gs*(n.s/n.s0)*(1-n.k); n.g.scale.setScalar(Math.max(sc,.001)); n.g.visible=sc>.01; /* собранное хранилище: всё внутри уменьшается и пропадает */
