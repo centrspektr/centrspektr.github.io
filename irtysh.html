@@ -870,7 +870,7 @@ function visShow(){ visB.classList.add('on'); var n=VIS_N; if(n==null){ visBN.te
 (function(page){ try{ var el=document.getElementById('visN'), k='irtysh_hit_'+page, ss=sessionStorage, ls=localStorage, f=function(n){ el.textContent=(+n).toLocaleString('ru-RU'); VIS_N=+n||null; };
   if(ss.getItem(k)){ f(ss.getItem(k)); return; } var d=new Date().toDateString(), fresh=!ls.getItem('irtysh_new_'+page), today=ls.getItem('irtysh_day_'+page)!==d;
   if(page==='proba-off'){ if(location.hostname!=='centrspektr.github.io') VIS_N=1234; return; } /* в превью счётчик не считает - показываем образец числа, чтобы был виден эффект */ fetch(API,{method:'POST',body:JSON.stringify({op:'hit',page:page,fresh:fresh,today:today})}).then(function(r){return r.json();}).then(function(j){ if(!j.ok) return;
-    ls.setItem('irtysh_new_'+page,'1'); ls.setItem('irtysh_day_'+page,d); ss.setItem(k,String(j.total||'')); f(j.total); }).catch(function(){}); }catch(e){} })('proba-off');
+    ls.setItem('irtysh_new_'+page,'1'); ls.setItem('irtysh_day_'+page,d); ss.setItem(k,String(j.total||'')); f(j.total); }).catch(function(){}); }catch(e){} })('portal');
 
 /* ---- кометы в три слоя: вдали - тонкие быстрые чёрточки; медленная звезда, что сгорает (сначала гаснет голова, потом хвост);
    на переднем плане - редкие яркие кометы. При полётах и провале всё стихает ---- */
