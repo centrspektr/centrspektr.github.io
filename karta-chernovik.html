@@ -1,0 +1,351 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex">
+<title>Карта планет Иртыш</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Manrope:wght@400;600;700&display=swap">
+<style>
+/* Космос портала: тёмная сцена на весь экран, сверху тонкая строка, снизу (телефон) или справа (компьютер) панель правки */
+:root{
+  --void:#05060f; --ink:#eef0ff; --dim:#9aa0c8; --glass:rgba(13,16,38,.78); --line:rgba(170,180,255,.22);
+  --accent:#7cf3ff; --warm:#ffd36e; --bad:#ff8a8a;
+  --display:'Unbounded','Arial Black',system-ui,sans-serif; --body:'Manrope',system-ui,-apple-system,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--void);color:var(--ink);font:15px/1.45 var(--body);overflow:hidden;-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+#labs{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.lb{position:absolute;left:0;top:0;white-space:nowrap;font:600 13px/1 var(--body);color:var(--ink);text-shadow:0 0 6px #000,0 0 14px #000;transform-origin:0 0;will-change:transform}
+.lb.p{font:500 12px/1 var(--display);letter-spacing:.04em}
+.lb.s{font-size:11px;color:var(--dim)}
+.lb.off{opacity:.5}
+.lb.sel{color:var(--warm)}
+.top{position:fixed;left:0;right:0;top:0;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:calc(10px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));pointer-events:none}
+.brand{font:700 15px/1.1 var(--display);letter-spacing:.03em;pointer-events:auto}
+.brand small{display:block;font:600 11px/1.3 var(--body);color:var(--dim);letter-spacing:.06em;text-transform:uppercase;margin-top:4px}
+.tag{display:inline-block;margin-left:8px;padding:3px 7px;border:1px solid var(--warm);color:var(--warm);border-radius:6px;font:700 10px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;vertical-align:3px}
+.tools{display:flex;gap:8px;pointer-events:auto}
+button,.btn{font:600 14px/1 var(--body);color:var(--ink);background:var(--glass);border:1px solid var(--line);border-radius:10px;padding:10px 13px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+button:hover,.btn:hover{border-color:var(--accent)}
+button:focus-visible,.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pri{background:var(--accent);color:#04121a;border-color:var(--accent)}
+.on{border-color:var(--warm);color:var(--warm)}
+#card{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(420px,calc(100% - 32px));
+  background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:16px;display:grid;gap:10px;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+#card h2{margin:0;font:700 17px/1.2 var(--display);text-wrap:balance;display:flex;align-items:center;gap:10px}
+#card h2 i{width:12px;height:12px;border-radius:50%;flex:none;background:var(--pc,var(--accent));box-shadow:0 0 10px var(--pc,var(--accent))}
+#card p{margin:0;color:var(--dim)}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+#hint{position:fixed;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(14px + env(safe-area-inset-bottom,0px));color:var(--dim);font-size:12px;max-width:300px;pointer-events:none}
+body.editing #hint,body.editing #card{display:none}
+/* панель правки */
+#ed{position:fixed;right:0;top:0;bottom:0;width:360px;max-width:100%;background:var(--glass);border-left:1px solid var(--line);
+  padding:calc(64px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) 16px;
+  overflow-y:auto;display:grid;align-content:start;gap:12px;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+#ed h3{margin:0;font:700 13px/1.2 var(--display);letter-spacing:.04em}
+#edHint{font-size:13px;color:var(--warm);min-height:1.2em}
+#edHint.dim{color:var(--dim)}
+.f{display:grid;gap:5px}
+.f>span{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--dim)}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+input[type=text],input[type=url],input[type=password],select,textarea{width:100%;font:14px/1.3 var(--body);color:var(--ink);background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:9px;padding:9px 10px}
+textarea{min-height:70px;resize:vertical;font-family:ui-monospace,Menlo,monospace;font-size:12px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+input[type=color]{width:100%;height:38px;border:1px solid var(--line);border-radius:9px;background:none;padding:2px}
+.chk{display:flex;align-items:center;gap:8px;font-size:14px}
+.chk input{width:18px;height:18px;accent-color:var(--accent)}
+.lk{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;padding:6px 0;border-bottom:1px solid var(--line)}
+.lk button{padding:5px 9px}
+.del{color:var(--bad);border-color:rgba(255,138,138,.4)}
+.note{font-size:12px;color:var(--dim);margin:0}
+hr{border:0;border-top:1px solid var(--line);margin:2px 0;width:100%}
+@media (max-width:700px){
+  #ed{top:auto;left:0;width:auto;max-height:48%;border-left:0;border-top:1px solid var(--line);border-radius:16px 16px 0 0;
+    padding:14px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+  .brand small{display:none}
+}
+/* окна */
+#modal{position:fixed;inset:0;background:rgba(2,3,10,.6);display:grid;place-items:center;padding:16px}
+#mBox{width:min(520px,100%);max-height:90%;overflow:auto;background:#0d1026;border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;gap:12px}
+#mBox h3{margin:0;font:700 15px/1.2 var(--display)}
+#mBox iframe{width:100%;height:60vh;border:1px solid var(--line);border-radius:10px;background:#fff}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head><body>
+
+<canvas id="c" aria-label="3D-карта планет"></canvas>
+<div id="labs"></div>
+<header class="top">
+  <div class="brand">Карта планет<span class="tag">черновик</span><small>Портал Иртыш · живой портал не тронут</small></div>
+  <div class="tools"><button type="button" id="homeB" title="Вернуть вид">⌂ Вид</button><button type="button" id="editB">✎ Правка</button></div>
+</header>
+<div id="hint">Тяните пальцем, чтобы крутить карту, щипок или колесо приближает. Нажмите на планету.</div>
+<div id="card" hidden></div>
+<aside id="ed" hidden>
+  <div class="row">
+    <button type="button" id="addP">+ Планета</button><button type="button" id="addS">+ Спутник</button><button type="button" id="addL">+ Нить</button>
+  </div>
+  <div id="edHint" class="dim"></div>
+  <div id="form"></div>
+  <hr>
+  <div class="row"><button type="button" id="schB">Схема</button><button type="button" id="rstB">Начать с примера</button><button type="button" class="pri" id="doneB">Готово</button></div>
+  <p class="note" id="saved">Черновик сохраняется только в этом браузере.</p>
+</aside>
+<div id="modal" hidden><div id="mBox" role="dialog" aria-modal="true"></div></div>
+
+<script src="three.min.js"></script>
+<script>
+(function(){
+/* ===== Схема карты =====
+   Планета (t:'p') висит на нити у того, кто её держит (from; пусто = Портал), off - куда от него.
+   Спутник (t:'s') летает вокруг своей планеты по кругу радиуса dist.
+   Планета без ссылки и без html - "пустышка": в неё не провалишься, нажатие собирает и выпускает всё, что она держит.
+   links - дополнительные нити-связи (пунктир): "этот кружок подключил этот курс". */
+var KEY='irtysh_karta_v1', A='https://centrspektr.github.io/';
+function P(id,n,from,off,o){ return Object.assign({id:id,t:'p',n:n,from:from,off:off,url:'',html:'',sz:2,c:'#94a3b8',glow:.7,on:true,shut:false,bend:.15},o||{}); }
+function Sa(id,n,from,i,o){ return Object.assign({id:id,t:'s',n:n,from:from,dist:7,ang:i*1.05,tilt:.35,spd:.22,url:'',html:'',sz:.75,c:'#cbd5e1',glow:.6,on:true,bend:0},o||{}); }
+function demo(){ var N=[
+  P('irtysh','Иртыш',null,[-28,4,-8],{sz:3,c:'#2dd4bf',glow:.9}),
+  Sa('ir1','ВК: село Иртыш','irtysh',0,{c:'#2787f5'}), Sa('ir2','ОК: село Иртыш','irtysh',1,{c:'#f7931e'}),
+  Sa('ir3','MAX: село Иртыш','irtysh',2,{c:'#4ade80'}), Sa('ir4','Школа','irtysh',3,{c:'#fde68a'}),
+  Sa('ir5','Администрация','irtysh',4,{c:'#a5b4fc'}), Sa('ir6','Галерея села','irtysh',5,{c:'#38bdf8'}),
+  P('spektr','Спектр',null,[0,3,-32],{sz:3.4,c:'#ffd36e',glow:1,url:A+'spektr/'}),
+  Sa('k1','Скульптура и рисование','spektr',0,{c:'#f97316',dist:8}), Sa('k2','Лит.ra','spektr',1.25,{c:'#8b5cf6',dist:8}),
+  Sa('k3','Околица','spektr',2.5,{c:'#dc2626',dist:8}), Sa('k4','Задоринки','spektr',3.75,{c:'#ca8a04',dist:8}), Sa('k5','Ладушки','spektr',5,{c:'#16a34a',dist:8}),
+  P('vzlet','Взлёт','spektr',[-15,7,-12],{c:'#7cf3ff',url:A+'vzlet/'}),
+  P('studio','Гитара и ИИ','spektr',[15,6,-10],{c:'#ff7ce0',url:A+'studio/'}),
+  P('agro','Агрокласс','spektr',[-3,-15,-6],{c:'#9dff7c',url:A+'agroklass/'}),
+  P('kursy','Обучающие курсы',null,[30,6,-16],{sz:2.6,c:'#60a5fa',glow:.9}),
+  P('kfpv','Курс FPV','kursy',[5,9,-11],{sz:1.6,c:'#22d3ee',url:A+'kurs-fpv/'}),
+  P('kgit','Курс Гитара и ИИ','kursy',[12,-1,-7],{sz:1.6,c:'#e879f9'}),
+  P('kagro','Курс Агрокласса','kursy',[4,-10,-9],{sz:1.6,c:'#86efac'}),
+  P('kpy','Python с ИИ','kursy',[15,9,2],{sz:1.6,c:'#facc15',on:false}),
+  P('social','Соцсети Спектра',null,[-16,-13,-22],{sz:2.2,c:'#34d399',shut:true}),
+  Sa('m1','MAX: Спектр','social',0,{c:'#f59e0b',dist:5,url:'https://max.ru/join/vXgGYXzwh0p9R1_CUppOus_9Msui9Annkj4HHpaBHVU'}),
+  Sa('m2','MAX: Взлёт','social',2.1,{c:'#0ea5e9',dist:5,url:'https://max.ru/join/v0ZfpDIihnow9hdwq3vpjm0KiPFW7A0WDfkNlIt9JVs'}),
+  Sa('m3','MAX: ИИ-студия','social',4.2,{c:'#d946ef',dist:5,url:'https://max.ru/join/x7bqQ0ZGLEmvUJso1aof3ylEJv5K-1x_4cbCWCHaf0A'}),
+  P('help','Поддержать проект',null,[0,24,-62],{sz:1.8,c:'#ffcf6e'})
+ ]; return {v:1,nodes:N,links:[['vzlet','kfpv'],['studio','kgit'],['agro','kagro']]}; }
+
+var M=null; try{ M=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){}
+if(!M||!Array.isArray(M.nodes)) M=demo();
+var saveT=0; function save(){ clearTimeout(saveT); saveT=setTimeout(function(){ try{ localStorage.setItem(KEY,JSON.stringify(M)); $('saved').textContent='Сохранено в этом браузере.'; }catch(e){ $('saved').textContent='Браузер не даёт сохранить. Скопируйте схему кнопкой «Схема».'; } },300); }
+function $(id){ return document.getElementById(id); }
+function byId(id){ for(var i=0;i<M.nodes.length;i++) if(M.nodes[i].id===id) return M.nodes[i]; return null; }
+function kids(n){ return M.nodes.filter(function(m){ return m.from===n.id; }); }
+function isBox(n){ return n.t==='p'&&!n.url&&!n.html; }
+function under(a,b){ /* a где-то внутри b? */ for(var x=a; x; x=x.from?byId(x.from):null) if(x===b) return true; return false; }
+function nm(id){ var n=id?byId(id):null; return n?n.n:'Портал'; }
+
+/* ===== сцена ===== */
+if(!window.THREE){ $('hint').textContent='Не загрузилась 3D-библиотека. Проверьте интернет.'; return; }
+var cv=$('c'), mob=matchMedia('(pointer:coarse)').matches, red=matchMedia('(prefers-reduced-motion:reduce)').matches;
+var R=new THREE.WebGLRenderer({canvas:cv,antialias:!mob}); R.setPixelRatio(Math.min(devicePixelRatio||1,mob?1.5:2)); R.setClearColor(0x05060f,1);
+var S=new THREE.Scene(), C=new THREE.PerspectiveCamera(55,1,.1,2000);
+function size(){ R.setSize(innerWidth,innerHeight,false); C.aspect=innerWidth/innerHeight; C.fov=innerWidth<innerHeight?68:55; C.updateProjectionMatrix(); }
+size(); addEventListener('resize',size);
+S.add(new THREE.AmbientLight(0x6070a0,.75)); var sun=new THREE.PointLight(0xffffff,1.3,0); sun.position.set(20,60,60); S.add(sun);
+function tex(draw,w,h){ var n=document.createElement('canvas'); n.width=w; n.height=h||w; draw(n.getContext('2d'),w,h||w); return new THREE.CanvasTexture(n); }
+var GLOW=tex(function(x,s){ var g=x.createRadialGradient(s/2,s/2,0,s/2,s/2,s/2); g.addColorStop(0,'rgba(255,255,255,1)'); g.addColorStop(.25,'rgba(255,255,255,.45)'); g.addColorStop(1,'rgba(255,255,255,0)'); x.fillStyle=g; x.fillRect(0,0,s,s); },128);
+function skin(c){ return tex(function(x,w,h){ var g=x.createLinearGradient(0,0,0,h); g.addColorStop(0,'#ffffff'); g.addColorStop(.5,c); g.addColorStop(1,'#000000'); x.fillStyle=c; x.fillRect(0,0,w,h);
+  x.globalAlpha=.35; x.fillStyle=g; x.fillRect(0,0,w,h); for(var i=0;i<16;i++){ x.globalAlpha=.06+Math.random()*.12; x.fillStyle=i%2?'#fff':'#000'; x.fillRect(0,Math.random()*h,w,2+Math.random()*8); } },256,128); }
+/* звёзды */
+(function(){ var n=mob?1800:3500, a=new Float32Array(n*3); for(var i=0;i<n;i++){ var r=300+Math.random()*500, t=Math.random()*6.283, p=Math.acos(2*Math.random()-1); a[i*3]=r*Math.sin(p)*Math.cos(t); a[i*3+1]=r*Math.cos(p); a[i*3+2]=r*Math.sin(p)*Math.sin(t); }
+  var g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.BufferAttribute(a,3)); S.add(new THREE.Points(g,new THREE.PointsMaterial({size:1.6,sizeAttenuation:false,color:0xdfe4ff,transparent:true,opacity:.8,depthWrite:false}))); })();
+/* Портал: светящееся кольцо в центре, от него нити */
+var portal=new THREE.Group(); S.add(portal);
+var pr=new THREE.Mesh(new THREE.TorusGeometry(3.2,.18,12,96),new THREE.MeshBasicMaterial({color:0xff7ce0})); portal.add(pr);
+var pr2=new THREE.Mesh(new THREE.TorusGeometry(2.3,.08,8,72),new THREE.MeshBasicMaterial({color:0x7cf3ff})); portal.add(pr2);
+var pg=new THREE.Sprite(new THREE.SpriteMaterial({map:GLOW,color:0xb48cff,blending:THREE.AdditiveBlending,depthWrite:false,transparent:true,opacity:.7})); pg.scale.set(16,16,1); portal.add(pg);
+var selRing=new THREE.Mesh(new THREE.RingGeometry(1.25,1.38,64),new THREE.MeshBasicMaterial({color:0xffd36e,transparent:true,opacity:.9,side:THREE.DoubleSide,depthWrite:false})); selRing.visible=false; S.add(selRing);
+
+var SPH=new THREE.SphereGeometry(1,32,24), OBJ={}, SH={}, K={}, W={}, LAB={}, otime=0;
+M.nodes.forEach(function(n){ if(n.shut) SH[n.id]=1; });
+function ensure(n){ var o=OBJ[n.id], key=n.c+'|'+n.on+'|'+n.glow;
+  if(!o){ o=OBJ[n.id]={g:new THREE.Group(),key:''}; S.add(o.g);
+    o.m=new THREE.Mesh(SPH,new THREE.MeshStandardMaterial({roughness:.7,metalness:.05,transparent:true})); o.g.add(o.m);
+    o.h=new THREE.Sprite(new THREE.SpriteMaterial({map:GLOW,blending:THREE.AdditiveBlending,depthWrite:false,transparent:true})); o.g.add(o.h);
+    o.line=mkLine(false); var el=document.createElement('div'); el.className='lb'; $('labs').appendChild(el); o.el=el; }
+  if(o.key!==key){ o.key=key; var c=n.on?n.c:'#3a3f55'; if(o.m.material.map) o.m.material.map.dispose(); o.m.material.map=skin(c);
+    o.m.material.emissive=new THREE.Color(n.on?n.c:'#000000'); o.m.material.emissiveIntensity=n.on?.12+.35*n.glow:0; o.m.material.opacity=n.on?1:.55; o.m.material.needsUpdate=true;
+    o.h.material.color=new THREE.Color(n.c); o.line.material.color=new THREE.Color(n.on?n.c:'#555a74'); }
+  o.el.className='lb '+n.t+(n.on?'':' off')+(n===sel?' sel':''); var t=n.n+(n.on?'':' · скоро'); if(o.el.textContent!==t) o.el.textContent=t;
+  return o; }
+function drop(id){ var o=OBJ[id]; if(!o) return; S.remove(o.g); S.remove(o.line); o.m.material.dispose(); o.el.remove(); delete OBJ[id]; }
+var SEG=24;
+function mkLine(dash){ var g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.BufferAttribute(new Float32Array((SEG+1)*3),3));
+  var l=new THREE.Line(g,dash?new THREE.LineDashedMaterial({color:0xffd36e,dashSize:1,gapSize:.8,transparent:true,opacity:.7,depthWrite:false}):new THREE.LineBasicMaterial({transparent:true,opacity:.5,depthWrite:false}));
+  l.frustumCulled=false; S.add(l); return l; }
+var tA=new THREE.Vector3(), tB=new THREE.Vector3(), tM=new THREE.Vector3(), tQ=new THREE.Vector3();
+function curve(a,b,bend,out){ tM.addVectors(a,b).multiplyScalar(.5); var len=a.distanceTo(b); tM.y+=len*bend;
+  for(var i=0;i<=SEG;i++){ var t=i/SEG, u=1-t; out.push(u*u*a.x+2*u*t*tM.x+t*t*b.x, u*u*a.y+2*u*t*tM.y+t*t*b.y, u*u*a.z+2*u*t*tM.z+t*t*b.z); } }
+function setLine(l,a,b,bend,op){ var arr=[]; curve(a,b,bend,arr); var p=l.geometry.attributes.position; p.array.set(arr); p.needsUpdate=true; l.material.opacity=op; l.visible=op>.02; if(l.material.isLineDashedMaterial) l.computeLineDistances(); l._pts=arr; }
+var LINKS={};
+
+/* где кто сейчас: сначала родитель, потом дети; "собранность" k тянет к родителю */
+function home(id){ return id?W[id]:portal.position; }
+function place(n,dt){ if(W[n.id]) return W[n.id]; var par=n.from?byId(n.from):null; if(n.from&&!par){ n.from=null; } if(par) place(par,dt);
+  var tgt=0; for(var x=par; x; x=x.from?byId(x.from):null) if(SH[x.id]) { tgt=1; break; }
+  var k=K[n.id]; if(k===undefined) k=tgt; k+=(tgt-k)*Math.min(1,dt*(red?20:3.2)); if(Math.abs(tgt-k)<.002) k=tgt; K[n.id]=k;
+  var base=home(n.from), w=new THREE.Vector3();
+  if(n.t==='s'){ var a=n.ang+otime*n.spd, d=n.dist*(1-k), x0=Math.cos(a)*d, z0=Math.sin(a)*d; w.set(x0,-z0*Math.sin(n.tilt),z0*Math.cos(n.tilt)).add(base); }
+  else w.set(n.off[0],n.off[1],n.off[2]).multiplyScalar(1-k).add(base);
+  W[n.id]=w; return w; }
+
+/* камера: крутится вокруг точки T */
+var T=new THREE.Vector3(0,0,-20), Tt=T.clone(), th=0, ph=1.18, rad=mob?95:80, radT=rad;
+function homeView(){ Tt.set(0,0,-20); th=0; ph=1.18; radT=mob?95:80; }
+$('homeB').onclick=function(){ homeView(); pickSel(null); };
+
+/* ===== режим просмотра: карточка ===== */
+var sel=null, selLink=null, EDIT=false, mode=null, pend=null;
+function card(n){ var c=$('card'); if(!n||EDIT){ c.hidden=true; return; } var ks=kids(n), h='';
+  h+='<h2 style="--pc:'+n.c+'"><i></i><span></span></h2>';
+  if(!n.on) h+='<p>Эта планета ещё не зажглась. Скоро здесь будет проект.</p>';
+  else { if(isBox(n)) h+='<p>Планета-хранилище: в неё не провалишься, она держит '+ks.length+' '+word(ks.length)+'. Нажмите на неё ещё раз, чтобы '+(SH[n.id]?'выпустить':'собрать')+'.</p>';
+    else if(!n.url&&!n.html&&n.t==='s') h+='<p>Адрес ещё не задан. Его добавляют в режиме правки.</p>';
+    h+='<div class="row">'; if(n.url) h+='<a class="btn pri" target="_blank" rel="noopener" id="goA">Открыть ↗</a>'; if(n.html) h+='<button type="button" class="pri" id="htB">Показать страницу</button>';
+    if(ks.length&&!isBox(n)) h+='<button type="button" id="tgB">'+(SH[n.id]?'Выпустить':'Собрать')+' ('+ks.length+')</button>'; h+='</div>'; }
+  c.innerHTML=h; c.querySelector('h2 span').textContent=n.n; c.hidden=false;
+  var a=$('goA'); if(a) a.href=n.url; var hb=$('htB'); if(hb) hb.onclick=function(){ showHtml(n); }; var tb=$('tgB'); if(tb) tb.onclick=function(){ toggle(n); card(n); }; }
+function word(k){ var m=k%10, h=k%100; return m===1&&h!==11?'объект':m>=2&&m<=4&&(h<12||h>14)?'объекта':'объектов'; }
+function toggle(n){ if(SH[n.id]) delete SH[n.id]; else SH[n.id]=1; }
+function pickSel(n){ sel=n; selLink=null; card(n); if(EDIT) form(); }
+
+/* ===== палец и мышь ===== */
+var PT={}, moved=0, drag=null, pinch=0, ray=new THREE.Raycaster(), mv=new THREE.Vector2(), plane=new THREE.Plane(), hit=new THREE.Vector3();
+function scr(v){ tQ.copy(v).project(C); return {x:(tQ.x+1)/2*innerWidth, y:(1-tQ.y)/2*innerHeight, z:tQ.z}; }
+function pick(x,y){ var best=null, bd=1e9; M.nodes.forEach(function(n){ var w=W[n.id]; if(!w||K[n.id]>.5) return; var s=scr(w); if(s.z>1) return;
+    var e=scr(tA.copy(w).addScaledVector(C.up,n.sz)), r=Math.max(Math.hypot(e.x-s.x,e.y-s.y),mob?22:14), d=Math.hypot(x-s.x,y-s.y); if(d<r&&d<bd){ bd=d; best=n; } }); return best; }
+function pickLine(x,y){ var best=null, bd=mob?16:10; allThreads().forEach(function(t){ var p=t.l._pts; if(!p||!t.l.visible) return;
+    for(var i=0;i<p.length;i+=6){ var s=scr(tA.set(p[i],p[i+1],p[i+2])); if(s.z>1) continue; var d=Math.hypot(x-s.x,y-s.y); if(d<bd){ bd=d; best=t; } } }); return best; }
+function allThreads(){ var a=[]; M.nodes.forEach(function(n){ if(OBJ[n.id]) a.push({kind:'hold',a:n.from,b:n.id,l:OBJ[n.id].line}); });
+  M.links.forEach(function(k,i){ if(LINKS[i]) a.push({kind:'link',a:k[0],b:k[1],i:i,l:LINKS[i]}); }); return a; }
+function pdist(){ var k=Object.keys(PT); if(k.length<2) return 0; var a=PT[k[0]], b=PT[k[1]]; return Math.hypot(a.x-b.x,a.y-b.y); }
+cv.addEventListener('pointerdown',function(e){ $('hint').hidden=true; PT[e.pointerId]={x:e.clientX,y:e.clientY}; try{ cv.setPointerCapture(e.pointerId); }catch(_){}
+  if(Object.keys(PT).length===1){ moved=0; drag=null; if(EDIT&&!mode){ var n=pick(e.clientX,e.clientY); if(n&&n===sel) drag=n; } } else { pinch=pdist(); drag=null; } });
+cv.addEventListener('pointermove',function(e){ var p=PT[e.pointerId]; if(!p) return; var dx=e.clientX-p.x, dy=e.clientY-p.y; p.x=e.clientX; p.y=e.clientY;
+  if(Object.keys(PT).length>1){ var d=pdist(); if(pinch&&d) radT=Math.max(12,Math.min(260,radT*pinch/d)); pinch=d; moved+=99; return; }
+  moved+=Math.abs(dx)+Math.abs(dy); if(moved<5) return;
+  if(drag){ moveTo(drag,e.clientX,e.clientY); return; }
+  th-=dx*.006; ph=Math.max(.12,Math.min(2.95,ph-dy*.006)); });
+function up(e){ if(!PT[e.pointerId]) return; delete PT[e.pointerId]; pinch=pdist(); if(Object.keys(PT).length) return;
+  if(drag){ var d=drag; drag=null; if(moved>=5){ save(); form(); return; } }
+  if(moved<6) tap(e.clientX,e.clientY); }
+cv.addEventListener('pointerup',up); cv.addEventListener('pointercancel',up);
+cv.addEventListener('wheel',function(e){ e.preventDefault(); radT=Math.max(12,Math.min(260,radT*(1+e.deltaY*.0012))); },{passive:false});
+function moveTo(n,x,y){ var w=W[n.id], b=home(n.from); if(!w) return; mv.set(x/innerWidth*2-1,-(y/innerHeight)*2+1); ray.setFromCamera(mv,C);
+  C.getWorldDirection(tB); plane.setFromNormalAndCoplanarPoint(tB,w); if(!ray.ray.intersectPlane(plane,hit)) return; hit.sub(b);
+  if(n.t==='s'){ var z0=hit.z*Math.cos(n.tilt)-hit.y*Math.sin(n.tilt); n.dist=Math.max(2,Math.min(30,Math.hypot(hit.x,z0))); n.ang=Math.atan2(z0,hit.x)-otime*n.spd; }
+  else n.off=[+hit.x.toFixed(2),+hit.y.toFixed(2),+hit.z.toFixed(2)]; }
+function tap(x,y){ var n=pick(x,y);
+  if(EDIT){ if(mode==='link'){ if(!n){ edHint('Нажмите на планету или спутник.'); return; }
+      if(!pend){ pend=n; edHint('Первая: «'+n.n+'». Теперь нажмите вторую.'); return; }
+      if(n!==pend){ M.links.push([pend.id,n.id]); save(); } mode=null; pend=null; edHint(''); $('addL').classList.remove('on'); pickSel(n); return; }
+    if(n){ pickSel(n); return; } var t=pickLine(x,y); if(t){ sel=null; selLink=t; form(); return; } pickSel(null); return; }
+  if(!n){ pickSel(null); return; }
+  if(n.on&&isBox(n)&&kids(n).length) toggle(n);
+  Tt.copy(W[n.id]); radT=Math.min(radT,mob?70:58); pickSel(n); }
+
+/* ===== правка ===== */
+function edHint(t,dim){ var h=$('edHint'); h.textContent=t||(sel||selLink?'':'Нажмите на планету, чтобы её настроить. Выбранную планету можно тянуть пальцем. Нажмите на нить, чтобы вставить в неё планету.'); h.className=dim||!t?'dim':''; }
+$('editB').onclick=function(){ if(EDIT){ endEdit(); return; } pinBox(); };
+function pinBox(){ modal('<h3>Вход для правки</h3><p class="note">В черновике подойдёт любой PIN. В настоящем портале будет тот же вход по PIN, что сейчас, и схема сохранится на сервере для всех.</p><input type="password" id="pinI" inputmode="numeric" maxlength="8" autocomplete="off" aria-label="PIN"><div class="row"><button type="button" data-x>Отмена</button><button type="button" class="pri" id="pinGo">Войти</button></div>');
+  var i=$('pinI'), go=function(){ closeModal(); startEdit(); }; setTimeout(function(){ i.focus(); },30); $('pinGo').onclick=go; i.onkeydown=function(e){ if(e.key==='Enter') go(); }; }
+function startEdit(){ EDIT=true; document.body.classList.add('editing'); $('ed').hidden=false; $('editB').textContent='✓ Готово'; $('editB').classList.add('on'); card(null); form(); }
+function endEdit(){ EDIT=false; mode=null; pend=null; drag=null; document.body.classList.remove('editing'); $('ed').hidden=true; $('editB').textContent='✎ Правка'; $('editB').classList.remove('on'); $('addL').classList.remove('on'); save(); pickSel(null); }
+$('doneB').onclick=endEdit;
+function opt(v,t,cur){ return '<option value="'+esc(v)+'"'+(v===cur?' selected':'')+'>'+esc(t)+'</option>'; }
+function esc(t){ return String(t).replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function planets(ex){ return M.nodes.filter(function(m){ return m.t==='p'&&(!ex||!under(m,ex)); }); }
+function rng(id,lab,min,max,st,val){ return '<label class="f"><span>'+lab+'</span><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+st+'" value="'+val+'"></label>'; }
+function form(){ var f=$('form'), n=sel; edHint('');
+  if(selLink){ var t=selLink, h='<h3>Нить: '+esc(nm(t.a))+' — '+esc(nm(t.b))+'</h3><p class="note">'+(t.kind==='hold'?'Сплошная нить: «'+esc(nm(t.a))+'» держит «'+esc(nm(t.b))+'».':'Пунктир: связь, ничего не держит.')+'</p><div class="row">';
+    if(t.kind==='hold'&&byId(t.b).t==='p') h+='<button type="button" class="pri" id="insP">Вставить планету в нить</button>';
+    if(t.kind==='link') h+='<button type="button" class="del" id="delL">Убрать связь</button>'; f.innerHTML=h+'</div>';
+    if($('insP')) $('insP').onclick=function(){ var b=byId(t.b), nn=newPlanet(t.a); nn.off=b.off.map(function(v){ return +(v/2).toFixed(2); }); b.off=b.off.map(function(v){ return +(v/2).toFixed(2); }); b.from=nn.id; save(); pickSel(nn); };
+    if($('delL')) $('delL').onclick=function(){ M.links.splice(t.i,1); rebuildLinks(); save(); selLink=null; form(); }; return; }
+  if(!n){ f.innerHTML=''; edHint(''); return; }
+  var ks=kids(n), par=n.t==='s'?planets().filter(function(m){ return m!==n; }):planets(n), h='';
+  h+='<h3>'+(n.t==='p'?(isBox(n)?'Планета-хранилище':'Планета со ссылкой'):'Спутник')+'</h3>';
+  h+='<label class="f"><span>Название</span><input type="text" id="fN" maxlength="40" value="'+esc(n.n)+'"></label>';
+  h+='<label class="f"><span>Держится за</span><select id="fF">'+(n.t==='p'?opt('','Портал',n.from||''):'')+par.map(function(m){ return opt(m.id,m.n,n.from); }).join('')+'</select></label>';
+  h+='<label class="f"><span>Ссылка (адрес)</span><input type="url" id="fU" placeholder="https://… или пусто" value="'+esc(n.url)+'"></label>';
+  h+='<label class="f"><span>Свой HTML (если нет ссылки)</span><textarea id="fH" placeholder="&lt;h1&gt;Привет&lt;/h1&gt;">'+esc(n.html)+'</textarea></label>';
+  h+='<label class="chk"><input type="checkbox" id="fO"'+(n.on?' checked':'')+'> Горит (выключенная видна тёмной и не открывается)</label>';
+  if(ks.length) h+='<label class="chk"><input type="checkbox" id="fS"'+(n.shut?' checked':'')+'> При входе собрана ('+ks.length+' внутри)</label>';
+  h+='<div class="f2">'+rng('fZ','Размер',.4,6,.1,n.sz)+'<label class="f"><span>Цвет</span><input type="color" id="fC" value="'+n.c+'"></label></div>';
+  h+=rng('fG','Свечение',0,1.6,.05,n.glow);
+  if(n.t==='s') h+='<div class="f2">'+rng('fD','Орбита',2,30,.1,n.dist)+rng('fV','Скорость',0,1,.01,n.spd)+'</div>'+rng('fT','Наклон орбиты',-1.4,1.4,.05,n.tilt);
+  else h+=rng('fD','Расстояние от того, кто держит',2,120,.5,Math.hypot(n.off[0],n.off[1],n.off[2]).toFixed(1));
+  h+=rng('fB','Изгиб нити',-1,1,.05,n.bend);
+  var ls=M.links.map(function(k,i){ return k[0]===n.id||k[1]===n.id?'<div class="lk"><span>Связь с «'+esc(nm(k[0]===n.id?k[1]:k[0]))+'»</span><button type="button" data-ul="'+i+'">✕</button></div>':''; }).join('');
+  if(ls) h+='<div class="f"><span>Связи пунктиром</span>'+ls+'</div>';
+  h+='<div class="row"><button type="button" id="fK">'+(n.t==='p'?'+ Спутник к ней':'')+'</button><button type="button" class="del" id="fX">Удалить</button></div>';
+  f.innerHTML=h; if(n.t!=='p') $('fK').remove();
+  var on=function(id,ev,fn){ var e=$(id); if(e) e.addEventListener(ev,function(){ fn(e); save(); }); };
+  on('fN','input',function(e){ n.n=e.value.trim()||'Без названия'; });
+  on('fF','change',function(e){ var np=e.value||null, w=W[n.id]&&W[n.id].clone(); n.from=np; if(n.t==='p'&&w){ var b=home(np)||portal.position; n.off=[w.x-b.x,w.y-b.y,w.z-b.z].map(function(v){ return +v.toFixed(2); }); } });
+  on('fU','change',function(e){ n.url=e.value.trim(); form(); }); on('fH','change',function(e){ n.html=e.value; form(); });
+  on('fO','change',function(e){ n.on=e.checked; }); on('fS','change',function(e){ n.shut=e.checked; if(e.checked) SH[n.id]=1; else delete SH[n.id]; });
+  on('fZ','input',function(e){ n.sz=+e.value; }); on('fC','input',function(e){ n.c=e.value; }); on('fG','input',function(e){ n.glow=+e.value; });
+  on('fD','input',function(e){ if(n.t==='s') n.dist=+e.value; else { var l=Math.hypot(n.off[0],n.off[1],n.off[2])||1, k=+e.value/l; n.off=n.off.map(function(v){ return +(v*k).toFixed(2); }); } });
+  on('fV','input',function(e){ var a=n.ang+otime*n.spd; n.spd=+e.value; n.ang=a-otime*n.spd; }); on('fT','input',function(e){ n.tilt=+e.value; }); on('fB','input',function(e){ n.bend=+e.value; });
+  f.querySelectorAll('[data-ul]').forEach(function(b){ b.onclick=function(){ M.links.splice(+b.getAttribute('data-ul'),1); rebuildLinks(); save(); form(); }; });
+  if($('fK')) $('fK').onclick=function(){ pickSel(newSat(n.id)); save(); };
+  $('fX').onclick=function(){ var b=this; if(!b._ok){ b._ok=1; b.textContent='Точно удалить?'; return; } remove(n); save(); pickSel(null); }; }
+function uid(){ return 'n'+Date.now().toString(36)+Math.floor(Math.random()*99); }
+function newPlanet(from){ var a=Math.random()*6.283, n=P(uid(),'Новая планета',from,[Math.cos(a)*12,Math.random()*8-4,Math.sin(a)*12-6],{c:'#a78bfa'}); M.nodes.push(n); return n; }
+function newSat(from){ var n=Sa(uid(),'Новый спутник',from,0,{ang:Math.random()*6.283-otime*.22,dist:4+(byId(from).sz||2)*1.6}); M.nodes.push(n); return n; }
+function remove(n){ /* дети не пропадают: планеты переходят к тому, кто держал удалённую, спутники - тоже, если там планета */
+  var par=n.from?byId(n.from):null;
+  kids(n).forEach(function(k){ if(k.t==='p'){ k.from=n.from; k.off=k.off.map(function(v,i){ return +(v+n.off[i]).toFixed(2); }); } else if(par) k.from=par.id; else remove(k); });
+  M.nodes=M.nodes.filter(function(m){ return m!==n; }); M.links=M.links.filter(function(k){ return k[0]!==n.id&&k[1]!==n.id; }); drop(n.id); delete SH[n.id]; rebuildLinks(); }
+function attachBox(kind){ var ps=planets(), h='<h3>'+(kind==='p'?'Новая планета':'Новый спутник')+'</h3><label class="f"><span>Куда прикрепить</span><select id="atS">';
+  if(kind==='p'){ h+=opt('','к Порталу',''); ps.forEach(function(m){ h+=opt('n:'+m.id,'к планете «'+m.n+'»',sel&&sel.id===m.id?'n:'+m.id:''); });
+    M.nodes.forEach(function(m){ if(m.t==='p') h+=opt('t:'+m.id,'в нить '+nm(m.from)+' — '+m.n,''); }); }
+  else ps.forEach(function(m){ h+=opt(m.id,'вокруг «'+m.n+'»',sel&&sel.id===m.id?m.id:''); });
+  modal(h+'</select></label><p class="note">'+(kind==='p'?'«В нить» - новая планета встаёт посередине нити, дальняя планета держится уже за неё.':'Спутник летает вокруг планеты, к ней тянется нить.')+'</p><div class="row"><button type="button" data-x>Отмена</button><button type="button" class="pri" id="atGo">Добавить</button></div>');
+  $('atGo').onclick=function(){ var v=$('atS').value, n; closeModal();
+    if(kind==='s') n=newSat(v); else if(v.indexOf('t:')===0){ var b=byId(v.slice(2)); n=newPlanet(b.from); n.off=b.off.map(function(x){ return +(x/2).toFixed(2); }); b.off=n.off.slice(); b.from=n.id; }
+    else n=newPlanet(v?v.slice(2):null); save(); pickSel(n); edHint('Добавлено. Тяните её пальцем или настройте ниже.'); }; }
+$('addP').onclick=function(){ attachBox('p'); };
+$('addS').onclick=function(){ if(!planets().length){ edHint('Сначала нужна планета.'); return; } attachBox('s'); };
+$('addL').onclick=function(){ if(mode==='link'){ mode=null; pend=null; this.classList.remove('on'); edHint(''); return; } mode='link'; pend=null; this.classList.add('on'); edHint('Нить-связь: нажмите первую планету, потом вторую.'); };
+$('schB').onclick=function(){ modal('<h3>Схема карты</h3><p class="note">Это вся карта текстом. Её можно скопировать и прислать, или вставить сюда другую и нажать «Загрузить».</p><textarea id="jT" style="min-height:220px">'+esc(JSON.stringify(M,null,1))+'</textarea><p class="note" id="jM"></p><div class="row"><button type="button" data-x>Закрыть</button><button type="button" id="jC">Копировать</button><button type="button" class="pri" id="jL">Загрузить</button></div>');
+  $('jC').onclick=function(){ var t=$('jT'); navigator.clipboard&&navigator.clipboard.writeText(t.value).then(function(){ $('jM').textContent='Скопировано.'; },function(){ t.select(); $('jM').textContent='Выделено, скопируйте вручную.'; }); };
+  $('jL').onclick=function(){ try{ var x=JSON.parse($('jT').value); if(!Array.isArray(x.nodes)) throw 0; load(x); closeModal(); }catch(e){ $('jM').textContent='Текст не похож на схему карты.'; } }; };
+$('rstB').onclick=function(){ var b=this; if(!b._ok){ b._ok=1; b.textContent='Точно? Всё своё пропадёт'; setTimeout(function(){ b._ok=0; b.textContent='Начать с примера'; },4000); return; } b._ok=0; b.textContent='Начать с примера'; load(demo()); };
+function load(x){ Object.keys(OBJ).forEach(drop); M=x; M.links=M.links||[]; SH={}; K={}; M.nodes.forEach(function(n){ if(n.shut) SH[n.id]=1; }); rebuildLinks(); save(); pickSel(null); }
+function rebuildLinks(){ Object.keys(LINKS).forEach(function(i){ S.remove(LINKS[i]); }); LINKS={}; M.links.forEach(function(k,i){ LINKS[i]=mkLine(true); }); }
+rebuildLinks();
+
+/* окна */
+function modal(h){ $('mBox').innerHTML=h; $('modal').hidden=false; $('mBox').querySelectorAll('[data-x]').forEach(function(b){ b.onclick=closeModal; }); }
+function closeModal(){ $('modal').hidden=true; $('mBox').innerHTML=''; }
+$('modal').onclick=function(e){ if(e.target===this) closeModal(); };
+addEventListener('keydown',function(e){ if(e.key==='Escape') closeModal(); });
+function showHtml(n){ modal('<h3></h3><iframe sandbox="allow-scripts" title="Страница планеты"></iframe><div class="row"><button type="button" data-x>Закрыть</button></div>'); $('mBox').querySelector('h3').textContent=n.n; $('mBox').querySelector('iframe').srcdoc=n.html; }
+
+/* ===== кадр ===== */
+var clock=new THREE.Clock(), tm=0;
+function frame(){ var dt=Math.min(clock.getDelta(),.05); tm+=dt; if(!EDIT&&!red) otime+=dt;
+  W={}; M.nodes.forEach(function(n){ place(n,dt); });
+  T.lerp(Tt,Math.min(1,dt*2.5)); rad+=(radT-rad)*Math.min(1,dt*4);
+  C.position.set(T.x+rad*Math.sin(ph)*Math.sin(th),T.y+rad*Math.cos(ph),T.z+rad*Math.sin(ph)*Math.cos(th)); C.lookAt(T);
+  pr.rotation.z+=dt*.4; pr2.rotation.z-=dt*.7; portal.lookAt(C.position);
+  M.nodes.forEach(function(n){ var o=ensure(n), w=W[n.id], k=K[n.id], s=n.sz*(1-k);
+    o.g.position.copy(w); o.g.visible=s>.02; o.m.scale.setScalar(Math.max(s,.001)); o.m.rotation.y+=dt*.2;
+    var gl=n.on?n.glow:0; o.h.visible=gl>.01; o.h.scale.setScalar(s*(2.2+2.4*gl)*(1+.06*Math.sin(tm*1.7+w.x))); o.h.material.opacity=Math.min(1,.25+.45*gl);
+    setLine(o.line,home(n.from),w,n.bend,(n.on?.5:.22)*(1-k));
+    var p=scr(w), el=o.el; if(p.z>1||k>.5||p.x<-200||p.x>innerWidth+200){ el.style.display='none'; }
+    else { var e2=scr(tA.copy(w).addScaledVector(C.up,s)), off=Math.hypot(e2.x-p.x,e2.y-p.y); el.style.display=''; el.style.transform='translate('+(p.x-el.offsetWidth/2|0)+'px,'+((p.y+off+6)|0)+'px)'; } });
+  M.links.forEach(function(lk,i){ var a=W[lk[0]], b=W[lk[1]], l=LINKS[i]; if(!l) return; if(!a||!b){ l.visible=false; return; } setLine(l,a,b,.25,.7*(1-Math.max(K[lk[0]],K[lk[1]]))); });
+  if(sel&&W[sel.id]&&K[sel.id]<.5){ selRing.visible=true; selRing.position.copy(W[sel.id]); selRing.scale.setScalar(sel.sz*(1.15+.05*Math.sin(tm*4))); selRing.lookAt(C.position); } else selRing.visible=false;
+  R.render(S,C); requestAnimationFrame(frame); }
+frame();
+})();
+</script>
+</body></html>
