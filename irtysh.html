@@ -300,7 +300,7 @@ function mapOf(CFG){ var M=CFG&&cleanMap(CFG); if(M) return M; M=defMap(); if(!C
   return M; }
 /* для сервера: только то, что отличается от обычного, числа короче - запись получается маленькой */
 function packMap(M){ return JSON.stringify({v:2,nodes:M.nodes.map(function(n){ var D=n.t==='s'?DEF_S:DEF_P, o={id:n.id,n:n.n};
-    Object.keys(n).forEach(function(k){ if(k==='id'||k==='n') return; var v=n[k]; if(typeof v==='number') v=+v.toFixed(2); if(Array.isArray(v)) v=v.map(function(q){ return +(+q).toFixed(1); });
+    Object.keys(n).forEach(function(k){ if(k==='id'||k==='n'||k[0]==='_') return; /* _o0, _d0 - откуда гость начал тянуть, не сохраняем */ var v=n[k]; if(typeof v==='number') v=+v.toFixed(2); if(Array.isArray(v)) v=v.map(function(q){ return +(+q).toFixed(1); });
       if(D[k]!==undefined&&D[k]===v&&k!=='t') return; if(k==='t'&&v==='p') return; if(v===''||v==null) return; o[k]=v; }); return o; }),links:M.links}); }
 var MAP=mapOf(CFG);
 var NODES=[], ORDER=[], EDW=false; /* EDW - идёт правка карты */
@@ -869,14 +869,15 @@ var ty=null, tx=null, moved=0, yaw=0, t0=0;
 var lpT=0, PT={}, pinD=0, pinA=0, pinM=null, OVR_MAX=mob?330:260; /* два пальца: щипок - ближе и дальше; сверху ещё поворот и сдвиг карты */
 function pin2(){ var k=Object.keys(PT); if(k.length<2) return null; var a=PT[k[0]], b=PT[k[1]]; return {d:Math.hypot(a.x-b.x,a.y-b.y),a:Math.atan2(b.y-a.y,b.x-a.x),x:(a.x+b.x)/2,y:(a.y+b.y)/2}; }
 function pinReset(){ var q=pin2(); pinD=q?q.d:0; pinA=q?q.a:0; pinM=q; }
-function ptUp(e){ clearTimeout(lpT); if(!PT[e.pointerId]) return; if(kdrag){ kdrag=null; if(moved>=8){ kDirty(); kForm(); } } delete PT[e.pointerId]; pinReset(); var k=Object.keys(PT); /* убрали один палец - второй продолжает с места, без рывка */ if(k.length===1){ ty=PT[k[0]].y; tx=PT[k[0]].x; } else ty=null; }
+function ptUp(e){ clearTimeout(lpT); if(!PT[e.pointerId]) return; if(lpN){ var g0=lpN; lpN=null; gather(g0); } if(kdrag){ kdrag=null; if(moved>=8&&EDW){ kDirty(); kForm(); } } delete PT[e.pointerId]; pinReset(); var k=Object.keys(PT); /* убрали один палец - второй продолжает с места, без рывка */ if(k.length===1){ ty=PT[k[0]].y; tx=PT[k[0]].x; } else ty=null; }
 addEventListener('pointerup',ptUp); addEventListener('pointercancel',ptUp);
 /* палец, поставленный на сноску, тоже двигает карту (раньше сноска "съедала" касание, и карта не реагировала) */
-addEventListener('pointerdown',function(e){ if(e.target!==cv&&!(e.target.closest&&e.target.closest('.co'))) return; PT[e.pointerId]={x:e.clientX,y:e.clientY}; pinReset(); ty=e.clientY; tx=e.clientX; if(Object.keys(PT).length===1){ moved=0; t0=Date.now(); } else kdrag=null;
+addEventListener('pointerdown',function(e){ if(e.target!==cv&&!(e.target.closest&&e.target.closest('.co'))) return; PT[e.pointerId]={x:e.clientX,y:e.clientY}; pinReset(); ty=e.clientY; tx=e.clientX; if(Object.keys(PT).length===1){ moved=0; t0=Date.now(); } else { kdrag=null; lpN=null; }
   clearTimeout(lpT); if(Object.keys(PT).length===1&&!EDW){ var lx=e.clientX, ly=e.clientY, lb=e.target.closest&&e.target.closest('.co'); lpT=setTimeout(function(){ if(moved<8&&Object.keys(PT).length===1) longPress(lx,ly,lb); },550); }
   /* правка: палец на выбранной планете - тянем её */
-  if(EDW&&kSel&&byId[kSel]&&!fly&&Object.keys(PT).length===1){ var r0=new THREE.Raycaster(); r0.setFromCamera(new THREE.Vector2(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1),C); if(r0.intersectObject(byId[kSel].hm,false).length) kdrag=byId[kSel]; } });
-addEventListener('pointermove',function(e){ if(kdrag&&PT[e.pointerId]&&Object.keys(PT).length===1){ moved+=Math.abs(e.clientX-PT[e.pointerId].x)+Math.abs(e.clientY-PT[e.pointerId].y); PT[e.pointerId]={x:e.clientX,y:e.clientY}; ty=e.clientY; tx=e.clientX; if(moved>=8) kMove(kdrag,e.clientX,e.clientY); return; }
+  if(EDW&&!fly&&Object.keys(PT).length===1){ var n0=nodeAt(e.clientX,e.clientY,null); if(n0) kdrag=n0; } }); /* правка: любую планету можно сразу тянуть пальцем */
+addEventListener('pointermove',function(e){ if(lpN&&PT[e.pointerId]&&Object.keys(PT).length===1){ if(Math.abs(e.clientX-PT[e.pointerId].x)+Math.abs(e.clientY-PT[e.pointerId].y)>5){ kdrag=lpN; lpN=null; moved=8; if(sel) unsel(); } else return; }
+  if(kdrag&&PT[e.pointerId]&&Object.keys(PT).length===1){ moved+=Math.abs(e.clientX-PT[e.pointerId].x)+Math.abs(e.clientY-PT[e.pointerId].y); PT[e.pointerId]={x:e.clientX,y:e.clientY}; ty=e.clientY; tx=e.clientX; if(moved>=8){ if(EDW&&kSel!==kdrag.id) kPick(kdrag); kMove(kdrag,e.clientX,e.clientY); } return; }
   if(PT[e.pointerId]){ PT[e.pointerId]={x:e.clientX,y:e.clientY}; var q=pin2(); if(q&&pinD){ var f=pinD/q.d, da=q.a-pinA; if(da>Math.PI) da-=2*Math.PI; if(da<-Math.PI) da+=2*Math.PI;
     if(st==='over'&&!fly){ ovR=Math.max(35,Math.min(OVR_MAX,ovR*f)); ovA+=da; } if(st==='node'&&!fly){ turnT+=da; nzT=Math.max(.35,Math.min(4,nzT*f)); } if(st==='top'&&!fly){ topZoom(f); topA+=da; topPan(q.x-pinM.x,q.y-pinM.y); }
     pinD=q.d; pinA=q.a; pinM=q; moved+=99; return; } if(Object.keys(PT).length>1) return; }
@@ -894,10 +895,15 @@ addEventListener('pointerup',function(e){ var was=moved; ty=null; if(was>=8||e.t
   if((st==='node'||st==='over')&&!fly&&farP.visible&&r.intersectObject(farHit).length) exitPortal(); });
 /* долгое нажатие (не в правке): планета собирает всё, что держит, по нитям внутрь себя; ещё раз - выпускает.
    Планета или спутник, который ничего не держит, сам уходит по своей нити внутрь того, кто его держит; вернуть - долгое нажатие на того, кто держит */
-function longPress(x,y,lb){ if(EDW||fly||!(st==='over'||st==='top'||st==='node')) return; var n=null;
+/* зажали планету: отпустили не двигая - собрать или выпустить; повели пальцем - тянем её (у гостей в разумных пределах, на сервер не сохраняется) */
+var lpN=null;
+function longPress(x,y,lb){ if(EDW||fly||!(st==='over'||st==='top'||st==='node')) return; var n=nodeAt(x,y,lb); if(!n) return;
+  lpN=n; n.bst=1; moved=0; try{ navigator.vibrate&&navigator.vibrate(20); }catch(e){} }
+function nodeAt(x,y,lb){ var n=null;
   var r=new THREE.Raycaster(); r.setFromCamera(new THREE.Vector2(x/innerWidth*2-1,-(y/innerHeight)*2+1),C); var h=r.intersectObjects(hits,false).filter(function(q){ var m=byId[q.object.userData.id]; return m&&m.k<.5; })[0]; if(h) n=byId[h.object.userData.id];
   if(!n&&lb) NODES.forEach(function(m){ if(m.el===lb) n=m; }); /* палец на самой планете важнее, чем на чужой сноске рядом */
-  if(!n) return; var ks=kidsOf(n.id);
+  return n; }
+function gather(n){ var ks=kidsOf(n.id);
   if(ks.length){ var open=!SHUT[n.id]&&ks.some(function(m){ return !TUCK[m.id]; }); if(open) SHUT[n.id]=1; else { delete SHUT[n.id]; ks.forEach(function(m){ delete TUCK[m.id]; }); } speak(n.n+(open?'. Собрано.':'. Выпущено.')); }
   else if(n.m.from){ TUCK[n.id]=1; if(sel===n) unsel(); speak(n.n+'. Ушла внутрь.'); n=byId[n.m.from]; }
   else return;
@@ -1128,8 +1134,10 @@ function pickThread(x,y){ var best=null, bd=mob?18:11, pr=function(cv,o){ for(va
 var kRay=new THREE.Raycaster(), kPl=new THREE.Plane(), kHit=new THREE.Vector3(), kV2=new THREE.Vector2(), kDir=new THREE.Vector3();
 function kMove(n,x,y){ var m=n.m, base=m.from&&byId[m.from]?byId[m.from].g.position:PJ; kV2.set(x/innerWidth*2-1,-(y/innerHeight)*2+1); kRay.setFromCamera(kV2,C);
   if(st==='top') kDir.set(0,1,0); else C.getWorldDirection(kDir); kPl.setFromNormalAndCoplanarPoint(kDir,n.g.position); if(!kRay.ray.intersectPlane(kPl,kHit)) return; kHit.sub(base);
-  if(m.t==='s'){ var z0=kHit.z*Math.cos(m.tilt)-kHit.y*Math.sin(m.tilt); m.dist=Math.max(1.5,Math.min(40,Math.hypot(kHit.x,z0))); m.ang=Math.atan2(z0,kHit.x)-otime*m.spd; }
-  else m.off=[+kHit.x.toFixed(1),+kHit.y.toFixed(1),+kHit.z.toFixed(1)]; }
+  if(m.t==='s'){ var z0=kHit.z*Math.cos(m.tilt)-kHit.y*Math.sin(m.tilt), d=Math.hypot(kHit.x,z0); if(!EDW){ if(m._d0==null) m._d0=m.dist; d=Math.max(m._d0*.8,Math.min(m._d0*1.5+1,d)); } /* гость: спутник только чуть ближе или дальше */
+    m.dist=Math.max(1.5,Math.min(40,d)); m.ang=Math.atan2(z0,kHit.x)-otime*m.spd; }
+  else { if(!EDW){ if(!m._o0) m._o0=m.off.slice(); var L0=Math.hypot(m._o0[0],m._o0[2]), dl=Math.hypot(kHit.x,kHit.z), R=Math.max(25,L0*1.5), r0=Math.min(6,L0); if(dl>R){ kHit.x*=R/dl; kHit.z*=R/dl; } else if(dl<r0&&dl>0){ kHit.x*=r0/dl; kHit.z*=r0/dl; } kHit.y=m._o0[1]; } /* гость: планету можно увести вокруг того, кто её держит, но нить длиннее чем в полтора раза не тянется */
+    m.off=[+kHit.x.toFixed(1),+kHit.y.toFixed(1),+kHit.z.toFixed(1)]; } }
 function under(a,b){ for(var x=a,i=0; x&&i<60; x=x.from?byIdM(x.from):null,i++) if(x===b) return true; return false; } /* a где-то внутри b */
 function planetsM(ex){ return MAP.nodes.filter(function(m){ return m.t==='p'&&(!ex||!under(m,ex)); }); }
 function holdersM(ex){ return MAP.nodes.filter(function(m){ return !ex||!under(m,ex); }); } /* за кого можно держаться: любая планета или спутник, кроме себя и своих же внутренних */
