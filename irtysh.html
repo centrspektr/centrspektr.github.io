@@ -229,7 +229,7 @@ var IMG=window.IMG||{}, A0='https://centrspektr.github.io/';
 /* выключенные планеты гости видят тёмными с подписью "скоро"; false - гости их не видят совсем (видно только в правке) */
 var OFF_SHOW=true;
 var J0=[0,-3,0]; /* узел у Портала, откуда тянутся нити */
-var DEF_P={t:'p',from:null,url:'',html:'',img:'',sz:1.8,c:'#94a3b8',glow:.9,on:true,shut:false,bend:.15}, DEF_S={t:'s',from:null,url:'',html:'',img:'',sz:1,c:'#cbd5e1',glow:.8,on:true,shut:false,bend:0,dist:8,ang:0,tilt:.35,spd:.12};
+var DEF_P={t:'p',from:null,url:'',html:'',img:'',sz:1.8,c:'#94a3b8',glow:.9,on:true,shut:false,bend:.15}, DEF_S={t:'s',from:null,url:'',html:'',img:'',sz:1,c:'#cbd5e1',glow:.8,on:true,shut:false,bend:0,dist:8,ang:0,tilt:.35,spd:0}; /* спутники стоят на месте (владелец: пусть не движутся) */
 function Pn(id,n,from,p,o){ return Object.assign({},DEF_P,{id:id,n:n,from:from,p:p},o||{}); }
 function Sn(id,n,from,ang,o){ return Object.assign({},DEF_S,{id:id,n:n,from:from,ang:ang},o||{}); }
 var MAXG=['https://max.ru/join/vXgGYXzwh0p9R1_CUppOus_9Msui9Annkj4HHpaBHVU','https://max.ru/join/v0ZfpDIihnow9hdwq3vpjm0KiPFW7A0WDfkNlIt9JVs','https://max.ru/join/x7bqQ0ZGLEmvUJso1aof3ylEJv5K-1x_4cbCWCHaf0A',
@@ -237,28 +237,28 @@ var MAXG=['https://max.ru/join/vXgGYXzwh0p9R1_CUppOus_9Msui9Annkj4HHpaBHVU','htt
   'https://max.ru/join/kbsZa2PtRYEwK3ZyDq2WHbf9LNJpv5Wayfh5aRuNz6Y','https://max.ru/join/ssNE1a7VgnRlJd58qOwncUx_051PJLlzmEa6thFGnss'];
 /* карта по умолчанию (пока владелец не сохранил свою): координаты здесь - где планета стоит в космосе, при запуске они пересчитываются в off */
 function defMap(){ var N=[
-  Pn('spektr','Спектр',null,[0,0,-40],{url:A0+'spektr/',c:'#ffd36e',sz:2.75,say:'Ресурсный центр Спектр'}),
-  /* кружки без своего сайта - спутники Спектра, ведут в свои группы MAX */
-  Sn('k1','Скульптура и рисование','spektr',0,{c:'#f97316',dist:7.5,sz:.8,url:MAXG[3]}), Sn('k2','Лит.ra','spektr',1.26,{c:'#8b5cf6',dist:7.5,sz:.8,url:MAXG[4]}),
-  Sn('k3','Околица','spektr',2.51,{c:'#dc2626',dist:7.5,sz:.8,url:MAXG[5]}), Sn('k4','Задоринки','spektr',3.77,{c:'#ca8a04',dist:7.5,sz:.8,url:MAXG[6]}), Sn('k5','Ладушки','spektr',5.03,{c:'#16a34a',dist:7.5,sz:.8,url:MAXG[7]}),
-  /* кружки со своим дашбордом - планеты Спектра */
-  Pn('vzlet','Взлёт','spektr',[-18,8,-96],{url:A0+'vzlet/',img:'vzlet.webp',c:'#7cf3ff',sz:1.9,say:'Клуб Взлёт'}),
-  Pn('studio','Гитара и ИИ','spektr',[26,-4,-92],{url:A0+'studio/',img:'studio.webp',c:'#ff7ce0',sz:1.9,say:'Гитара и ИИ-студия'}),
-  Pn('agro','Агрокласс','spektr',[0,20,-114],{url:A0+'agroklass/',c:'#9dff7c',sz:1.75}),
-  /* обучающие курсы - отдельные продукты, от кружков к ним пунктир */
-  Pn('kursy','Обучающие курсы',null,[-50,4,-150],{c:'#60a5fa',sz:2.3,shut:true}),
-  Pn('fpv','Курс FPV','kursy',[-26,14,-176],{c:'#22d3ee',sz:1.6,say:'Курс FPV Взлёт'}),
-  Pn('kgit','Курс Гитара и ИИ','kursy',[-60,0,-172],{c:'#e879f9',sz:1.6}),
-  Pn('kagro','Курс Агрокласса','kursy',[-42,22,-192],{c:'#86efac',sz:1.6}),
-  Pn('kpy','Python с ИИ','kursy',[-60,-8,-128],{c:'#facc15',sz:1.6,on:false}),
-  /* Иртыш - справочник групп села */
-  Pn('irtysh','Иртыш',null,[40,9,-30],{img:'selo.jpg',c:'#2dd4bf',sz:2.2,shut:true,say:'Село Иртыш. Группы села'}),
-  Sn('ir1','ВК: село Иртыш','irtysh',0,{c:'#2787f5'}), Sn('ir2','ОК: село Иртыш','irtysh',1.57,{c:'#f7931e'}), Sn('ir3','MAX: село Иртыш','irtysh',3.14,{c:'#4ade80'}),
-  Sn('gallery','Галерея Иртыша','irtysh',4.71,{c:'#38bdf8',say:'Галерея Иртыша. Фото и видео села'}),
+  /* Иртыш в центре: от него нити к Соцсетям и к Спектру; вокруг него спутники - группы села (адреса владелец пришлёт) */
+  Pn('irtysh','Иртыш',null,[0,6,-34],{img:'selo.jpg',c:'#2dd4bf',sz:2.4,say:'Село Иртыш'}),
+  Sn('ir1','ВК: село Иртыш','irtysh',.4,{c:'#2787f5'}), Sn('ir2','ОК: село Иртыш','irtysh',1.97,{c:'#f7931e'}), Sn('ir3','MAX: село Иртыш','irtysh',3.54,{c:'#4ade80'}),
+  Sn('gallery','Галерея Иртыша','irtysh',5.11,{c:'#38bdf8',say:'Галерея Иртыша. Фото и видео села'}),
   /* соцсети Спектра: MAX (8 групп на полках), ОК, ВК */
-  Pn('social','Соцсети',null,[-48,-12,-42],{c:'#34d399',sz:2.15,say:'Соцсети Спектра'}),
-  Sn('max','MAX','social',0,{c:'#4ade80',dist:11,sz:1.2,say:'Группы в МАКС'}), Sn('ok','ОК','social',2.1,{c:'#f7931e',dist:11,sz:1.05,say:'Одноклассники'}), Sn('vk','ВК','social',4.2,{c:'#2787f5',dist:11,sz:1.05,say:'ВКонтакте'}),
-  Pn('idea1','Здесь может быть твоя идея',null,[52,-14,-124],{c:'#a78bfa',sz:1.6}),
+  Pn('social','Соцсети',null,[-40,-8,-62],{from:'irtysh',c:'#34d399',sz:2.15,say:'Соцсети Спектра'}),
+  Sn('max','MAX','social',.3,{c:'#4ade80',dist:9,sz:1.2,say:'Группы в МАКС'}), Sn('ok','ОК','social',2.4,{c:'#f7931e',dist:9,sz:1.05,say:'Одноклассники'}), Sn('vk','ВК','social',4.5,{c:'#2787f5',dist:9,sz:1.05,say:'ВКонтакте'}),
+  Pn('spektr','Спектр','irtysh',[14,0,-88],{url:A0+'spektr/',c:'#ffd36e',sz:2.75,say:'Ресурсный центр Спектр'}),
+  /* Кружки - хранилище: кружки со своим сайтом - планеты, без сайта - спутники (ведут в свои группы MAX) */
+  Pn('kruzhki','Кружки','spektr',[-22,8,-130],{c:'#f472b6',sz:2.1}),
+  Sn('k1','Скульптура и рисование','kruzhki',0,{c:'#f97316',dist:8,sz:.8,url:MAXG[3]}), Sn('k2','Лит.ra','kruzhki',1.26,{c:'#8b5cf6',dist:8,sz:.8,url:MAXG[4]}),
+  Sn('k3','Околица','kruzhki',2.51,{c:'#dc2626',dist:8,sz:.8,url:MAXG[5]}), Sn('k4','Задоринки','kruzhki',3.77,{c:'#ca8a04',dist:8,sz:.8,url:MAXG[6]}), Sn('k5','Ладушки','kruzhki',5.03,{c:'#16a34a',dist:8,sz:.8,url:MAXG[7]}),
+  Pn('vzlet','Взлёт','kruzhki',[-48,8,-154],{url:A0+'vzlet/',img:'vzlet.webp',c:'#7cf3ff',sz:1.9,say:'Клуб Взлёт'}),
+  Pn('studio','Гитара и ИИ','kruzhki',[-10,-2,-166],{url:A0+'studio/',img:'studio.webp',c:'#ff7ce0',sz:1.9,say:'Гитара и ИИ-студия'}),
+  Pn('agro','Агрокласс','kruzhki',[-36,20,-184],{url:A0+'agroklass/',c:'#9dff7c',sz:1.75}),
+  /* Обучающие курсы - хранилище, курсы - отдельные продукты; от кружка к его курсу пунктир */
+  Pn('kursy','Обучающие курсы','spektr',[30,6,-132],{c:'#60a5fa',sz:2.3,shut:true}),
+  Pn('fpv','Курс FPV','kursy',[14,14,-168],{c:'#22d3ee',sz:1.6,say:'Курс FPV Взлёт'}),
+  Pn('kgit','Курс Гитара и ИИ','kursy',[42,0,-170],{c:'#e879f9',sz:1.6}),
+  Pn('kagro','Курс Агрокласса','kursy',[28,22,-194],{c:'#86efac',sz:1.6}),
+  Pn('kpy','Python с ИИ','kursy',[48,-6,-122],{c:'#facc15',sz:1.6,on:false}),
+  Pn('idea1','Здесь может быть твоя идея',null,[46,-14,-34],{c:'#a78bfa',sz:1.6}),
   Pn('nastr','Настройки',null,[-26,-7,-8],{c:'#cbd5e1',sz:1.4,say:'Настройки портала'}),
   Pn('help','Поддержать проект',null,[0,30,-235],{c:'#ffcf6e',sz:1.9})
  ]; absToOff(N); return {v:2,nodes:N,links:[['vzlet','fpv'],['studio','kgit'],['agro','kagro']]}; }
@@ -273,11 +273,11 @@ function cleanMap(x){ var M={v:2,nodes:[],links:[]}, seen={}; if(!x||!Array.isAr
     var D=n.t==='s'?DEF_S:DEF_P, m={id:id,t:D.t,n:String(n.n==null?'Без названия':n.n).slice(0,48),from:n.from?String(n.from):null,url:safeUrl(n.url),html:String(n.html||'').slice(0,20000),img:safeUrl(n.img),
       sz:num(n.sz,D.sz,.3,7),c:/^#[0-9a-f]{6}$/i.test(n.c)?n.c:D.c,glow:num(n.glow,D.glow,0,1.6),on:n.on!==false,shut:!!n.shut,bend:num(n.bend,D.bend,-1,1)};
     if(n.say) m.say=String(n.say).slice(0,80);
-    if(m.t==='s'){ m.dist=num(n.dist,8,1.5,40); m.ang=num(n.ang,0,-100,100); m.tilt=num(n.tilt,.35,-1.5,1.5); m.spd=num(n.spd,.12,0,1); }
+    if(m.t==='s'){ m.dist=num(n.dist,8,1.5,40); m.ang=num(n.ang,0,-100,100); m.tilt=num(n.tilt,.35,-1.5,1.5); m.spd=0; }
     else { var o=Array.isArray(n.off)?n.off:[0,0,-30]; m.off=[num(o[0],0,-400,400),num(o[1],0,-200,200),num(o[2],-30,-400,400)]; }
     M.nodes.push(m); });
   var by={}; M.nodes.forEach(function(n){ by[n.id]=n; });
-  M.nodes.forEach(function(n){ var p=n.from&&by[n.from]; if(!p||p.t!=='p'||p===n) n.from=null; });
+  M.nodes.forEach(function(n){ var p=n.from&&by[n.from]; if(!p||p===n) n.from=null; }); /* держать может и планета, и спутник */
   /* держит по кругу (А держит Б, Б держит А) - такую нить рвём */
   M.nodes.forEach(function(n){ for(var x=n.from&&by[n.from],k=0; x; x=x.from&&by[x.from],k++) if(x===n||k>60){ n.from=null; break; } });
   /* спутник без планеты становится планетой рядом с Порталом */
@@ -568,7 +568,7 @@ function bandSkin(c){ return tex(function(x,w,h){ var g=x.createLinearGradient(0
    dash - планета со ссылкой или своей страницей, hub - хранилище, idea - пустая планета, link - спутник, off - не горит */
 function kidsM(id){ return MAP.nodes.filter(function(m){ return m.from===id; }); }
 function lookOf(m){ if(m.id==='help') return 'support'; if(m.id==='nastr') return 'set'; if(m.id==='spektr') return 'center'; if(!m.on) return 'off'; if(m.id==='max') return 'group';
-  if(m.t==='s') return 'link'; if(m.url||m.html) return 'dash'; return kidsM(m.id).length?'hub':'idea'; }
+  if(m.url||m.html) return m.t==='s'?'link':'dash'; if(kidsM(m.id).length) return 'hub'; return m.t==='s'?'link':'idea'; } /* спутник без адреса, который что-то держит, - тоже коробочка */
 function abbr(m){ var t=m.n.split(':')[0].trim(); if(t.length<=3) return t; var w=t.split(/[\s.\-]+/).filter(Boolean); return (w.length>1?w[0][0]+w[1][0]:t.slice(0,2)).toUpperCase(); }
 function imgOf(m){ if(IMG[m.id]) return IMG[m.id]; if((m.id==='irtysh'||m.id==='gallery')&&window.VILLAGE) return window.VILLAGE; return m.img; }
 function keyOf(m){ var k=lookOf(m); return k+'|'+m.c+'|'+imgOf(m)+'|'+m.sz+'|'+(m.from||'')+'|'+(k==='link'?abbr(m):''); }
@@ -647,7 +647,7 @@ function setPts(ln,cv){ var P=ln.geometry.attributes.position, np=P.count; for(v
 function placeAll(dt){ PW={}; NODES.forEach(function(n){ placeN(n,dt); });
   NODES.forEach(function(n){ if(!n.curve) return; var a=n.m.from&&byId[n.m.from]?byId[n.m.from].g.position:PJ; bez(n.curve,a,n.g.position,n.m.bend); setPts(n.thr.ln,n.curve); n.thr.mid.copy(n.curve.v1); });
   EXTRA.forEach(function(q){ bez(q.cv,q.a.g.position,q.b.g.position,q.bend,q.abs); setPts(q.ln,q.cv); if(q.dash) q.ln.computeLineDistances();
-    var h=Math.max(q.a.k,q.b.k); q.ln.visible=h<.98; q.ln.material.opacity=(q.dash?.75:q.op)*(1-h); }); }
+    var h=Math.max(q.a.k,q.b.k); if(q.dash&&(!q.a.m.on||!q.b.m.on)) h=1; q.ln.visible=h<.98; /* пунктир виден, только когда обе планеты горят и выпущены */ q.ln.material.opacity=(q.dash?.75:q.op)*(1-h); }); }
 /* нейрон: зелёная капсула от нас к Спектру после провала */
 var neu=spark('#4ade80',1.3); neu.vis(false);
 var rip=new THREE.Sprite(new THREE.SpriteMaterial({map:tex(function(x,sz){ var c=sz/2, g=x.createRadialGradient(c,c,sz*.3,c,c,sz*.5); g.addColorStop(0,'rgba(134,239,172,0)'); g.addColorStop(.6,'rgba(134,239,172,.9)'); g.addColorStop(1,'rgba(134,239,172,0)'); x.fillStyle=g; x.fillRect(0,0,sz,sz); },256),blending:THREE.AdditiveBlending,depthWrite:false,transparent:true}));
@@ -1109,6 +1109,7 @@ function kMove(n,x,y){ var m=n.m, base=m.from&&byId[m.from]?byId[m.from].g.posit
   else m.off=[+kHit.x.toFixed(1),+kHit.y.toFixed(1),+kHit.z.toFixed(1)]; }
 function under(a,b){ for(var x=a,i=0; x&&i<60; x=x.from?byIdM(x.from):null,i++) if(x===b) return true; return false; } /* a где-то внутри b */
 function planetsM(ex){ return MAP.nodes.filter(function(m){ return m.t==='p'&&(!ex||!under(m,ex)); }); }
+function holdersM(ex){ return MAP.nodes.filter(function(m){ return !ex||!under(m,ex); }); } /* за кого можно держаться: любая планета или спутник, кроме себя и своих же внутренних */
 function nmM(id){ var m=id?byIdM(id):null; return m?m.n:'Портал'; }
 function opt(v,t,cur){ return '<option value="'+esc(v)+'"'+(v===cur?' selected':'')+'>'+esc(t)+'</option>'; }
 function rng(id,lab,min,max,st0,val){ return '<label class="kf"><span>'+lab+'</span><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+st0+'" value="'+val+'"></label>'; }
@@ -1117,7 +1118,7 @@ function kWorld(id){ var v0=byId[id]; return v0?v0.g.position.clone():PJ.clone()
 function kForm(){ var h='', m=kNode(); kHint('');
   if(kThr){ var a, b;
     if(kThr.hold){ b=byIdM(kThr.id); if(!b){ kThr=null; kForm(); return; } h='<h4>Нить: '+esc(nmM(b.from))+' - '+esc(b.n)+'</h4><p class="kn">Сплошная нить: "'+esc(nmM(b.from))+'" держит "'+esc(b.n)+'". Соберёте "'+esc(nmM(b.from))+'" - "'+esc(b.n)+'" уйдёт внутрь.</p>'+rng('kB','Изгиб нити',-1,1,.05,b.bend)+'<div class="kd-row">'+(b.t==='p'?'<button class="btn pri" type="button" id="kIns">+ Вставить планету в нить</button>':'')+'<button class="btn" type="button" id="kOpen">Настроить "'+esc(b.n)+'"</button></div>'; }
-    else h='<h4>Пунктир: '+esc(nmM(kThr.lk[0]))+' - '+esc(nmM(kThr.lk[1]))+'</h4><p class="kn">Связь: кто чем пользуется. Ничего не держит.</p><div class="kd-row"><button class="btn kdel" type="button" id="kUl">Убрать связь</button></div>';
+    else h='<h4>Пунктир: '+esc(nmM(kThr.lk[0]))+' - '+esc(nmM(kThr.lk[1]))+'</h4><p class="kn">Связь: кто чем пользуется. Ничего не держит. Видна, когда обе планеты горят и не собраны.</p><div class="kd-row"><button class="btn kdel" type="button" id="kUl">Убрать связь</button></div>';
     kF.innerHTML=h;
     if($k('kB')) $k('kB').oninput=function(){ b.bend=+this.value; }, $k('kB').onchange=kDirty;
     if($k('kOpen')) $k('kOpen').onclick=function(){ kPick(byId[b.id]); };
@@ -1125,31 +1126,31 @@ function kForm(){ var h='', m=kNode(); kHint('');
     if($k('kUl')) $k('kUl').onclick=function(){ var L=kThr.lk; MAP.links=MAP.links.filter(function(q){ return q!==L&&!(q[0]===L[0]&&q[1]===L[1]); }); kThr=null; rebuild(); kDirty(); kForm(); };
     return; }
   if(!m){ kF.innerHTML='<p class="kn">Нажмите на планету или спутник, чтобы настроить. Выбранную планету можно тянуть пальцем. Нажмите на нить, чтобы вставить в неё планету или изменить изгиб. Двумя пальцами - ближе, дальше, поворот. Кнопка "Включить 3D" вверху - посмотреть в объёме.</p>'; return; }
-  var ks=kidsM(m.id), lk=lookOf(m), pars=m.t==='s'?planetsM().filter(function(q){ return q!==m; }):planetsM(m), fixed=m.id==='spektr'||m.id==='nastr';
+  var ks=kidsM(m.id), lk=lookOf(m), pars=holdersM(m), fixed=m.id==='spektr'||m.id==='nastr';
   var what={center:'Спектр - планета со ссылкой',group:'MAX - группы на полках',support:'Поддержать проект',set:'Настройки портала',dash:'Планета со ссылкой',hub:'Планета-хранилище',idea:'Пустая планета (ничего не держит, ссылки нет)',link:'Спутник',off:'Не горит'}[lk];
-  h+='<h4>'+(m.t==='s'?'Спутник: ':'')+esc(what)+'</h4>';
+  h+='<h4>'+(m.t==='s'?(lk==='hub'?'Спутник-коробочка (держит '+ks.length+')':lk==='link'?'Спутник'+(m.url||m.html?' со ссылкой':''):'Спутник: '+esc(what)):esc(what))+'</h4>';
   h+='<label class="kf"><span>Название</span><input type="text" id="kN" maxlength="48" value="'+esc(m.n)+'"></label>';
   h+='<div class="k2"><label class="kf"><span>Держится за</span><select id="kFr">'+(m.t==='p'?opt('','Портал',m.from||''):'')+pars.map(function(q){ return opt(q.id,q.n,m.from); }).join('')+'</select></label>';
-  h+='<label class="kf"><span>Вид</span><select id="kT">'+opt('p','Планета',m.t)+(ks.length||m.id==='spektr'?'':opt('s','Спутник',m.t))+'</select></label></div>';
+  h+='<label class="kf"><span>Вид</span><select id="kT">'+opt('p','Планета',m.t)+(m.id==='spektr'?'':opt('s','Спутник',m.t))+'</select></label></div>';
   h+='<label class="kf"><span>Ссылка (адрес)</span><input type="url" id="kU" placeholder="https://... или файл.html, пусто - хранилище" value="'+esc(m.url)+'"></label>';
   h+='<label class="kf"><span>Своя страница (HTML, если нет ссылки)</span><textarea id="kH" placeholder="&lt;h1&gt;Привет&lt;/h1&gt;">'+esc(m.html)+'</textarea></label>';
   h+='<label class="kc"><input type="checkbox" id="kO"'+(m.on?' checked':'')+'> Горит (выключенная - тёмная, '+(OFF_SHOW?'с подписью "скоро"':'гости её не видят')+')</label>';
   if(ks.length) h+='<label class="kc"><input type="checkbox" id="kS"'+(m.shut?' checked':'')+'> При входе собрана ('+ks.length+' внутри)</label>';
   h+='<div class="k2">'+rng('kZ','Размер',.4,6,.05,m.sz)+'<label class="kf"><span>Цвет</span><input type="color" id="kC" value="'+m.c+'"></label></div>'+rng('kG','Свечение',0,1.6,.05,m.glow);
-  if(m.t==='s') h+='<div class="k2">'+rng('kD','Орбита',1.5,40,.1,m.dist)+rng('kV','Скорость',0,1,.01,m.spd)+'</div>'+rng('kTl','Наклон орбиты',-1.5,1.5,.05,m.tilt);
+  if(m.t==='s') h+='<div class="k2">'+rng('kD','Расстояние от планеты',1.5,40,.1,m.dist)+rng('kTl','Наклон круга',-1.5,1.5,.05,m.tilt)+'</div>';
   else h+='<div class="k2">'+rng('kD','Расстояние',2,250,.5,Math.hypot(m.off[0],m.off[1],m.off[2]).toFixed(1))+rng('kY','Высота',-80,80,.5,m.off[1])+'</div>';
   if(m.id!=='help'||m.from) h+=rng('kB','Изгиб нити',-1,1,.05,m.bend);
   h+='<label class="kf"><span>Картинка на планете (адрес, можно пусто)</span><input type="url" id="kI" placeholder="https://...jpg или файл.webp" value="'+esc(m.img)+'"></label>';
   var ls=MAP.links.map(function(q,i){ return q[0]===m.id||q[1]===m.id?'<div class="kl"><span>- - "'+esc(nmM(q[0]===m.id?q[1]:q[0]))+'"</span><button class="x" type="button" data-ul="'+i+'" aria-label="Убрать связь">✕</button></div>':''; }).join('');
   if(ls) h+='<div class="kf"><span>Связи пунктиром</span>'+ls+'</div>';
-  h+='<div class="kd-row">'+(m.t==='p'?'<button class="btn" type="button" id="kSat">+ Спутник к ней</button><button class="btn" type="button" id="kKid">+ Планета от неё</button>':'')+(fixed?'':'<button class="btn kdel" type="button" id="kX">Удалить</button>')+'</div>';
+  h+='<div class="kd-row">'+'<button class="btn" type="button" id="kSat">+ Спутник к '+(m.t==='p'?'ней':'нему')+'</button><button class="btn" type="button" id="kKid">+ Планета от '+(m.t==='p'?'неё':'него')+'</button>'+(fixed?'':'<button class="btn kdel" type="button" id="kX">Удалить</button>')+'</div>';
   kF.innerHTML=h;
   var on=function(id,ev,fn){ var e=$k(id); if(e) e.addEventListener(ev,function(){ fn(e); if(ev==='change') kDirty(); }); };
   var re=function(){ var id=m.id; rebuild(); kSel=id; sel=byId[id]||null; };
   on('kN','input',function(e){ m.n=e.value.trim().slice(0,48)||'Без названия'; if(byId[m.id]) byId[m.id].n=m.n; }); on('kN','change',function(){ re(); });
   on('kFr','change',function(e){ var np=e.value||null, w=kWorld(m.id), b=np?kWorld(np):PJ.clone(); m.from=np; if(m.t==='p') m.off=[w.x-b.x,w.y-b.y,w.z-b.z].map(function(q){ return +q.toFixed(1); }); re(); kForm(); });
   on('kT','change',function(e){ var w=kWorld(m.id);
-    if(e.value==='s'){ if(!m.from){ var near=planetsM(m).filter(function(q){ return q!==m; })[0]; if(!near){ e.value='p'; return; } m.from=near.id; } var b=kWorld(m.from), d=w.sub(b); m.t='s'; m.dist=Math.max(3,Math.min(30,Math.hypot(d.x,d.z))); m.ang=Math.atan2(d.z,d.x)-otime*.12; m.tilt=.35; m.spd=.12; delete m.off; }
+    if(e.value==='s'){ if(!m.from){ var near=holdersM(m).filter(function(q){ return q!==m; })[0]; if(!near){ e.value='p'; return; } m.from=near.id; } var b=kWorld(m.from), d=w.sub(b); m.t='s'; m.dist=Math.max(3,Math.min(30,Math.hypot(d.x,d.z))); m.ang=Math.atan2(d.z,d.x); m.tilt=.35; m.spd=0; delete m.off; }
     else { var b2=m.from?kWorld(m.from):PJ.clone(); m.t='p'; m.off=[w.x-b2.x,w.y-b2.y,w.z-b2.z].map(function(q){ return +q.toFixed(1); }); delete m.dist; delete m.ang; delete m.tilt; delete m.spd; }
     re(); kForm(); });
   on('kU','change',function(e){ var u=safeUrl(e.value); if(e.value.trim()&&!u) kHint('Нужен полный адрес https://... или имя файла портала, например zaglushka.html'); m.url=u; re(); kForm(); });
@@ -1168,22 +1169,23 @@ function kForm(){ var h='', m=kNode(); kHint('');
   if($k('kX')) $k('kX').onclick=function(){ var b=this; if(!b._ok){ b._ok=1; b.textContent='Точно удалить?'; return; } kRemove(m); kPick(null); kHint('Удалено. Что она держала, теперь держится за "'+esc(nmM(m.from))+'".'); }; }
 /* удалить: то, что держала планета, не пропадает - переходит к тому, кто держал её */
 function kRemove(m){ var par=m.from?byIdM(m.from):null, w0=kWorld(m.id);
-  kidsM(m.id).forEach(function(k){ if(k.t==='p'){ k.from=m.from; if(m.off) k.off=k.off.map(function(q,i){ return +(q+m.off[i]).toFixed(1); }); }
-    else if(par) k.from=par.id; else { var w=kWorld(k.id); k.t='p'; k.from=null; k.off=[w.x-PJ.x,w.y-PJ.y,w.z-PJ.z].map(function(q){ return +q.toFixed(1); }); delete k.dist; delete k.ang; delete k.tilt; delete k.spd; } });
+  kidsM(m.id).forEach(function(k){ var w=kWorld(k.id), b=par?kWorld(par.id):PJ.clone();
+    if(k.t==='s'&&!par){ k.t='p'; delete k.dist; delete k.ang; delete k.tilt; delete k.spd; }
+    k.from=par?par.id:null; if(k.t==='p') k.off=[w.x-b.x,w.y-b.y,w.z-b.z].map(function(q){ return +q.toFixed(1); }); else { var d=w.sub(b); k.dist=Math.max(1.5,Math.min(40,Math.hypot(d.x,d.z))); k.ang=Math.atan2(d.z,d.x); } });
   MAP.nodes=MAP.nodes.filter(function(q){ return q!==m; }); MAP.links=MAP.links.filter(function(q){ return q[0]!==m.id&&q[1]!==m.id; }); delete SHUT[m.id]; rebuild(); kDirty(); }
 /* добавить планету (к Порталу, к планете или в нить) или спутник */
-function kAdd(kind,par){ var ps=planetsM(), h='<h3>'+(kind==='p'?'Новая планета':'Новый спутник')+' <button class="x" type="button" data-x>✕</button></h3><p>Куда прикрепить:</p><select id="atS" class="ksel">';
-  if(kind==='p'){ h+=opt('','к Порталу',par?'':''); ps.forEach(function(q){ h+=opt('n:'+q.id,'к планете "'+q.n+'"',par===q.id?'n:'+q.id:''); }); ps.forEach(function(q){ h+=opt('t:'+q.id,'в нить '+nmM(q.from)+' - '+q.n,''); }); }
+function kAdd(kind,par){ var ps=holdersM(), pl=planetsM(), h='<h3>'+(kind==='p'?'Новая планета':'Новый спутник')+' <button class="x" type="button" data-x>✕</button></h3><p>Куда прикрепить:</p><select id="atS" class="ksel">';
+  if(kind==='p'){ h+=opt('','к Порталу',par?'':''); ps.forEach(function(q){ h+=opt('n:'+q.id,'к '+(q.t==='p'?'планете':'спутнику')+' "'+q.n+'"',par===q.id?'n:'+q.id:''); }); pl.forEach(function(q){ h+=opt('t:'+q.id,'в нить '+nmM(q.from)+' - '+q.n,''); }); }
   else ps.forEach(function(q){ h+=opt(q.id,'вокруг "'+q.n+'"',par===q.id?q.id:''); });
   edP.innerHTML=h+'</select><p>'+(kind==='p'?'"В нить" - новая планета встаёт посередине нити, дальняя планета держится уже за неё.':'Спутник летает вокруг планеты, к ней тянется нить.')+'</p><div class="bar"><button class="btn" type="button" data-x>Отмена</button><button class="btn pri" type="button" id="atGo">Добавить</button></div>';
   edM.classList.add('on');
   $k('atGo').onclick=function(){ var v0=$k('atS').value, nn, a=Math.random()*6.283; edM.classList.remove('on');
-    if(kind==='s'){ var pm=byIdM(v0); nn=Object.assign({},DEF_S,{id:uid(),n:'Новый спутник',from:v0,ang:a-otime*.12,dist:4+(pm?pm.sz:2)*1.8,c:'#cbd5e1'}); }
+    if(kind==='s'){ var pm=byIdM(v0); nn=Object.assign({},DEF_S,{id:uid(),n:'Новый спутник',from:v0,ang:a,dist:3+(pm?pm.sz:2)*1.8,sz:pm&&pm.t==='s'?Math.max(.5,pm.sz*.7):1,c:'#cbd5e1'}); }
     else if(v0.indexOf('t:')===0){ var b=byIdM(v0.slice(2)); nn=Object.assign({},DEF_P,{id:uid(),n:'Новая планета',from:b.from,c:'#a78bfa',off:b.off.map(function(q){ return +(q/2).toFixed(1); })}); b.off=nn.off.slice(); b.from=nn.id; }
     else nn=Object.assign({},DEF_P,{id:uid(),n:'Новая планета',from:v0?v0.slice(2):null,c:'#a78bfa',off:[+(Math.cos(a)*16).toFixed(1),+(Math.random()*8-4).toFixed(1),+(Math.sin(a)*16-(v0?0:30)).toFixed(1)]});
     MAP.nodes.push(nn); rebuild(); placeAll(0); kDirty(); kPick(byId[nn.id]); kHint('Добавлено. Тяните её пальцем или настройте ниже.'); }; }
-$k('kAddP').onclick=function(){ kAdd('p',kSel&&kNode().t==='p'?kSel:null); };
-$k('kAddS').onclick=function(){ if(!planetsM().length){ kHint('Сначала нужна планета.'); return; } var m=kNode(); kAdd('s',m?(m.t==='p'?m.id:m.from):null); };
+$k('kAddP').onclick=function(){ kAdd('p',kSel||null); };
+$k('kAddS').onclick=function(){ if(!MAP.nodes.length){ kHint('Сначала нужна планета.'); return; } kAdd('s',kSel||null); };
 $k('kAddL').onclick=function(){ if(kMode==='link'){ kMode=null; kPend=null; this.classList.remove('on'); kHint(''); return; } kMode='link'; kPend=null; this.classList.add('on'); kThr=null; kHint('Нить-связь (пунктир): нажмите первую планету, потом вторую.'); };
 $k('kdX').onclick=function(){ kd.classList.toggle('min'); this.textContent=kd.classList.contains('min')?'▴':'▾'; };
 $k('kUndo').onclick=function(){ var b=this; if(!b._ok){ b._ok=1; b.textContent='Точно? Правки пропадут'; setTimeout(function(){ b._ok=0; b.textContent='Отменить всё'; },4000); return; }
