@@ -754,7 +754,7 @@ function capText(n){ if(n.kind==='idea') return 'Пиши нам - подклю�
   if(holds(n)){ var ks=kidsOf(n.id); return boxCap(n)+(mob?'':'<br>'+ks.filter(function(m){ return !inBox(n,m); }).map(function(m){ return '<b>'+esc(m.n)+'</b>'; }).join(', ')); }
 
   if(n.close) return '<b class="go">Войти</b>';
-  if(n.kind==='set') return 'Нажми ещё раз - <b>открыть</b>: установка, голос, графика';
+  if(n.kind==='set') return 'Нажми ещё раз - <b>открыть</b>: установка, карта, графика';
   if(soon(n)) return 'Ссылка появится скоро';
   return 'Нажми ещё раз - <b>'+(n.kind==='support'?'открыть':'войти')+'</b>'; }
 function showCap(n){ document.getElementById('capT').textContent=n.n+(n.kind==='off'?' · скоро':''); cap.style.setProperty('--pc',n.c);
@@ -866,8 +866,8 @@ nNext.onclick=function(){ if(fly||(st!=='node'&&st!=='over')) return; var O=navL
 nPrev.onclick=function(){ if(fly||st!=='node') return; var O=navList(), i=navIdx(); if(i>0) goTo(byId[O[i-1]]); else goBack(); };
 tL.onclick=function(){ turnT+=Math.PI/3; }; tR.onclick=function(){ turnT-=Math.PI/3; };
 /* провал в портал и выход */
-/* голос-проводник (озвучка браузера; включается кнопкой, выбор запоминается) */
-var VOICE=false; try{ VOICE=localStorage.getItem('irtysh_voice')==='1'; }catch(e){}
+/* голос-проводник убран по просьбе владельца (24.10): озвучки нет, прежний выбор забываем */
+var VOICE=false; try{ localStorage.removeItem('irtysh_voice'); if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){}
 function speak(t){ if(!VOICE||!window.speechSynthesis) return; try{ speechSynthesis.cancel(); var u=new SpeechSynthesisUtterance(t); u.lang='ru-RU';
   var vs=speechSynthesis.getVoices().filter(function(v){ return /^ru/i.test(v.lang); }); if(vs.length) u.voice=vs[0]; u.rate=.95; speechSynthesis.speak(u); }catch(e){} }
 function speakNode(n){ speak(n.kind==='idea'?n.n:(n.say||n.n)+(n.kind==='hub'?'. Нажми ещё раз, чтобы '+(SHUT[n.id]?'выпустить.':'собрать.'):n.kind==='off'?'. Скоро.':soon(n)?'. Ссылка появится скоро.':'. Нажми ещё раз, чтобы войти.')); }
@@ -1097,17 +1097,15 @@ function instSteps(){ var URL0=location.origin+'/';
   return stepI(1,'Нажмите ⋮ вверху справа')+stepI(2,'"Установить приложение"','Если такого пункта нет - "Добавить на гл. экран".'); }
 instB.onclick=function(){ if(dp&&BRW!=='ya'){ dp.prompt(); dp.userChoice.then(function(r){ if(r&&r.outcome==='accepted'){ APP=true; gateUI(); } dp=null; }).catch(function(){}); return; }
   document.getElementById('instI').innerHTML=instSteps(); instM.classList.add('on'); };
-/* окно планеты Настройки: установка на телефон, голос-проводник, графика */
+/* окно планеты Настройки: установка на телефон, правка карты, графика */
 var setM=document.getElementById('setM'), setP=document.getElementById('setP');
 function setPanel(){ var b=function(v,t){ return '<button class="btn'+(GQ===v?' pri':'')+'" type="button" data-q="'+v+'">'+t+'</button>'; };
   setP.innerHTML='<h3>Настройки <button class="x" type="button" data-x>✕</button></h3>'+
     '<div class="ed-h">Приложение</div>'+(APP?'<p>Портал уже установлен.</p>':'<p>Поставить Иртыш-портал на телефон, как приложение.</p><div class="bar" style="justify-content:flex-start"><button class="btn pri" type="button" id="setInst">📲 Установить</button></div>')+
-    '<div class="ed-h">Голос-проводник</div><p>Голос подсказывает, куда летим.</p><div class="bar" style="justify-content:flex-start"><button class="btn'+(VOICE?' pri':'')+'" type="button" id="setVoice">'+(VOICE?'🔊 Включён':'🔈 Выключен')+'</button></div>'+
     '<div class="ed-h">Карта портала</div><p>Добавить и настроить планеты, спутники и нити (по PIN).</p><div class="bar" style="justify-content:flex-start"><button class="btn" type="button" id="setEd">✎ Править карту</button></div>'+
     '<div class="ed-h">Графика</div><p>"Красиво" - полный эффект для сильных телефонов, "Просто" - легче для слабых, "Авто" - портал выберет сам.</p><div class="bar" style="justify-content:flex-start">'+b('auto','Авто')+b('hi','Красиво')+b('lo','Просто')+'</div>';
   setM.classList.add('on');
   var si=document.getElementById('setInst'); if(si) si.onclick=function(){ setM.classList.remove('on'); instB.onclick(); };
-  document.getElementById('setVoice').onclick=function(){ sndB.onclick(); setPanel(); };
   document.getElementById('setEd').onclick=function(){ setM.classList.remove('on'); startEdit(); };
   [].forEach.call(setP.querySelectorAll('[data-q]'),function(el){ el.onclick=function(){ GQ=el.getAttribute('data-q'); try{ localStorage.setItem('irtysh_gq',GQ); }catch(e){} if(GQ!=='auto') LOW=0; applyQ(); setPanel(); }; }); }
 [instM,edM,setM].forEach(function(M){ /* M здесь - окно */ M.addEventListener('click',function(e){ if(e.target===M||(e.target.closest&&e.target.closest('[data-x]'))) M.classList.remove('on'); }); });
