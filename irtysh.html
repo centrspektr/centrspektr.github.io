@@ -163,6 +163,9 @@ body{background:var(--bg);color:var(--fg);font-family:var(--body);overflow:hidde
 .kl{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.08)}
 .kdel{color:#ff8a8a!important;border-color:rgba(255,138,138,.45)!important}
 body.kedit #cap,body.kedit #nav,body.kedit #back,body.kedit #side{display:none!important}
+#moi{position:fixed;top:calc(62px + env(safe-area-inset-top,0px));left:max(16px,env(safe-area-inset-left,0px));z-index:6;display:none;align-items:center;gap:8px}#moi.on{display:flex}body.kedit #moi{display:none!important}
+#moi button{height:36px;padding:0 14px;border-radius:99px;border:1px solid rgba(74,222,128,.7);background:rgba(6,28,16,.6);color:#fff;font:700 13px var(--body);cursor:pointer;box-shadow:0 0 16px rgba(74,222,128,.35)}#moi button.x2{border-color:var(--line);background:var(--glass);box-shadow:none;color:var(--dim)}
+#moi button:focus-visible{outline:2px solid #7cf3ff;outline-offset:2px}#moi small{font:600 12px var(--body);color:#86efac;text-shadow:0 1px 4px #000}
 #side{position:fixed;right:max(10px,env(safe-area-inset-right,0px));top:50%;transform:translate(8px,-50%);z-index:5;display:flex;flex-direction:column;align-items:flex-end;gap:6px;max-height:52vh;overflow-y:auto;opacity:0;transition:opacity .35s,transform .35s;pointer-events:none;padding:4px 2px;scrollbar-width:none}
 #side.on{opacity:1;transform:translate(0,-50%)}#side.on button{pointer-events:auto}
 #side button{display:flex;align-items:center;gap:8px;max-width:46vw;padding:7px 12px 7px 10px;border-radius:99px;border:1px solid color-mix(in srgb,var(--pc) 55%,transparent);background:rgba(6,10,28,.6);color:var(--fg);font:700 13px/1.15 var(--body);text-align:left;cursor:pointer;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);transition:opacity .25s,border-color .25s}
@@ -197,6 +200,7 @@ body.kedit #cap,body.kedit #nav,body.kedit #back,body.kedit #side{display:none!i
 <button id="snd" type="button" aria-label="Голос-проводник" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path class="w" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12"/></svg></button>
 <div id="labels"><button id="farL" class="lb idea" type="button">Иртыш-портал</button></div>
 <div id="side" aria-label="Что держит планета"></div>
+<div id="moi" aria-live="polite"><button id="moiS" type="button">💾 Сохранить</button><button id="moiX" class="x2" type="button">Как было</button><small id="moiT"></small></div>
 <div id="cap" aria-live="polite"><h2 id="capT"></h2><p id="capP"></p></div>
 <div id="atm" role="dialog" aria-label="Группы MAX"><div class="atin"><h2>Группы MAX</h2><p>Выбери свою группу и вступай</p><div class="avs" id="avs"></div><button class="btn" id="atBack" type="button">← Назад в портал</button></div></div>
 <div id="sup" role="dialog" aria-label="Поддержать проект"><div class="sbox">
@@ -649,6 +653,27 @@ function byIdM(id){ for(var i=0;i<MAP.nodes.length;i++) if(MAP.nodes[i].id===id)
 /* где кто сейчас: сначала тот, кто держит, потом он сам; собранное хранилище тянет всё своё внутрь (k от 0 до 1) */
 var SHUT={}, TUCK={}, otime=0, /* TUCK - сам ушёл внутрь того, кто держит (долгое нажатие) */ PJ=new THREE.Vector3().fromArray(J0), PW={}, qv=new THREE.Vector3();
 MAP.nodes.forEach(function(m){ if(m.shut) SHUT[m.id]=1; });
+/* своя раскладка на этом устройстве: гость отвёл планеты, собрал нити и нажал "Сохранить" - так и запомнится (только здесь, на сервер не уходит).
+   Если владелец потом сдвинет эту планету в правке, своя раскладка для неё забывается */
+var SHARED=packMap(MAP), MOI='irtysh_moi', moiD=false, moiBox=false;
+function r1(v){ return +(+v).toFixed(1); }
+function moiGet(){ try{ return JSON.parse(localStorage.getItem(MOI)||'null'); }catch(e){ return null; } }
+function moiSave(){ var P={}; MAP.nodes.forEach(function(m){ if(m.t==='s'&&m._d0!=null&&(m.dist!==m._d0||m.ang!==m._a0)) P[m.id]={o:[r1(m._d0),r1(m._a0)],v:[r1(m.dist),+m.ang.toFixed(3)]};
+    else if(m.t==='p'&&m._o0&&m.off.join()!==m._o0.join()) P[m.id]={o:m._o0.map(r1),v:m.off.map(r1)}; });
+  var x={p:P}, old=moiGet(); if(moiBox) x.b={s:Object.keys(SHUT),t:Object.keys(TUCK)}; else if(old&&old.b) x.b=old.b;
+  try{ localStorage.setItem(MOI,JSON.stringify(x)); }catch(e){} moiD=false; moiUI('Запомнено на этом устройстве'); }
+function moiApply(){ var x=moiGet(); if(!x) return; var P=x.p||{};
+  MAP.nodes.forEach(function(m){ var q=P[m.id]; if(!q||!q.o||!q.v) return;
+    if(m.t==='s'&&q.v.length===2&&r1(m.dist)===q.o[0]&&r1(m.ang)===q.o[1]){ m._d0=m.dist; m._a0=m.ang; m.dist=q.v[0]; m.ang=q.v[1]; }
+    else if(m.t==='p'&&q.v.length===3&&m.off.map(r1).join()===q.o.join()){ m._o0=m.off.slice(); m.off=q.v.slice(); } });
+  if(x.b){ SHUT={}; TUCK={}; (x.b.s||[]).forEach(function(id){ if(byIdM(id)) SHUT[id]=1; }); (x.b.t||[]).forEach(function(id){ if(byIdM(id)) TUCK[id]=1; }); moiBox=true; } }
+function toShared(){ MAP=cleanMap(JSON.parse(SHARED)); SHUT={}; TUCK={}; MAP.nodes.forEach(function(m){ if(m.shut) SHUT[m.id]=1; }); moiBox=false; }
+function moiTouch(box){ if(EDW) return; if(box) moiBox=true; moiD=true; moiUI(''); }
+var moiEl=document.getElementById('moi'), moiTm=0;
+function moiUI(t){ var on=!EDW&&(moiD||!!t); document.getElementById('moiS').hidden=!moiD; document.getElementById('moiX').hidden=!moiD; document.getElementById('moiT').textContent=t||''; moiEl.classList.toggle('on',on); clearTimeout(moiTm); if(t&&!moiD) moiTm=setTimeout(function(){ moiEl.classList.remove('on'); },2500); }
+document.getElementById('moiS').onclick=function(){ moiSave(); };
+document.getElementById('moiX').onclick=function(){ toShared(); moiApply(); moiD=false; rebuild(); moiUI('Вернул, как было сохранено'); };
+moiApply();
 function placeN(n,dt,d){ if(PW[n.id]) return n.g.position; var m=n.m, par=m.from?byId[m.from]:null; d=d||0; var base=par&&d<40?placeN(par,dt,d+1):PJ;
   var tgt=TUCK[n.id]?1:0; for(var x=par,i=0; x&&i<40&&!tgt; x=x.m.from?byId[x.m.from]:null,i++) if(SHUT[x.id]||TUCK[x.id]){ tgt=1; break; }
   var wt=n.wait||0; for(var y=par,j=0; y&&j<40; y=y.m.from?byId[y.m.from]:null,j++) if(y.wait>wt) wt=y.wait; /* по очереди: ждёт своей очереди (и всё, что у него внутри) */
@@ -779,10 +804,10 @@ var hl=null; /* что сейчас подсвечено кольцом */
 function toggleBox(n){ var ks=kidsOf(n.id), open=!allIn(n);
   if(open) SHUT[n.id]=1; else { delete SHUT[n.id]; ks.forEach(function(m){ delete TUCK[m.id]; }); }
   (open?ks.slice().reverse():ks).forEach(function(m,i){ m.wait=tm+i*.17; }); /* нити уходят внутрь и выходят по очереди */
-  n.bst=1; rip.n=n; rip.t=0; speak(n.n+(open?'. Собрано.':'. Выпущено.')); return open; }
+  n.bst=1; rip.n=n; rip.t=0; speak(n.n+(open?'. Собрано.':'. Выпущено.')); moiTouch(true); return open; }
 /* выборочно: одну нить из списка справа - внутрь или наружу */
 function toggleKid(p,k){ if(SHUT[p.id]){ delete SHUT[p.id]; kidsOf(p.id).forEach(function(m){ if(m!==k) TUCK[m.id]=1; }); delete TUCK[k.id]; } else if(TUCK[k.id]) delete TUCK[k.id]; else TUCK[k.id]=1;
-  k.wait=0; p.bst=1; rip.n=p; rip.t=0; speak(k.n+(inBox(p,k)?'. Внутри.':'. Снаружи.')); try{ navigator.vibrate&&navigator.vibrate(12); }catch(e){} if(sel===p) selCap(p); else if(cur===p&&st==='node') showCap(p); sideKey=''; }
+  k.wait=0; moiTouch(true); p.bst=1; rip.n=p; rip.t=0; speak(k.n+(inBox(p,k)?'. Внутри.':'. Снаружи.')); try{ navigator.vibrate&&navigator.vibrate(12); }catch(e){} if(sel===p) selCap(p); else if(cur===p&&st==='node') showCap(p); sideKey=''; }
 var sideEl=document.getElementById('side'), sideN=null, sideKey='';
 function sideUI(n){ var ks=n?kidsOf(n.id):[], key=n?n.id+':'+ks.map(function(m){ return m.id+(inBox(n,m)?1:0); }).join(','):''; if(key===sideKey) return; sideKey=key;
   if(!n){ sideEl.classList.remove('on'); sideN=null; return; } var re=sideN!==n||sideEl.children.length!==ks.length+1; sideN=n;
@@ -898,7 +923,7 @@ var ty=null, tx=null, moved=0, yaw=0, t0=0;
 var lpT=0, PT={}, pinD=0, pinA=0, pinM=null, OVR_MAX=mob?330:260; /* два пальца: щипок - ближе и дальше; сверху ещё поворот и сдвиг карты */
 function pin2(){ var k=Object.keys(PT); if(k.length<2) return null; var a=PT[k[0]], b=PT[k[1]]; return {d:Math.hypot(a.x-b.x,a.y-b.y),a:Math.atan2(b.y-a.y,b.x-a.x),x:(a.x+b.x)/2,y:(a.y+b.y)/2}; }
 function pinReset(){ var q=pin2(); pinD=q?q.d:0; pinA=q?q.a:0; pinM=q; }
-function ptUp(e){ clearTimeout(lpT); if(!PT[e.pointerId]) return; if(lpN){ var g0=lpN; lpN=null; gather(g0); } if(kdrag){ kdrag=null; if(moved>=8&&EDW){ kDirty(); kForm(); } } delete PT[e.pointerId]; pinReset(); var k=Object.keys(PT); /* убрали один палец - второй продолжает с места, без рывка */ if(k.length===1){ ty=PT[k[0]].y; tx=PT[k[0]].x; } else ty=null; }
+function ptUp(e){ clearTimeout(lpT); if(!PT[e.pointerId]) return; if(lpN){ var g0=lpN; lpN=null; gather(g0); } if(kdrag){ kdrag=null; if(moved>=8&&EDW){ kDirty(); kForm(); } else if(moved>=8) moiTouch(); } delete PT[e.pointerId]; pinReset(); var k=Object.keys(PT); /* убрали один палец - второй продолжает с места, без рывка */ if(k.length===1){ ty=PT[k[0]].y; tx=PT[k[0]].x; } else ty=null; }
 addEventListener('pointerup',ptUp); addEventListener('pointercancel',ptUp);
 /* палец, поставленный на сноску, тоже двигает карту (раньше сноска "съедала" касание, и карта не реагировала) */
 addEventListener('pointerdown',function(e){ if(e.target!==cv&&!(e.target.closest&&e.target.closest('.co'))) return; PT[e.pointerId]={x:e.clientX,y:e.clientY}; pinReset(); ty=e.clientY; tx=e.clientX; if(Object.keys(PT).length===1){ moved=0; t0=Date.now(); } else { kdrag=null; lpN=null; }
@@ -934,7 +959,7 @@ function nodeAt(x,y,lb){ var n=null;
   return n; }
 function gather(n){ hl=n;
   if(kidsOf(n.id).length) toggleBox(n);
-  else if(n.m.from){ TUCK[n.id]=1; if(sel===n) unsel(); speak(n.n+'. Ушла внутрь.'); n=byId[n.m.from]; hl=n; n.bst=1; rip.n=n; rip.t=0; }
+  else if(n.m.from){ TUCK[n.id]=1; moiTouch(true); if(sel===n) unsel(); speak(n.n+'. Ушла внутрь.'); n=byId[n.m.from]; hl=n; n.bst=1; rip.n=n; rip.t=0; }
   else return;
   moved=99; try{ navigator.vibrate&&navigator.vibrate(25); }catch(e){} if(sel===n) selCap(n); else if(cur===n&&st==='node') showCap(n); }
 addEventListener('keydown',function(e){ if(e.target.closest&&e.target.closest('input,textarea,select')) return; if(EDW){ if(e.key==='Escape'){ edM.classList.remove('on'); pgM.classList.remove('on'); } return; } if(e.key==='ArrowDown'||e.key===' ') scrollBy(300); if(e.key==='ArrowUp') scrollBy(-300); if(e.key==='Escape') goBack(); if(e.key==='Enter'&&cur) tapNode(cur.id); });
@@ -1102,10 +1127,12 @@ var setM=document.getElementById('setM'), setP=document.getElementById('setP');
 function setPanel(){ var b=function(v,t){ return '<button class="btn'+(GQ===v?' pri':'')+'" type="button" data-q="'+v+'">'+t+'</button>'; };
   setP.innerHTML='<h3>Настройки <button class="x" type="button" data-x>✕</button></h3>'+
     '<div class="ed-h">Приложение</div>'+(APP?'<p>Портал уже установлен.</p>':'<p>Поставить Иртыш-портал на телефон, как приложение.</p><div class="bar" style="justify-content:flex-start"><button class="btn pri" type="button" id="setInst">📲 Установить</button></div>')+
+    (moiGet()?'<div class="ed-h">Моя раскладка</div><p>Как вы расставили и собрали карту, запомнено на этом устройстве. Другие видят свою.</p><div class="bar" style="justify-content:flex-start"><button class="btn" type="button" id="setMoi">↺ Вернуть карту как у всех</button></div>':'')+
     '<div class="ed-h">Карта портала</div><p>Добавить и настроить планеты, спутники и нити (по PIN).</p><div class="bar" style="justify-content:flex-start"><button class="btn" type="button" id="setEd">✎ Править карту</button></div>'+
     '<div class="ed-h">Графика</div><p>"Красиво" - полный эффект для сильных телефонов, "Просто" - легче для слабых, "Авто" - портал выберет сам.</p><div class="bar" style="justify-content:flex-start">'+b('auto','Авто')+b('hi','Красиво')+b('lo','Просто')+'</div>';
   setM.classList.add('on');
   var si=document.getElementById('setInst'); if(si) si.onclick=function(){ setM.classList.remove('on'); instB.onclick(); };
+  var smo=document.getElementById('setMoi'); if(smo) smo.onclick=function(){ try{ localStorage.removeItem(MOI); }catch(e){} toShared(); moiD=false; rebuild(); moiUI('Карта как у всех'); setPanel(); };
   document.getElementById('setEd').onclick=function(){ setM.classList.remove('on'); startEdit(); };
   [].forEach.call(setP.querySelectorAll('[data-q]'),function(el){ el.onclick=function(){ GQ=el.getAttribute('data-q'); try{ localStorage.setItem('irtysh_gq',GQ); }catch(e){} if(GQ!=='auto') LOW=0; applyQ(); setPanel(); }; }); }
 [instM,edM,setM].forEach(function(M){ /* M здесь - окно */ M.addEventListener('click',function(e){ if(e.target===M||(e.target.closest&&e.target.closest('[data-x]'))) M.classList.remove('on'); }); });
@@ -1141,10 +1168,10 @@ function kSize(){ $k('kdSz').textContent=(packMap(MAP).length/1024).toFixed(1)+'
 function kDirty(){ kDirty0=true; try{ localStorage.setItem(KDR,packMap(MAP)); }catch(e){} kSize(); kMsg('Есть несохранённые правки.'); }
 function startEdit(){ if(!canEdit()){ edLogin(); return; } wantEdit=false;
   if(st==='gate'){ wantEdit=true; fall(); return; } if(st==='atm'||st==='falling'||fly){ wantEdit=true; return; } if(st!=='top'){ wantEdit=true; topOn(); return; } openEdit(); }
-function openEdit(){ if(EDW) return; EDW=true; MAP0=packMap(MAP); kDirty0=false; document.body.classList.add('kedit'); kd.hidden=false; kd.classList.remove('min'); hideCap(); sel=null; turnUI(true); rebuild(); kPick(null); kSize(); kMsg('');
+function openEdit(){ if(EDW) return; toShared(); moiD=false; EDW=true; moiUI(''); MAP0=packMap(MAP); kDirty0=false; document.body.classList.add('kedit'); kd.hidden=false; kd.classList.remove('min'); hideCap(); sel=null; turnUI(true); rebuild(); kPick(null); kSize(); kMsg('');
   if(st==='top'){ if(innerWidth<760) camL.z+=60; else camL.x+=190*2*Math.tan(C.fov*Math.PI/360)*camP.y/innerHeight; topCam(); } /* панель закрывает низ (телефон) или правый край (компьютер): карту сдвигаем в открытую часть экрана */
   var dr=null; try{ dr=localStorage.getItem(KDR); }catch(e){} if(dr&&dr!==MAP0){ kMsg(''); kHint('С прошлого раза осталась несохранённая правка. <button class="btn" type="button" id="kRest">Вернуть её</button>'); $k('kRest').onclick=function(){ var x=null; try{ x=cleanMap(JSON.parse(dr)); }catch(e){} if(x) kLoad(x); }; } }
-function closeEdit(revert){ if(revert){ try{ kLoad(cleanMap(JSON.parse(MAP0)),true); localStorage.removeItem(KDR); }catch(e){} } EDW=false; kMode=null; kPend=null; kdrag=null; document.body.classList.remove('kedit'); kd.hidden=true; kSel=kThr=null; sel=null; rebuild(); topUI(); }
+function closeEdit(revert){ if(revert){ try{ kLoad(cleanMap(JSON.parse(MAP0)),true); localStorage.removeItem(KDR); }catch(e){} } EDW=false; toShared(); moiApply(); kMode=null; kPend=null; kdrag=null; document.body.classList.remove('kedit'); kd.hidden=true; kSel=kThr=null; sel=null; rebuild(); topUI(); }
 function kLoad(x,quiet){ MAP=x; SHUT={}; MAP.nodes.forEach(function(m){ if(m.shut) SHUT[m.id]=1; }); rebuild(); placeAll(-1); kPick(null); if(!quiet) kDirty(); }
 function kPick(n){ kSel=n?n.id:null; kThr=null; sel=n||null; kForm(); }
 function kNode(){ return kSel?byIdM(kSel):null; }
@@ -1161,7 +1188,7 @@ function pickThread(x,y){ var best=null, bd=mob?18:11, pr=function(cv,o){ for(va
 var kRay=new THREE.Raycaster(), kPl=new THREE.Plane(), kHit=new THREE.Vector3(), kV2=new THREE.Vector2(), kDir=new THREE.Vector3();
 function kMove(n,x,y){ var m=n.m, base=m.from&&byId[m.from]?byId[m.from].g.position:PJ; kV2.set(x/innerWidth*2-1,-(y/innerHeight)*2+1); kRay.setFromCamera(kV2,C);
   if(st==='top') kDir.set(0,1,0); else C.getWorldDirection(kDir); kPl.setFromNormalAndCoplanarPoint(kDir,n.g.position); if(!kRay.ray.intersectPlane(kPl,kHit)) return; kHit.sub(base);
-  if(m.t==='s'){ var z0=kHit.z*Math.cos(m.tilt)-kHit.y*Math.sin(m.tilt), d=Math.hypot(kHit.x,z0); if(!EDW){ if(m._d0==null) m._d0=m.dist; d=Math.max(m._d0*.5,Math.min(Math.max(m._d0*4,m._d0+25),d)); } /* гость: спутник можно отвести далеко (до 4 своих расстояний) */
+  if(m.t==='s'){ var z0=kHit.z*Math.cos(m.tilt)-kHit.y*Math.sin(m.tilt), d=Math.hypot(kHit.x,z0); if(!EDW){ if(m._d0==null){ m._d0=m.dist; m._a0=m.ang; } d=Math.max(m._d0*.5,Math.min(Math.max(m._d0*4,m._d0+25),d)); } /* гость: спутник можно отвести далеко (до 4 своих расстояний) */
     m.dist=Math.max(1.5,Math.min(80,d)); m.ang=Math.atan2(z0,kHit.x)-otime*m.spd; }
   else { if(!EDW){ if(!m._o0) m._o0=m.off.slice(); var L0=Math.hypot(m._o0[0],m._o0[2]), dl=Math.hypot(kHit.x,kHit.z), R=Math.max(60,L0*3), r0=Math.min(6,L0); if(dl>R){ kHit.x*=R/dl; kHit.z*=R/dl; } else if(dl<r0&&dl>0){ kHit.x*=r0/dl; kHit.z*=r0/dl; } kHit.y=m._o0[1]; } /* гость: планету можно увести вокруг того, кто её держит, нить тянется до 3 раз длиннее */
     m.off=[+kHit.x.toFixed(1),+kHit.y.toFixed(1),+kHit.z.toFixed(1)]; } }
@@ -1254,13 +1281,13 @@ $k('kSch').onclick=function(){ edP.innerHTML='<h3>Схема карты <button 
   $k('jC').onclick=function(){ var t=$k('jT'); if(navigator.clipboard) navigator.clipboard.writeText(t.value).then(function(){ edMsg('Скопировано.'); },function(){ t.select(); edMsg('Выделено, скопируйте вручную.'); }); else { t.select(); edMsg('Выделено, скопируйте вручную.'); } };
   $k('jL').onclick=function(){ var x=null; try{ x=cleanMap(JSON.parse($k('jT').value)); }catch(e){} if(!x){ edMsg('Текст не похож на схему карты.'); return; } edM.classList.remove('on'); kLoad(x); }; };
 $k('kSave').onclick=function(){ var b=this, txt=packMap(MAP);
-  if(PROBA){ CFG=JSON.parse(txt); try{ localStorage.setItem('irtysh_cfg',txt); localStorage.removeItem(KDR); }catch(e){} MAP0=txt; kDirty0=false; kMsg('Это проба: карта сохранена только в этом браузере. На сайте кнопка сохранит её для всех.'); return; }
+  if(PROBA){ SHARED=txt; CFG=JSON.parse(txt); try{ localStorage.setItem('irtysh_cfg',txt); localStorage.removeItem(KDR); }catch(e){} MAP0=txt; kDirty0=false; kMsg('Это проба: карта сохранена только в этом браузере. На сайте кнопка сохранит её для всех.'); return; }
   b.disabled=true; b.textContent='Сохраняю…'; kMsg('');
   api({op:'hput',hub:'spectr',key:'portal',item:{id:CFG&&CFG._id||'',text:txt}}).then(function(j){
     var a=j.data&&j.data.portal, it=Array.isArray(a)&&a.length?a[a.length-1]:null; b.disabled=false; b.textContent='Сохранить для всех';
     if(j.data&&!it){ kMsg('Сервер не сохранил карту: нужна правка сервера (разрешить запись "portal" у Спектра).'); return; }
     if(it&&typeof it.text==='string'&&it.text!==txt){ kMsg('Сервер сохранил карту не полностью ('+it.text.length+' из '+txt.length+' знаков): нужна правка сервера - увеличить размер записи "portal". Правка осталась в этом браузере.'); return; }
-    CFG=JSON.parse(txt); CFG._id=it?it.id:'' ; try{ localStorage.setItem('irtysh_cfg',JSON.stringify(CFG)); localStorage.removeItem(KDR); }catch(e){} MAP0=txt; kDirty0=false; kMsg('Сохранено. Гости увидят новую карту.'); })
+    SHARED=txt; CFG=JSON.parse(txt); CFG._id=it?it.id:'' ; try{ localStorage.setItem('irtysh_cfg',JSON.stringify(CFG)); localStorage.removeItem(KDR); }catch(e){} MAP0=txt; kDirty0=false; kMsg('Сохранено. Гости увидят новую карту.'); })
   .catch(function(e){ b.disabled=false; b.textContent='Сохранить для всех'; kMsg(e.message+' Правка не пропадёт: она лежит в этом браузере.'); }); };
 /* своя страница планеты (html) - в окне поверх портала, отдельно от сайта (sandbox) */
 var pgM=document.getElementById('pgM');
