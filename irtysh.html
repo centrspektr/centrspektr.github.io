@@ -54,7 +54,8 @@ body{background:var(--bg);color:var(--fg);font-family:var(--body);overflow:hidde
 #back.on{opacity:1;pointer-events:auto}
 #topB{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));left:calc(max(16px,env(safe-area-inset-left,0px)) + 54px);z-index:6;height:36px;padding:0 12px 0 8px;border-radius:99px;border:1px solid var(--line);background:var(--glass);color:var(--fg);font:700 12px var(--body);display:flex;align-items:center;gap:6px;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .4s}
 #topB svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
-#topB.on{opacity:1;pointer-events:auto} #topB[aria-pressed=true]{border-color:rgba(167,139,250,.8);box-shadow:0 0 16px rgba(167,139,250,.5)}
+#topB.on{opacity:1;pointer-events:auto} #topB[aria-pressed=true]{border-color:rgba(167,139,250,.95);color:#fff;background:rgba(80,50,160,.55);animation:t3d 2.4s ease-in-out infinite}
+@keyframes t3d{50%{box-shadow:0 0 22px rgba(167,139,250,.85),0 0 6px rgba(124,243,255,.6)}0%,100%{box-shadow:0 0 10px rgba(167,139,250,.45)}} /* сверху кнопка горит: "Включить 3D" */
 .turn{position:fixed;top:50%;transform:translateY(-50%);z-index:5;width:40px;height:56px;border-radius:14px;border:1px solid var(--line);background:var(--glass);color:var(--fg);font:700 26px var(--body);cursor:pointer;opacity:0;pointer-events:none;transition:opacity .4s}
 #tL{left:max(10px,env(safe-area-inset-left,0px))} #tR{right:max(10px,env(safe-area-inset-right,0px))} .turn.on{opacity:.75;pointer-events:auto}
 /* перелёты только кнопками: внизу "‹ предыдущая" и "следующая ›", палец только крутит камеру */
@@ -593,7 +594,7 @@ function lookQ(p,l){ CQ2.position.copy(p); CQ2.lookAt(l); CQ2.rotateZ(roll*.6); 
 function fpvFly(toP,toL,curve,rev,done){ var a=camP.clone(), b=toP.clone(), ab=b.clone().sub(a), D=ab.length(), q0=C.quaternion.clone(), q1=lookQ(b,toL),
     f0=new THREE.Vector3(0,0,-1).applyQuaternion(q0), f1=new THREE.Vector3(0,0,-1).applyQuaternion(q1), k=Math.max(5,D*.4), p1=a.clone().addScaledVector(f0,k), p2=b.clone().addScaledVector(f1,-k);
   if(curve){ /* вдоль нити: дуга тянется к её середине */ p1.lerp(curve.getPoint(rev?2/3:1/3).addScaledVector(UP,2.2),.5); p2.lerp(curve.getPoint(rev?1/3:2/3).addScaledVector(UP,2.2),.5); }
-  if(!red){ var sd=new THREE.Vector3().crossVectors(ab,UP); if(sd.lengthSq()<1e-6) sd.set(1,0,0); sd.normalize(); var uv=new THREE.Vector3().crossVectors(sd,ab).normalize(), an=Math.random()*6.2832, m=D*(.12+Math.random()*.2);
+  if(!red){ var sd=new THREE.Vector3().crossVectors(ab,UP); if(sd.lengthSq()<1e-6) sd.set(1,0,0); sd.normalize(); var uv=new THREE.Vector3().crossVectors(sd,ab).normalize(), tb=f0.angleTo(ab.clone().normalize())/Math.PI, an=Math.random()<.5?(Math.random()<.5?1:-1)*(1.5708+(Math.random()-.5)*.9):Math.random()*6.2832, m=D*(.14+Math.random()*.2)*(1+tb*.8); /* цель позади - петля шире; в половине случаев петля вертикальная (вверх или вниз), иначе под любым углом */
     var off=sd.multiplyScalar(Math.cos(an)*m).addScaledVector(uv,Math.sin(an)*m); p1.add(off); p2.addScaledVector(off,.6); }
   var rk=0, rl=0; if(!red&&D>30){ var r=Math.random(); if(r<.35){ rk=1; rl=(r<.17?-1:1)*(.35+Math.random()*.3); } else if(r<.6){ rk=2; rl=(r<.48?-1:1)*6.2832; } }
   fly={fpv:true,a:a,b:b,p1:p1,p2:p2,al:camL.clone(),bl:toL.clone(),q0:q0,q1:q1,up:new THREE.Vector3(0,1,0).applyQuaternion(q0),rk:rk,rl:rl,Q:q0.clone(),t:0,
@@ -646,25 +647,26 @@ function goClose(n){ hideCap(); st='fly'; var B=closeView(n); startFly(B.p,B.l,n
 /* нажатие на узел: первое - летим к нему, у Спектра второе - ближе, последнее - провал внутрь */
 /* первое нажатие - выбор: планета подсвечивается и оживает, второе - летим; у планеты, где мы, нажатие - вход */
 var sel=null;
-function selCap(n){ document.getElementById('capT').textContent=n.kind==='idea'?n.cap:n.n; cap.style.setProperty('--pc',n.c); document.getElementById('capP').innerHTML='Нажми ещё раз - <b class="go">полетели</b>'; cap.classList.remove('hi'); cap.classList.add('on'); }
+function selCap(n){ document.getElementById('capT').textContent=n.kind==='idea'?n.cap:n.n; cap.style.setProperty('--pc',n.c); document.getElementById('capP').innerHTML='Нажми ещё раз - <b class="go">'+(canEnter(n)?(n.kind==='support'?'открыть':'войти'):'полетели')+'</b>'; cap.classList.remove('hi'); cap.classList.add('on'); }
+function canEnter(n){ return !(n.kind==='idea'||n.kind==='hub'||n.kind==='set'||soon(n)); } /* куда можно провалиться сразу со второго нажатия */
 function unsel(){ if(!sel) return; sel=null; if(cur&&st==='node') showCap(cur); else hideCap(); }
 function tapNode(id){ if(st==='gate'||st==='falling'||st==='atm'||fly) return; var n=byId[id];
   if(st==='node'&&cur===n){ sel=null; enter(n); return; }
   if(sel!==n){ sel=n; n.bst=1; selCap(n); speak(n.kind==='idea'?n.cap:(n.say||n.n)); return; }
-  sel=null;
-  if(st==='top'){ meSw.visible=meGlow.visible=false; var sv=topSave; topSave=null; st=sv.st; if(cur===n&&st==='node'){ var B=canon(n); st='fly'; startFly(B.p,B.l,null,2.2,function(){ settle(n); }); return; } goTo(n); return; }
-  goTo(n); }
-function goTo(n,isBack){ if(n.kind==='set') setTimeout(setPanel,250); /* Настройки: окно сразу, камера летит и разворачивается уже за ним */ hideCap(); turnUI(true); topB.classList.remove('on'); if(!isBack) back.push(cur?cur.id:null);
+  sel=null; var dive=canEnter(n);
+  if(st==='top'){ meSw.visible=meGlow.visible=false; var sv=topSave; topSave=null; st=sv.st; if(cur===n&&st==='node'){ var B=canon(n); st='fly'; startFly(B.p,B.l,null,2.2,function(){ if(dive){ st='node'; enter(n); } else settle(n); }); return; } goTo(n,false,dive); return; }
+  goTo(n,false,dive); }
+function goTo(n,isBack,dive){ if(n.kind==='set') setTimeout(setPanel,250); /* Настройки: окно сразу, камера летит и разворачивается уже за ним */ hideCap(); turnUI(true); topB.classList.remove('on'); if(!isBack) back.push(cur?cur.id:null);
   sel=null; var curve=null, rev=false;
   if(cur&&n.from===cur.id||!cur&&n.from==='me') curve=n.curve; else if(cur&&cur.from===n.id){ curve=cur.curve; rev=true; }
   /* летим сразу к нужному виду - без облёта после прилёта (раньше камера подлетала, а потом отъезжала) */
-  st='fly'; fpvFly(canon(n).p,canon(n).l,curve,rev,function(){ cur=n; acc=0; n.close=false; settle(n); }); }
+  st='fly'; fpvFly(canon(n).p,canon(n).l,curve,rev,function(){ cur=n; acc=0; n.close=false; if(dive){ st='node'; topUI(); enter(n); } else settle(n); }); } /* второе нажатие: долетели - и сразу проваливаемся, без остановки */
 /* шаг назад: нить тянет к предыдущему узлу; у Спектра вблизи - сперва отъезд; из обзора - выход из портала */
 function goBack(){ if(fly||st==='atm') return; sel=null; if(st==='top'){ topOff(); return; } if(st==='over'){ exitPortal(); return; }
   if(cur&&cur.close){ hideCap(); st='fly'; var B0=canon(cur), n0=cur; startFly(B0.p,B0.l,null,red?.5:1.6,function(){ n0.close=false; settle(n0); }); return; }
   hideCap(); turnUI(true); var prev=back.pop();
   if(prev){ goTo(byId[prev],true); }
-  else { var cv0=cur&&cur.from==='me'?cur.curve:null; st='fly'; startFly(OVER_P.clone(),OVER_L.clone(),cv0,cv0?3:2.4,function(){ ovA=0; ovE=.067; ovR=90; st='over'; cur=null; acc=0; neuNext=1.2; topUI(); },!!cv0); } }
+  else { var cv0=cur&&cur.from==='me'?cur.curve:null; st='fly'; startFly(OVER_P.clone(),OVER_L.clone(),cv0,cv0?3:2.4,function(){ ovA=0; ovE=.067; ovR=90; st='over'; cur=null; acc=0; neuNext=1.2; topUI(); topOn(); },!!cv0); } }
 backB.onclick=goBack;
 function flashOn(col,cb){ flash.style.setProperty('--fl',col||'rgba(255,255,255,.85)'); flash.style.transition='opacity .25s'; flash.style.opacity=1; setTimeout(cb,260); }
 function flashOff(){ flash.style.transition='opacity 1.1s'; flash.style.opacity=0; }
@@ -693,7 +695,7 @@ var meSw=new THREE.Group(); meSw.position.copy(ME); meSw.rotation.x=-Math.PI/2; 
 meSw.add(new THREE.Points(swirl.geometry,swirl.material)); meSw.add(new THREE.Points(ring.geometry,ring.material));
 var meGlow=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex('#a78bfa'),blending:THREE.AdditiveBlending,depthWrite:false,opacity:.7})); meGlow.scale.set(18,18,1); meGlow.position.copy(ME); meGlow.visible=false; inside.add(meGlow);
 function topUI(){ navUI(); topB.classList.toggle('on',inside.visible&&(st==='over'||st==='node'||st==='top')); topB.setAttribute('aria-pressed',st==='top'?'true':'false');
-  topB.querySelector('span').textContent=st==='top'?'3D':'Сверху'; topB.setAttribute('aria-label',st==='top'?'Вернуться в объём':'Посмотреть сверху'); }
+  topB.querySelector('span').textContent=st==='top'?'Включить 3D':'Сверху'; topB.setAttribute('aria-label',st==='top'?'Вернуться в объём':'Посмотреть сверху'); }
 function topOn(){ if(fly||(st!=='over'&&st!=='node')) return; sel=null; topZT=TOP_P.y; topA=topAc=0; topSave={p:camP.clone(),l:camL.clone(),st:st}; hideCap(); turnUI(true); st='fly'; /* портал сверху остаётся таким же, не ложится плашмя */
   startFly(TOP_P.clone(),TOP_L.clone(),null,red?.5:2.4,function(){ st='top'; topUI(); }); topUI(); }
 function topOff(now){ if(!topSave) return; var sv=topSave; topSave=null; if(now){ meSw.visible=meGlow.visible=false; return; } st='fly';
@@ -727,7 +729,7 @@ hint.onclick=function(){ fall(); };
 function fall(){ if(st!=='gate') return; st='falling'; growT0=-1; introV=0; skyK=gateK=starK=1; introSeen=true; gateUI(); hint.style.opacity=0; hint.style.pointerEvents='none'; speak('Добро пожаловать в Иртыш-портал'); hideIntro();
   startFly(new THREE.Vector3(0,0,-34),new THREE.Vector3(0,0,-90),null,red?.5:1.6,function(){
     flashOn(null,function(){ gate.visible=false; inside.visible=true; mixT=1; rollT=.04; camP.set(0,46,320); camL.copy(OVER_L);
-      startFly(OVER_P.clone(),OVER_L.clone(),null,red?.5:3.6,function(){ ovA=0; ovE=.067; ovR=90; st='over'; cur=null; acc=0; backB.classList.add('on'); neuNext=.4; topUI(); }); flashOff(); }); }); }
+      startFly(OVER_P.clone(),OVER_L.clone(),null,red?.5:3.6,function(){ ovA=0; ovE=.067; ovR=90; st='over'; cur=null; acc=0; backB.classList.add('on'); neuNext=.4; topUI(); topOn(); }); flashOff(); /* после входа камера уходит наверх: карта по умолчанию сверху */ }); }); }
 function exitPortal(){ if(fly) return; hideCap(); turnUI(true); topOff(true); topB.classList.remove('on'); if(cur) cur.close=false; backB.classList.remove('on'); back=[]; cur=null; st='falling';
   var away=camP.clone().sub(PF).setY(0).normalize(); if(!isFinite(away.x)) away.set(0,0,-1);
   startFly(PF.clone().addScaledVector(away,2),PF.clone().addScaledVector(away,-60),null,red?.5:2.4,function(){
