@@ -242,6 +242,7 @@ window.IRTYSH_BOOT=function(CFG){ CFG=CFG||{};
    Планета без ссылки (url) и без своей страницы (html) - хранилище: нажатие собирает внутрь всё, что она держит, повторное - выпускает. Если она ничего не держит - это пустая планета-идея.
    links - пунктир "связан" (кто чем пользуется), ничего не держит. on:false - не горит (тёмная, "скоро"). shut - собрана при входе. bend - изгиб нити ---- */
 var IMG=window.IMG||{}, A0='https://centrspektr.github.io/';
+var SITE=/^(centrspektr\.github\.io|(centrspektr|glebbelov85)\.gitverse\.site)$/.test(location.hostname); /* настоящий сайт (GitHub или копия на GitVerse), а не превью */
 /* выключенные планеты гости видят тёмными с подписью "скоро"; false - гости их не видят совсем (видно только в правке) */
 var OFF_SHOW=true;
 var J0=[0,-3,0]; /* узел у Портала, откуда тянутся нити */
@@ -850,7 +851,7 @@ function enter(n){ if(n.kind==='set'){ setPanel(); return; } if(n.kind==='hub'){
       warp.style.setProperty('--wc',n.c); document.getElementById('warpT').textContent=n.n; warp.classList.add('on'); flashOff();
       setTimeout(function(){
         if(!n.u&&n.html){ pageShow(n,function(){ warp.classList.remove('on','ask'); camP.copy(back0.p); camL.copy(back0.l); settle(n); }); return; } /* своя страница планеты - в окне поверх портала */
-        if(window.OPEN_SAME&&location.hostname==='centrspektr.github.io'&&(n.u.indexOf('https://centrspektr.github.io/')===0||!/^https:/.test(n.u))){ /* на самом сайте - в этом окне; в превью переход внутри окна запрещён (был белый экран) - открываем новую вкладку */
+        if(window.OPEN_SAME&&SITE&&(n.u.indexOf(A0)===0||n.u.indexOf(location.origin+'/')===0||!/^https:/.test(n.u))){ /* на самом сайте - в этом окне; в превью переход внутри окна запрещён (был белый экран) - открываем новую вкладку */
           /* запоминаем планету: по кнопке "назад" (или крестику в приложении) вернёмся к ней, а не в начало */
           try{ sessionStorage.setItem('irtysh_ret',n.id); }catch(e){} window.__ret=function(){ warp.classList.remove('on','ask'); camP.copy(back0.p); camL.copy(back0.l); cqSnap=true; settle(n); }; location.href=n.u; return; } /* свои дашборды - в этом окне, соцсети и галерея - в новом */
         /* сам браузер не даёт открыть новую вкладку без нажатия - показываем кнопку "Открыть" */
@@ -1069,7 +1070,7 @@ function visShow(){ visB.classList.add('on'); var n=VIS_N; if(n==null){ visBN.te
 /* счётчик посещений: общий для сайтов СПЕКТРа, как на портале */
 (function(page){ try{ var el=document.getElementById('visN'), k='irtysh_hit_'+page, ss=sessionStorage, ls=localStorage, f=function(n){ el.textContent=(+n).toLocaleString('ru-RU'); VIS_N=+n||null; };
   if(ss.getItem(k)){ f(ss.getItem(k)); return; } var d=new Date().toDateString(), fresh=!ls.getItem('irtysh_new_'+page), today=ls.getItem('irtysh_day_'+page)!==d;
-  if(page==='proba-off'){ if(location.hostname!=='centrspektr.github.io') VIS_N=1234; return; } /* в превью счётчик не считает - показываем образец числа, чтобы был виден эффект */ fetch(API,{method:'POST',body:JSON.stringify({op:'hit',page:page,fresh:fresh,today:today})}).then(function(r){return r.json();}).then(function(j){ if(!j.ok) return;
+  if(page==='proba-off'){ if(!SITE) VIS_N=1234; return; } /* в превью счётчик не считает - показываем образец числа, чтобы был виден эффект */ fetch(API,{method:'POST',body:JSON.stringify({op:'hit',page:page,fresh:fresh,today:today})}).then(function(r){return r.json();}).then(function(j){ if(!j.ok) return;
     ls.setItem('irtysh_new_'+page,'1'); ls.setItem('irtysh_day_'+page,d); ss.setItem(k,String(j.total||'')); f(j.total); }).catch(function(){}); }catch(e){} })('portal');
 
 /* ---- кометы в три слоя: вдали - тонкие быстрые чёрточки; медленная звезда, что сгорает (сначала гаснет голова, потом хвост);
@@ -1144,7 +1145,7 @@ function gateUI(){ var g=st==='gate'; if(g) document.getElementById('zm').classL
    PIN нигде не сохраняется: после входа в браузере остаётся только временный пропуск (token) до закрытия вкладки ---- */
 var SESS=null; try{ SESS=JSON.parse(sessionStorage.getItem('spectr_sess')||'null'); }catch(e){}
 var EDIT_ON=false; try{ EDIT_ON=localStorage.getItem('spectr_editor')==='1'; }catch(e){} if(/pravka/.test(location.hash)) EDIT_ON=true;
-var PROBA=location.hostname!=='centrspektr.github.io'; /* проба (превью): правка без PIN, сохраняется только в этом браузере */
+var PROBA=!SITE; /* проба (превью): правка без PIN, сохраняется только в этом браузере */
 if(PROBA) EDIT_ON=true;
 function canEdit(){ return PROBA||!!(SESS&&SESS.user&&(SESS.user.role==='admin'||(SESS.user.clubs||[]).indexOf('hub:spectr')>=0)); }
 function api(q){ return fetch(API,{method:'POST',body:JSON.stringify(Object.assign({},q,q.op==='login'?{}:{token:SESS&&SESS.token}))}).catch(function(){ throw new Error('Нет связи с сервером. Проверьте статус Яндекс Облака.'); })
