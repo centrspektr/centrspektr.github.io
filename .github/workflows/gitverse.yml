@@ -1,0 +1,26 @@
+# Копия портала в GitVerse: после каждой правки в main отправляем main
+# в репозиторий GitVerse, там GitVerse сам пересобирает сайт.
+# По совету штаба (вариант А) портал живёт в личном аккаунте:
+#   репозиторий glebbelov85/glebbelov85 -> https://glebbelov85.gitverse.site/
+# Settings -> Secrets and variables -> Actions:
+#   секрет     GITVERSE_TOKEN - токен GitVerse с правом записи в репозиторий
+#   переменная GITVERSE_USER  - логин на GitVerse (glebbelov85)
+#   переменная GITVERSE_REPO  - владелец/репозиторий (по умолчанию glebbelov85/glebbelov85)
+name: Копия в GitVerse
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Отправить main в GitVerse
+        env:
+          GV_USER: ${{ vars.GITVERSE_USER || secrets.GITVERSE_USER || 'glebbelov85' }}
+          GV_TOKEN: ${{ secrets.GITVERSE_TOKEN }}
+          GV_REPO: ${{ vars.GITVERSE_REPO || 'glebbelov85/glebbelov85' }}
+        run: git push --force "https://${GV_USER}:${GV_TOKEN}@gitverse.ru/${GV_REPO}.git" HEAD:refs/heads/main
