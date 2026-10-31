@@ -242,8 +242,8 @@ window.IRTYSH_BOOT=function(CFG){ CFG=CFG||{};
    Планета без ссылки (url) и без своей страницы (html) - хранилище: нажатие собирает внутрь всё, что она держит, повторное - выпускает. Если она ничего не держит - это пустая планета-идея.
    links - пунктир "связан" (кто чем пользуется), ничего не держит. on:false - не горит (тёмная, "скоро"). shut - собрана при входе. bend - изгиб нити ---- */
 var IMG=window.IMG||{}, A0='https://centrspektr.github.io/', A_GV='https://centrspektr.gitverse.site/';
-/* куда переехали планеты: старый адрес github.io -> новый на GitVerse. Взлёт и Гитару и ИИ добавим, когда их адреса проверят */
-var MOVED={'spektr/':A_GV+'spektr/','agroklass/':A_GV+'agroklass/'};
+/* куда переехали планеты: старый адрес github.io -> новый на GitVerse */
+var MOVED={'spektr/':A_GV+'spektr/','agroklass/':A_GV+'agroklass/','vzlet/':A_GV+'vzlet/','studio/':A_GV+'studio/','kurs-fpv/':A_GV+'kurs-fpv/'};
 function moved(u){ return u&&u.indexOf(A0)===0&&MOVED[u.slice(A0.length)]||u; } /* и для карты, сохранённой на сервере со старыми адресами */
 var SITE=/^(centrspektr\.github\.io|(centrspektr|glebbelov85)\.gitverse\.site)$/.test(location.hostname); /* настоящий сайт (GitHub или копия на GitVerse), а не превью */
 /* выключенные планеты гости видят тёмными с подписью "скоро"; false - гости их не видят совсем (видно только в правке) */
@@ -269,8 +269,8 @@ function defMap(){ var N=[
   Sn('max','MAX','social',.3,{c:'#4ade80',dist:9,sz:1.2,say:'Группы в МАКС'}), Sn('ok','ОК','social',2.4,{c:'#f7931e',dist:9,sz:1.05,say:'Одноклассники'}), Sn('vk','ВК','social',4.5,{c:'#2787f5',dist:9,sz:1.05,say:'ВКонтакте'}),
   /* Кружки - хранилище, все кружки в нём - спутники (у кого есть свой сайт - ведут на него, остальные - в свои группы MAX) */
   Pn('kruzhki','Кружки','spektr',[-16,8,-146],{c:'#f472b6',sz:2.1}),
-  Sn('vzlet','Взлёт','kruzhki',0,{url:'https://centrspektr.github.io/vzlet/',c:'#7cf3ff',dist:10,sz:1.15,say:'Клуб Взлёт'}),
-  Sn('studio','Гитара и ИИ','kruzhki',.785,{url:'https://centrspektr.github.io/studio/',c:'#ff7ce0',dist:10,sz:1.15,say:'Гитара и ИИ-студия'}),
+  Sn('vzlet','Взлёт','kruzhki',0,{url:'https://centrspektr.gitverse.site/vzlet/',c:'#7cf3ff',dist:10,sz:1.15,say:'Клуб Взлёт'}),
+  Sn('studio','Гитара и ИИ','kruzhki',.785,{url:'https://centrspektr.gitverse.site/studio/',c:'#ff7ce0',dist:10,sz:1.15,say:'Гитара и ИИ-студия'}),
   Sn('agro','Агрокласс','kruzhki',1.57,{url:'https://centrspektr.gitverse.site/agroklass/',c:'#9dff7c',dist:10,sz:1.15}),
   Sn('k1','Скульптура и рисование','kruzhki',2.36,{c:'#f97316',dist:10,sz:.85,url:MAXG[3]}), Sn('k2','Лит.ra','kruzhki',3.14,{c:'#8b5cf6',dist:10,sz:.85,url:MAXG[4]}),
   Sn('k3','Околица','kruzhki',3.93,{c:'#dc2626',dist:10,sz:.85,url:MAXG[5]}), Sn('k4','Задоринки','kruzhki',4.71,{c:'#ca8a04',dist:10,sz:.85,url:MAXG[6]}), Sn('k5','Ладушки','kruzhki',5.5,{c:'#16a34a',dist:10,sz:.85,url:MAXG[7]}),
