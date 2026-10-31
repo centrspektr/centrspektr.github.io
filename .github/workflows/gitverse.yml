@@ -1,0 +1,23 @@
+# Копия портала в GitVerse: после каждой правки в main отправляем main
+# в gitverse.ru/centrspektr/centrspektr, там GitVerse сам пересобирает сайт
+# https://centrspektr.gitverse.site/ (Иртыш-портал: .../irtysh.html)
+# Секреты (Settings -> Secrets and variables -> Actions):
+#   GITVERSE_USER  - логин на GitVerse
+#   GITVERSE_TOKEN - токен GitVerse с правом записи в репозитории
+name: Копия в GitVerse
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Отправить main в GitVerse
+        env:
+          GV_USER: ${{ secrets.GITVERSE_USER }}
+          GV_TOKEN: ${{ secrets.GITVERSE_TOKEN }}
+        run: git push --force "https://${GV_USER}:${GV_TOKEN}@gitverse.ru/centrspektr/centrspektr.git" HEAD:refs/heads/main
