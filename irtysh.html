@@ -1302,12 +1302,20 @@ $k('kSch').onclick=function(){ edP.innerHTML='<h3>Схема карты <button 
 $k('kSave').onclick=function(){ var b=this, txt=packMap(MAP);
   if(PROBA){ SHARED=txt; CFG=JSON.parse(txt); try{ localStorage.setItem('irtysh_cfg',txt); localStorage.removeItem(KDR); }catch(e){} MAP0=txt; kDirty0=false; kMsg('Это проба: карта сохранена только в этом браузере. На сайте кнопка сохранит её для всех.'); return; }
   b.disabled=true; b.textContent='Сохраняю…'; kMsg('');
-  api({op:'hput',hub:'spectr',key:'portal',item:{id:CFG&&CFG._id||'',text:txt}}).then(function(j){
-    var a=j.data&&j.data.portal, it=Array.isArray(a)&&a.length?a[a.length-1]:null; b.disabled=false; b.textContent='Сохранить для всех';
-    if(j.data&&!it){ kMsg('Сервер не сохранил карту: нужна правка сервера (разрешить запись "portal" у Спектра).'); return; }
-    if(it&&typeof it.text==='string'&&it.text!==txt){ kMsg('Сервер сохранил карту не полностью ('+it.text.length+' из '+txt.length+' знаков): нужна правка сервера - увеличить размер записи "portal". Правка осталась в этом браузере.'); return; }
-    SHARED=txt; CFG=JSON.parse(txt); CFG._id=it?it.id:'' ; try{ localStorage.setItem('irtysh_cfg',JSON.stringify(CFG)); localStorage.removeItem(KDR); }catch(e){} MAP0=txt; kDirty0=false; kMsg('Сохранено. Гости увидят новую карту.'); })
-  .catch(function(e){ b.disabled=false; b.textContent='Сохранить для всех'; kMsg(e.message+' Правка не пропадёт: она лежит в этом браузере.'); }); };
+  /* частями: сначала все новые части, потом удаляем старые - гости всё время видят целую карту */
+  var CH=1600, st=Date.now().toString(36), parts=[], old=[], data=null; for(var i=0;i<txt.length;i+=CH) parts.push(txt.slice(i,i+CH));
+  var hd=function(i){ return 'K|'+st+'|'+i+'|'+parts.length+'|'; }, fail=function(t){ var e=new Error(t); e.srv=1; throw e; };
+  var put=function(i){ if(i>=parts.length) return Promise.resolve();
+    return api({op:'hput',hub:'spectr',key:'portal',item:{id:'',text:hd(i)+parts[i]}}).then(function(j){ var a=j.data&&j.data.portal; data=j.data;
+      if(!Array.isArray(a)) fail('Сервер не сохранил карту: нужна правка сервера (разрешить запись "portal" у Спектра).');
+      if(!i) a.forEach(function(it){ if(it&&it.id&&String(it.text||'').indexOf('K|'+st+'|')!==0) old.push(it.id); });
+      if(!a.some(function(it){ return it&&it.text===hd(i)+parts[i]; })){ var my=a.filter(function(it){ return it&&String(it.text||'').indexOf(hd(i))===0; })[0]; fail('Сервер сохранил часть карты не полностью'+(my?' ('+my.text.length+' из '+(hd(i)+parts[i]).length+' знаков)':'')+': нужна правка сервера. Правка осталась в этом браузере.'); }
+      return put(i+1); }); };
+  var del=function(k){ if(k>=old.length) return Promise.resolve(); return api({op:'hdel',hub:'spectr',key:'portal',id:old[k]}).then(function(j){ if(j&&j.data) data=j.data; },function(){}).then(function(){ return del(k+1); }); };
+  put(0).then(function(){ return del(0); }).then(function(){ b.disabled=false; b.textContent='Сохранить для всех';
+    if(PORTAL_JOIN(data&&data.portal)!==txt){ kMsg('Карта на сервере собралась не так, как отправлена: нужна правка сервера. Правка осталась в этом браузере.'); return; }
+    SHARED=txt; CFG=JSON.parse(txt); try{ localStorage.setItem('irtysh_cfg',JSON.stringify(CFG)); localStorage.removeItem(KDR); }catch(e){} MAP0=txt; kDirty0=false; kMsg('Сохранено. Гости увидят новую карту.'); })
+  .catch(function(e){ b.disabled=false; b.textContent='Сохранить для всех'; kMsg(e.message+(e.srv?'':' Правка не пропадёт: она лежит в этом браузере.')); }); };
 /* своя страница планеты (html) - в окне поверх портала, отдельно от сайта (sandbox) */
 var pgM=document.getElementById('pgM');
 function pageShow(n,done){ $k('pgT').textContent=n.n; $k('pgF').srcdoc=n.html; pgM.classList.add('on'); pgM._done=done; }
@@ -1408,13 +1416,21 @@ frame();
 </script>
 <script>
 /* запуск: сначала настройки портала с сервера (какие планеты скрыты), их копия хранится в браузере - со второго раза портал стартует сразу */
+/* сервер хранит в одной записи не больше 2000 знаков, поэтому карта лежит частями: "K|метка|номер|всего|кусок".
+   Собираем самую свежую полную карту; если частей нет - старая запись одним куском (настройки до карты) */
+window.PORTAL_JOIN=function(a){ if(!Array.isArray(a)||!a.length) return null; var G={}, last=null;
+  a.forEach(function(it){ var t=it&&typeof it.text==='string'?it.text:'', m=/^K\|([0-9a-z]+)\|(\d+)\|(\d+)\|/.exec(t); if(!m){ if(t) last=t; return; }
+    var g=G[m[1]]||(G[m[1]]={n:+m[3],p:{}}); g.p[m[2]]=t.slice(m[0].length); });
+  var ks=Object.keys(G).sort(function(x,y){ return parseInt(y,36)-parseInt(x,36); });
+  for(var i=0;i<ks.length;i++){ var g=G[ks[i]], out=''; for(var j=0;j<g.n;j++){ if(g.p[j]==null){ out=null; break; } out+=g.p[j]; } if(out!=null) return out; }
+  return last; };
 (function(){ var API='https://functions.yandexcloud.net/d4e4vhndceg7scc0mh3b', K='irtysh_cfg', c=null, done=false;
   try{ c=JSON.parse(localStorage.getItem(K)||'null'); }catch(e){}
   addEventListener('beforeinstallprompt',function(e){ if(/YaBrowser|YaApp/.test(navigator.userAgent)) e.preventDefault(); window.__dp=e; if(window.__dpH) window.__dpH(); });
   function go(x){ if(done) return; done=true; window.IRTYSH_BOOT(x); }
   fetch(API+'?hub=spectr',{cache:'no-store'}).then(function(r){ return r.json(); }).then(function(j){ if(!j||!j.ok) throw 0;
-      var a=j.data&&j.data.portal, it=Array.isArray(a)&&a.length?a[a.length-1]:null, x={};
-      if(it){ try{ x=JSON.parse(it.text)||{}; }catch(e){ x={}; } x._id=it.id; }
+      var t=PORTAL_JOIN(j.data&&j.data.portal), x={};
+      if(t){ try{ x=JSON.parse(t)||{}; }catch(e){ x={}; } }
       try{ localStorage.setItem(K,JSON.stringify(x)); }catch(e){} go(x); }).catch(function(){ go(c); });
   if(c) go(c); else setTimeout(function(){ go(c); },1500);
 })();
