@@ -1,4 +1,19 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex"><title>Иртыш-портал</title>
+<!doctype html><html lang="ru"><head><meta charset="utf-8">
+<script>/* переезд на GitVerse: со старого адреса github.io сразу уходим на новый и уносим память устройства (раскладку карты, правку, вход) в #perenos; на новом адресе берём её, только если там ещё пусто */
+(function(){ var NEW='https://glebbelov85.gitverse.site/irtysh.html', ls, ss; try{ ls=localStorage; ss=sessionStorage; }catch(e){}
+  function b64(s){ return btoa(unescape(encodeURIComponent(s))); } function unb64(s){ return decodeURIComponent(escape(atob(s))); }
+  if(location.hostname==='centrspektr.github.io'){ var p={l:{},s:{}}, i, k;
+    try{ for(i=0;i<ls.length;i++){ k=ls.key(i); if(/^irtysh_/.test(k)||k==='spectr_editor') p.l[k]=ls.getItem(k); } }catch(e){}
+    try{ if(ss.getItem('spectr_sess')!=null) p.s.spectr_sess=ss.getItem('spectr_sess'); }catch(e){}
+    var h=location.hash.replace(/^#/,''), x=''; try{ x=b64(JSON.stringify(p)); }catch(e){}
+    location.replace(NEW+location.search+'#'+(x?'perenos='+encodeURIComponent(x):'')+(h?(x?'&':'')+'h='+encodeURIComponent(h):'')); return; }
+  var m=/^#perenos=([^&]*)(?:&h=(.*))?$/.exec(location.hash); if(!m) return;
+  try{ var q=JSON.parse(unb64(decodeURIComponent(m[1]))), j;
+    for(j in q.l||{}) if(ls.getItem(j)==null) ls.setItem(j,q.l[j]);
+    for(j in q.s||{}) if(ss.getItem(j)==null) ss.setItem(j,q.s[j]); }catch(e){}
+  try{ history.replaceState(null,'',location.pathname+location.search+(m[2]?'#'+decodeURIComponent(m[2]):'')); }catch(e){ location.hash=m[2]?decodeURIComponent(m[2]):''; }
+})();</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex"><title>Иртыш-портал</title>
 <link rel="manifest" href="irtysh.webmanifest"><meta name="theme-color" content="#0b0914"><link rel="apple-touch-icon" href="irtysh-apple-touch-icon.png">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marck+Script&family=Bad+Script&family=Roboto+Mono:wght@200;300;400&family=Unbounded:wght@500;700&family=Manrope:wght@400;600;700;800&display=swap">
