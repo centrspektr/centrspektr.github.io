@@ -1303,12 +1303,12 @@ $k('kSave').onclick=function(){ var b=this, txt=packMap(MAP);
   if(PROBA){ SHARED=txt; CFG=JSON.parse(txt); try{ localStorage.setItem('irtysh_cfg',txt); localStorage.removeItem(KDR); }catch(e){} MAP0=txt; kDirty0=false; kMsg('Это проба: карта сохранена только в этом браузере. На сайте кнопка сохранит её для всех.'); return; }
   b.disabled=true; b.textContent='Сохраняю…'; kMsg('');
   /* частями: сначала все новые части, потом удаляем старые - гости всё время видят целую карту */
-  var CH=1600, st=Date.now().toString(36), parts=[], old=[], data=null; for(var i=0;i<txt.length;i+=CH) parts.push(txt.slice(i,i+CH));
-  var hd=function(i){ return 'K|'+st+'|'+i+'|'+parts.length+'|'; }, fail=function(t){ var e=new Error(t); e.srv=1; throw e; };
+  var CH=1600, stp=Date.now().toString(36), parts=[], old=[], data=null; for(var i=0;i<txt.length;i+=CH) parts.push(txt.slice(i,i+CH));
+  var hd=function(i){ return 'K|'+stp+'|'+i+'|'+parts.length+'|'; }, fail=function(t){ var e=new Error(t); e.srv=1; throw e; };
   var put=function(i){ if(i>=parts.length) return Promise.resolve();
     return api({op:'hput',hub:'spectr',key:'portal',item:{id:'',text:hd(i)+parts[i]}}).then(function(j){ var a=j.data&&j.data.portal; data=j.data;
       if(!Array.isArray(a)) fail('Сервер не сохранил карту: нужна правка сервера (разрешить запись "portal" у Спектра).');
-      if(!i) a.forEach(function(it){ if(it&&it.id&&String(it.text||'').indexOf('K|'+st+'|')!==0) old.push(it.id); });
+      if(!i) a.forEach(function(it){ if(it&&it.id&&String(it.text||'').indexOf('K|'+stp+'|')!==0) old.push(it.id); });
       if(!a.some(function(it){ return it&&it.text===hd(i)+parts[i]; })){ var my=a.filter(function(it){ return it&&String(it.text||'').indexOf(hd(i))===0; })[0]; fail('Сервер сохранил часть карты не полностью'+(my?' ('+my.text.length+' из '+(hd(i)+parts[i]).length+' знаков)':'')+': нужна правка сервера. Правка осталась в этом браузере.'); }
       return put(i+1); }); };
   var del=function(k){ if(k>=old.length) return Promise.resolve(); return api({op:'hdel',hub:'spectr',key:'portal',id:old[k]}).then(function(j){ if(j&&j.data) data=j.data; },function(){}).then(function(){ return del(k+1); }); };
