@@ -201,10 +201,10 @@ body.kedit #cap,body.kedit #nav,body.kedit #back,body.kedit #side{display:none!i
 <canvas id="cm" aria-hidden="true"></canvas>
 <canvas id="mxR" aria-hidden="true"></canvas>
 <div id="mxA" class="mxl" aria-hidden="true"></div><div id="mxM" class="mxl" aria-hidden="true"></div><div id="mxB" class="mxl" aria-hidden="true"></div>
-<div id="ttl" role="img" aria-label="Иртыш-портал"><svg viewBox="0 0 600 92"><defs>
+<div id="ttl" role="img" aria-label="Портал"><svg viewBox="0 0 600 92"><defs>
 <linearGradient id="mgA" gradientUnits="userSpaceOnUse" x1="-30" x2="0"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient>
 <mask id="mA" maskUnits="userSpaceOnUse" x="0" y="0" width="560" height="110"><rect width="560" height="110" fill="url(#mgA)"/></mask></defs>
-<text class="tw t1" x="14" y="66" textLength="262" lengthAdjust="spacingAndGlyphs">Иртыш-</text><text class="tw t2" x="284" y="66" textLength="300" lengthAdjust="spacingAndGlyphs">портал</text>
+<text class="tw t1" x="150" y="66" textLength="300" lengthAdjust="spacingAndGlyphs">Портал</text>
 <circle id="nib" r="2.4" fill="#fff" opacity="0" style="filter:drop-shadow(0 0 5px #fff)"/></svg></div>
 <div id="say" aria-live="polite"></div>
 <div id="visB" aria-live="polite"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span id="visBN">-</span></div>
@@ -1013,7 +1013,7 @@ function runIntro(){ var id=++intro, d=new Date(), w=function(ms,f){ setTimeout(
   hint.style.opacity=0; hint.style.pointerEvents='none';
   /* первый раз - тёмный экран и рост портала; при возврате из портала космос уже есть */
   if(!introSeen){ skyK=0; gateK=0; starK=0; } else { skyK=1; gateK=1; starK=1; }
-  var T='Иртыш-портал', TT=T+'___', fx=[], stopFx=function(){ fx.forEach(clearInterval); fx=[]; };
+  var T='Портал', TT=T+'___', /* 01.11 владелец: без "Иртыш" */ fx=[], stopFx=function(){ fx.forEach(clearInterval); fx=[]; };
   /* надпись перепечатывается в глаз со счётчиком ещё во время подлёта портала */
   var rp=false, reprint=function(){ if(rp) return; rp=true; stopFx(); var n=dissolve(mxB,id,true); w(Math.round(n*35/2+100),visShow); };
   introEnd=function(){ introSeen=true; if(!rp) w(1300,reprint); };
