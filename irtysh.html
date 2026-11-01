@@ -259,7 +259,7 @@ window.IRTYSH_BOOT=function(CFG){ CFG=CFG||{};
 var IMG=window.IMG||{}, A0='https://centrspektr.github.io/', A_GV='https://centrspektr.gitverse.site/';
 /* куда переехали планеты: старый адрес github.io -> новый на GitVerse */
 var MOVED={'spektr/':A_GV+'spektr/','agroklass/':A_GV+'agroklass/','vzlet/':A_GV+'vzlet/','studio/':A_GV+'studio/','kurs-fpv/':A_GV+'kurs-fpv/'};
-function moved(u){ return u&&u.indexOf(A0)===0&&MOVED[u.slice(A0.length)]||u; } /* и для карты, сохранённой на сервере со старыми адресами */
+function movedUrl(u){ return u&&u.indexOf(A0)===0&&MOVED[u.slice(A0.length)]||u; } /* и для карты, сохранённой на сервере со старыми адресами */
 var SITE=/^(centrspektr\.github\.io|(centrspektr|glebbelov85)\.gitverse\.site)$/.test(location.hostname); /* настоящий сайт (GitHub или копия на GitVerse), а не превью */
 /* выключенные планеты гости видят тёмными с подписью "скоро"; false - гости их не видят совсем (видно только в правке) */
 var OFF_SHOW=true;
@@ -307,7 +307,7 @@ function num(v,d,a,b){ v=+v; if(!isFinite(v)) v=d; return Math.max(a,Math.min(b,
 function safeUrl(u){ u=String(u||'').trim().slice(0,500); return /^https:\/\/[^\s"'<>]+$/.test(u)||/^[\w\-]+\.(html|webp|png|jpg|jpeg)$/.test(u)?u:''; } /* только полный адрес https:// или свой файл портала (например zaglushka.html) */
 function cleanMap(x){ var M={v:2,nodes:[],links:[]}, seen={}; if(!x||!Array.isArray(x.nodes)) return null;
   x.nodes.slice(0,150).forEach(function(n){ if(!n||typeof n!=='object') return; var id=String(n.id||'').replace(/[^\w\-]/g,'').slice(0,24); if(!id||seen[id]) return; seen[id]=1;
-    var D=n.t==='s'?DEF_S:DEF_P, m={id:id,t:D.t,n:String(n.n==null?'Без названия':n.n).slice(0,48),from:n.from?String(n.from):null,url:moved(safeUrl(n.url)),html:String(n.html||'').slice(0,20000),img:safeUrl(n.img),
+    var D=n.t==='s'?DEF_S:DEF_P, m={id:id,t:D.t,n:String(n.n==null?'Без названия':n.n).slice(0,48),from:n.from?String(n.from):null,url:movedUrl(safeUrl(n.url)),html:String(n.html||'').slice(0,20000),img:safeUrl(n.img),
       sz:num(n.sz,D.sz,.3,7),c:/^#[0-9a-f]{6}$/i.test(n.c)?n.c:D.c,glow:num(n.glow,D.glow,0,1.6),on:n.on!==false,shut:!!n.shut,bend:num(n.bend,D.bend,-1,1)};
     if(n.say) m.say=String(n.say).slice(0,80);
     if(m.t==='s'){ m.dist=num(n.dist,8,1.5,80); m.ang=num(n.ang,0,-100,100); m.tilt=num(n.tilt,.35,-1.5,1.5); m.spd=0; }
