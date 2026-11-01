@@ -5,18 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>СПЕКТР - дашборд переехал</title>
 <meta name="robots" content="noindex">
-<link rel="canonical" href="https://centrspektr.github.io/spektr/">
-<script>
-// Дашборд Спектра переехал: старые ссылки и QR ведут сюда, сохраняем ?параметры и #метку
-location.replace('https://centrspektr.github.io/spektr/' + location.search + location.hash);
-</script>
-<meta http-equiv="refresh" content="0; url=https://centrspektr.github.io/spektr/">
+<link rel="canonical" href="https://centrspektr.gitverse.site/spektr/">
+<script>/* Промт штаба 26 (01.11.2026): старая копия дашборда убрана.
+   С centrspektr.github.io ведём в настоящий дашборд https://centrspektr.gitverse.site/spektr/ с ?параметрами и #меткой,
+   а память браузера (ключи spectr_*, irtysh_*, spk_*, skin) уносим в #perenos=<base64 UTF-8 JSON {ключ: значение}> -
+   дашборд принимает её своим perenos.js и не затирает то, что там уже есть. */
+(function(){ var NEW='https://centrspektr.gitverse.site/spektr/';
+  var h=location.hash.replace(/^#/,''), x='';
+  if(location.hostname==='centrspektr.github.io'){ var d={}, n=0, i, k;
+    try{ for(i=0;i<localStorage.length;i++){ k=localStorage.key(i); if(/^(spectr_|irtysh_|spk_|skin$)/.test(k)){ d[k]=localStorage.getItem(k); n++; } } }catch(e){}
+    if(n) try{ x=btoa(unescape(encodeURIComponent(JSON.stringify(d)))); }catch(e){ x=''; } }
+  location.replace(NEW+location.search+(x?'#perenos='+encodeURIComponent(x)+(h?'&'+h:''):(h?'#'+h:''))); })();</script>
 <style>
 body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0b0914;color:#eee;font:17px/1.5 system-ui,sans-serif;text-align:center;padding:16px;box-sizing:border-box}
 a{color:#ffd36e}
 </style>
 </head>
 <body>
-<p>Дашборд Спектра переехал на новый адрес.<br><a href="https://centrspektr.github.io/spektr/">Открыть дашборд Спектра</a></p>
+<p>Дашборд Спектра переехал на новый адрес.<br><a href="https://centrspektr.gitverse.site/spektr/">Открыть дашборд Спектра</a></p>
 </body>
 </html>
