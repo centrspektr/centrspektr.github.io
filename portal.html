@@ -894,7 +894,10 @@ function topOff(now){ if(!topSave) return; var sv=topSave; topSave=null; if(now)
 /* карту можно повернуть двумя пальцами: камера сверху обходит точку взгляда по кругу (topA - куда повернуть, topAc - плавно догоняет) */
 var topA=0, topAc=0;
 function topPan(dx,dy){ var k=2*Math.tan(C.fov*Math.PI/360)*camP.y/innerHeight, ca=Math.cos(topAc), sa=Math.sin(topAc), mx=(-dx*ca+dy*sa)*k, mz=(dx*sa+dy*ca)*k;
-  camL.x=TOP_L.x+Math.max(-110,Math.min(110,camL.x-TOP_L.x+mx)); camL.z=TOP_L.z+Math.max(-150,Math.min(70,camL.z-TOP_L.z+mz)); topCam(); }
+  var B=topBox(); camL.x=Math.max(B[0],Math.min(B[1],camL.x+mx)); camL.z=Math.max(B[2],Math.min(B[3],camL.z+mz)); topCam(); }
+/* куда можно увести карту сверху: до самых дальних планет и спутников и ещё немного за них (раньше была жёсткая рамка - упирались, когда карту разносили шире) */
+function topBox(){ var b=[TOP_L.x-110,TOP_L.x+110,TOP_L.z-150,TOP_L.z+70]; NODES.forEach(function(n){ if(n.k>.5||!n.g.visible) return; var p=n.g.position; b[0]=Math.min(b[0],p.x-60); b[1]=Math.max(b[1],p.x+60); b[2]=Math.min(b[2],p.z-60); b[3]=Math.max(b[3],p.z+60); });
+  b[0]=Math.min(b[0],camL.x); b[1]=Math.max(b[1],camL.x); b[2]=Math.min(b[2],camL.z); b[3]=Math.max(b[3],camL.z); return b; }
 function topCam(){ var o=TOP_P.z-TOP_L.z; camP.x=camL.x+Math.sin(topAc)*o; camP.z=camL.z+Math.cos(topAc)*o; }
 var topZT=185; function topZoom(f){ topZT=Math.max(60,Math.min(480,topZT*f)); } /* сверху: задаём нужную высоту, камера плавно к ней едет */
 document.getElementById('zIn').onclick=function(){ zoomBy(1/1.25); }; document.getElementById('zOut').onclick=function(){ zoomBy(1.25); };
