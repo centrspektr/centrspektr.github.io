@@ -679,13 +679,16 @@ function r1(v){ return +(+v).toFixed(1); }
 function moiGet(){ try{ return JSON.parse(localStorage.getItem(MOI)||'null'); }catch(e){ return null; } }
 function moiSave(){ var P={}; MAP.nodes.forEach(function(m){ if(m.t==='s'&&m._d0!=null&&(m.dist!==m._d0||m.ang!==m._a0)) P[m.id]={o:[r1(m._d0),r1(m._a0)],v:[r1(m.dist),+m.ang.toFixed(3)]};
     else if(m.t==='p'&&m._o0&&m.off.join()!==m._o0.join()) P[m.id]={o:m._o0.map(r1),v:m.off.map(r1)}; });
-  var x={p:P}, old=moiGet(); if(moiBox) x.b={s:Object.keys(SHUT),t:Object.keys(TUCK)}; else if(old&&old.b) x.b=old.b;
+  var x={p:P}, old=moiGet(); if(moiBox) x.b={s:Object.keys(SHUT),t:Object.keys(TUCK),base:shutKey(JSON.parse(SHARED))}; else if(old&&old.b) x.b=old.b;
   try{ localStorage.setItem(MOI,JSON.stringify(x)); }catch(e){} moiD=false; moiUI('Запомнено на этом устройстве'); }
 function moiApply(){ var x=moiGet(); if(!x) return; var P=x.p||{};
   MAP.nodes.forEach(function(m){ var q=P[m.id]; if(!q||!q.o||!q.v) return;
     if(m.t==='s'&&q.v.length===2&&r1(m.dist)===q.o[0]&&r1(m.ang)===q.o[1]){ m._d0=m.dist; m._a0=m.ang; m.dist=q.v[0]; m.ang=q.v[1]; }
     else if(m.t==='p'&&q.v.length===3&&m.off.map(r1).join()===q.o.join()){ m._o0=m.off.slice(); m.off=q.v.slice(); } });
+  if(x.b&&(x.b.base!=null?x.b.base:shutKey(defMap()))!==shutKey(JSON.parse(SHARED))){ delete x.b; try{ localStorage.setItem(MOI,JSON.stringify(x)); }catch(e){} } /* владелец поменял, что собрано у всех: его решение важнее старого своего */
   if(x.b){ SHUT={}; TUCK={}; (x.b.s||[]).forEach(function(id){ if(byIdM(id)) SHUT[id]=1; }); (x.b.t||[]).forEach(function(id){ if(byIdM(id)) TUCK[id]=1; }); moiBox=true; } }
+/* что собрано у всех (галочка в правке) - строкой, чтобы сравнивать */
+function shutKey(M){ return (M&&M.nodes||[]).filter(function(m){ return m&&m.shut; }).map(function(m){ return m.id; }).sort().join(','); }
 function toShared(){ MAP=cleanMap(JSON.parse(SHARED)); SHUT={}; TUCK={}; MAP.nodes.forEach(function(m){ if(m.shut) SHUT[m.id]=1; }); moiBox=false; }
 function moiTouch(box){ if(EDW) return; if(box) moiBox=true; moiD=true; moiUI(''); }
 var moiEl=document.getElementById('moi'), moiTm=0;
@@ -1242,7 +1245,7 @@ function kForm(){ var h='', m=kNode(); kHint('');
   h+='<label class="kf"><span>Ссылка (адрес)</span><input type="url" id="kU" placeholder="https://... или файл.html, пусто - хранилище" value="'+esc(m.url)+'"></label>';
   h+='<label class="kf"><span>Своя страница (HTML, если нет ссылки)</span><textarea id="kH" placeholder="&lt;h1&gt;Привет&lt;/h1&gt;">'+esc(m.html)+'</textarea></label>';
   h+='<label class="kc"><input type="checkbox" id="kO"'+(m.on?' checked':'')+'> Горит (выключенная - тёмная, '+(OFF_SHOW?'с подписью "скоро"':'гости её не видят')+')</label>';
-  if(ks.length) h+='<label class="kc"><input type="checkbox" id="kS"'+(m.shut?' checked':'')+'> При входе собрана ('+ks.length+' внутри)</label>';
+  if(ks.length) h+='<label class="kc"><input type="checkbox" id="kS"'+(m.shut?' checked':'')+'> Собрана для всех ('+ks.length+' внутри) - так её увидят гости</label>';
   h+='<div class="k2">'+rng('kZ','Размер',.4,6,.05,m.sz)+'<label class="kf"><span>Цвет</span><input type="color" id="kC" value="'+m.c+'"></label></div>'+rng('kG','Свечение',0,1.6,.05,m.glow);
   if(m.t==='s') h+='<div class="k2">'+rng('kD','Расстояние от планеты',1.5,80,.1,m.dist)+rng('kTl','Наклон круга',-1.5,1.5,.05,m.tilt)+'</div>';
   else h+='<div class="k2">'+rng('kD','Расстояние',2,250,.5,Math.hypot(m.off[0],m.off[1],m.off[2]).toFixed(1))+rng('kY','Высота',-80,80,.5,m.off[1])+'</div>';
@@ -1436,6 +1439,6 @@ window.PORTAL_JOIN=function(a){ if(!Array.isArray(a)||!a.length) return null; va
       var t=PORTAL_JOIN(j.data&&j.data.portal), x={};
       if(t){ try{ x=JSON.parse(t)||{}; }catch(e){ x={}; } }
       try{ localStorage.setItem(K,JSON.stringify(x)); }catch(e){} go(x); }).catch(function(){ go(c); });
-  if(c) go(c); else setTimeout(function(){ go(c); },1500);
+  setTimeout(function(){ go(c); },1500); /* сначала ждём свежую карту с сервера (обычно доли секунды), старая копия - только если сервер молчит */
 })();
 </script>
