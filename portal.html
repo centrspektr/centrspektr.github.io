@@ -136,7 +136,6 @@ body{background:var(--bg);color:var(--fg);font-family:var(--body);overflow:hidde
 .tb{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));z-index:6;height:40px;padding:0 14px;border-radius:99px;border:1px solid var(--line);background:var(--glass);color:var(--fg);font:700 13px var(--body);cursor:pointer;display:none;align-items:center;gap:6px}
 .tb.on{display:flex}
 #inst{display:none!important}
-#edB{top:calc(92px + env(safe-area-inset-top,0px));right:max(10px,env(safe-area-inset-right,0px));width:40px;padding:0;justify-content:center;color:var(--dim)}
 /* окна: установка, вход по PIN, правка планет */
 .mdl{position:fixed;inset:0;z-index:12;display:none;align-items:flex-end;justify-content:center;background:rgba(2,3,10,.6);padding:0}
 .mdl.on{display:flex}
@@ -197,7 +196,7 @@ body.kedit #cap,body.kedit #nav,body.kedit #back,body.kedit #side{display:none!i
 @media (prefers-reduced-motion:reduce){#hint b,.av,#atm::before{animation:none}}
 </style>
 
-<canvas id="c" aria-label="Иртыш-портал: полёт сквозь звёзды к направлениям"></canvas>
+<canvas id="c" aria-label="Портал: полёт сквозь звёзды к направлениям"></canvas>
 <canvas id="cm" aria-hidden="true"></canvas>
 <canvas id="mxR" aria-hidden="true"></canvas>
 <div id="mxA" class="mxl" aria-hidden="true"></div><div id="mxM" class="mxl" aria-hidden="true"></div><div id="mxB" class="mxl" aria-hidden="true"></div>
@@ -213,7 +212,7 @@ body.kedit #cap,body.kedit #nav,body.kedit #back,body.kedit #side{display:none!i
 <button id="back" type="button" aria-label="Назад">←</button>
 <button id="topB" type="button" aria-label="Посмотреть сверху" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg><span>Сверху</span></button>
 <button id="snd" type="button" aria-label="Голос-проводник" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path class="w" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12"/></svg></button>
-<div id="labels"><button id="farL" class="lb idea" type="button">Иртыш-портал</button></div>
+<div id="labels"><button id="farL" class="lb idea" type="button">Портал</button></div>
 <div id="side" aria-label="Что держит планета"></div>
 <div id="moi" aria-live="polite"><button id="moiS" type="button">💾 Сохранить</button><button id="moiX" class="x2" type="button">Как было</button><small id="moiT"></small></div>
 <div id="cap" aria-live="polite"><h2 id="capT"></h2><p id="capP"></p></div>
@@ -231,8 +230,7 @@ body.kedit #cap,body.kedit #nav,body.kedit #back,body.kedit #side{display:none!i
 <div id="warp"><div class="wbox"><b id="warpT"></b><div id="warpGo"><a id="warpA" class="btn" target="_blank" rel="noopener">Открыть ›</a><button id="warpX" class="btn" type="button">← Назад в портал</button></div></div></div>
 <div id="nav"><button id="nPrev" class="nb" type="button"></button><button id="nNext" class="nb" type="button"></button></div>
 <button id="inst" class="tb" type="button">📲 Установить</button>
-<button id="edB" class="tb" type="button" aria-label="Правка портала" title="Правка портала">✎</button>
-<div id="instM" class="mdl" role="dialog" aria-modal="true" aria-label="Установка"><div class="mp"><h3>Иртыш-портал на телефон <button class="x" type="button" data-x>✕</button></h3><div id="instI"></div></div></div>
+<div id="instM" class="mdl" role="dialog" aria-modal="true" aria-label="Установка"><div class="mp"><h3>Портал на телефон <button class="x" type="button" data-x>✕</button></h3><div id="instI"></div></div></div>
 <div id="setM" class="mdl" role="dialog" aria-modal="true" aria-label="Настройки"><div class="mp" id="setP"></div></div>
 <div id="edM" class="mdl" role="dialog" aria-modal="true" aria-label="Правка портала"><div class="mp" id="edP"></div></div>
 <aside id="kd" hidden aria-label="Правка карты">
@@ -924,7 +922,7 @@ function speakNode(n){ speak(n.kind==='idea'?n.n:(n.say||n.n)+(n.kind==='hub'?'.
 var sndB=document.getElementById('snd'); function sndUI(){ sndB.classList.toggle('on',VOICE); sndB.setAttribute('aria-pressed',VOICE?'true':'false'); } sndUI();
 sndB.onclick=function(){ VOICE=!VOICE; try{ localStorage.setItem('irtysh_voice',VOICE?'1':'0'); }catch(e){} sndUI(); if(VOICE) speak('Голос включён. Я подскажу дорогу.'); else if(window.speechSynthesis) speechSynthesis.cancel(); };
 hint.onclick=function(){ fall(); };
-function fall(){ if(st!=='gate') return; st='falling'; growT0=-1; introV=0; skyK=gateK=starK=1; introSeen=true; gateUI(); hint.style.opacity=0; hint.style.pointerEvents='none'; speak('Добро пожаловать в Иртыш-портал'); hideIntro();
+function fall(){ if(st!=='gate') return; st='falling'; growT0=-1; introV=0; skyK=gateK=starK=1; introSeen=true; gateUI(); hint.style.opacity=0; hint.style.pointerEvents='none'; speak('Добро пожаловать в Портал'); hideIntro();
   startFly(new THREE.Vector3(0,0,-34),new THREE.Vector3(0,0,-90),null,red?.5:1.6,function(){
     flashOn(null,function(){ gate.visible=false; inside.visible=true; mixT=1; rollT=.04; camP.set(0,46,320); camL.copy(OVER_L);
       startFly(OVER_P.clone(),OVER_L.clone(),null,red?.5:3.6,function(){ ovA=0; ovE=.067; ovR=90; st='over'; cur=null; acc=0; backB.classList.add('on'); neuNext=.4; topUI(); topOn(); }); flashOff(); /* после входа камера уходит наверх: карта по умолчанию сверху */ }); }); }
@@ -1128,7 +1126,7 @@ function visShow(){ visB.classList.add('on'); var n=VIS_N; if(n==null){ visBN.te
   requestAnimationFrame(step); })();
 
 /* ---- установка как приложение: кнопка на стартовом экране (свой portal.webmanifest - приложение открывает Иртыш-портал; sw.js общий в корне сайта) ---- */
-var instB=document.getElementById('inst'), instM=document.getElementById('instM'), edB=document.getElementById('edB'), edM=document.getElementById('edM'), edP=document.getElementById('edP');
+var instB=document.getElementById('inst'), instM=document.getElementById('instM'), edM=document.getElementById('edM'), edP=document.getElementById('edP');
 var UA=navigator.userAgent, IOS=/iPhone|iPad|iPod/.test(UA)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1), AND=/Android/i.test(UA), MOBI=AND||IOS;
 var APP=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true, dp=window.__dp||null;
 var INAPP=/; wv\)|VKAndroidApp|VKClient|vkontakte|Telegram|Instagram|FBAN|FBAV|OdnoklassnikiApp|OKApp|ru\.oneme|OneMe|MAXApp|\bMAX\//i.test(UA)||(IOS&&!/Safari\//.test(UA)&&!/CriOS|FxiOS|YaBrowser|EdgiOS/.test(UA));
@@ -1151,7 +1149,7 @@ instB.onclick=function(){ if(dp&&BRW!=='ya'){ dp.prompt(); dp.userChoice.then(fu
 var setM=document.getElementById('setM'), setP=document.getElementById('setP');
 function setPanel(){ var b=function(v,t){ return '<button class="btn'+(GQ===v?' pri':'')+'" type="button" data-q="'+v+'">'+t+'</button>'; };
   setP.innerHTML='<h3>Настройки <button class="x" type="button" data-x>✕</button></h3>'+
-    '<div class="ed-h">Приложение</div>'+(APP?'<p>Портал уже установлен.</p>':'<p>Поставить Иртыш-портал на телефон, как приложение.</p><div class="bar" style="justify-content:flex-start"><button class="btn pri" type="button" id="setInst">📲 Установить</button></div>')+
+    '<div class="ed-h">Приложение</div>'+(APP?'<p>Портал уже установлен.</p>':'<p>Поставить Портал на телефон, как приложение.</p><div class="bar" style="justify-content:flex-start"><button class="btn pri" type="button" id="setInst">📲 Установить</button></div>')+
     (moiGet()?'<div class="ed-h">Моя раскладка</div><p>Как вы расставили и собрали карту, запомнено на этом устройстве. Другие видят свою.</p><div class="bar" style="justify-content:flex-start"><button class="btn" type="button" id="setMoi">↺ Вернуть карту как у всех</button></div>':'')+
     '<div class="ed-h">Карта портала</div><p>Добавить и настроить планеты, спутники и нити (по PIN).</p><div class="bar" style="justify-content:flex-start"><button class="btn" type="button" id="setEd">✎ Править карту</button></div>'+
     '<div class="ed-h">Графика</div><p>"Красиво" - полный эффект для сильных телефонов, "Просто" - легче для слабых, "Авто" - портал выберет сам.</p><div class="bar" style="justify-content:flex-start">'+b('auto','Авто')+b('hi','Красиво')+b('lo','Просто')+'</div>';
@@ -1162,7 +1160,7 @@ function setPanel(){ var b=function(v,t){ return '<button class="btn'+(GQ===v?' 
   [].forEach.call(setP.querySelectorAll('[data-q]'),function(el){ el.onclick=function(){ GQ=el.getAttribute('data-q'); try{ localStorage.setItem('irtysh_gq',GQ); }catch(e){} if(GQ!=='auto') LOW=0; applyQ(); setPanel(); }; }); }
 [instM,edM,setM].forEach(function(M){ /* M здесь - окно */ M.addEventListener('click',function(e){ if(e.target===M||(e.target.closest&&e.target.closest('[data-x]'))) M.classList.remove('on'); }); });
 /* кнопки стартового экрана видны только у портала-входа */
-function gateUI(){ var g=st==='gate'; if(g) document.getElementById('zm').classList.remove('on'); document.getElementById('vis').style.opacity=g?0:1; /* на старте счётчик внизу, внутри - в углу */ instB.classList.toggle('on',g&&!APP); edB.classList.toggle('on',g&&EDIT_ON); }
+function gateUI(){ var g=st==='gate'; if(g) document.getElementById('zm').classList.remove('on'); document.getElementById('vis').style.opacity=g?0:1; /* на старте счётчик внизу, внутри - в углу */ instB.classList.toggle('on',g&&!APP); } /* карандаша правки на старте нет: правка - через планету Настройки */
 
 /* ---- правка портала по PIN: скрыть или вернуть планету, добавить или убрать пустую планету-шаблон.
    Вход тот же, что на главной (сервер spektr-api, op login). Настройки хранятся у Спектра в отдельной записи "portal" и читаются всеми при входе.
@@ -1326,7 +1324,6 @@ $k('kSave').onclick=function(){ var b=this, txt=packMap(MAP);
 var pgM=document.getElementById('pgM');
 function pageShow(n,done){ $k('pgT').textContent=n.n; $k('pgF').srcdoc=n.html; pgM.classList.add('on'); pgM._done=done; }
 pgM.addEventListener('click',function(e){ if(e.target===pgM||(e.target.closest&&e.target.closest('[data-x]'))){ pgM.classList.remove('on'); $k('pgF').srcdoc=''; var d=pgM._done; pgM._done=null; d&&d(); } });
-edB.onclick=function(){ startEdit(); };
 gateUI(); if(/pravka/.test(location.hash)) setTimeout(startEdit,600);
 
 /* ---- кадр ---- */

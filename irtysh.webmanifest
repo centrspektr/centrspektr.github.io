@@ -1,7 +1,7 @@
 {
-  "name": "Иртыш-портал",
-  "short_name": "Иртыш",
-  "description": "Иртыш-портал: полёт по планетам СПЕКТРа",
+  "name": "Портал",
+  "short_name": "Портал",
+  "description": "Портал: полёт по планетам СПЕКТРа",
   "lang": "ru",
   "id": "/irtysh.html",
   "start_url": "/irtysh.html",
