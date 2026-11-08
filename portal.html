@@ -998,11 +998,14 @@ function g1(){ return MXG[Math.random()*MXG.length|0]; }
 function g2(ch){ var D='0123456789', A='абвгдежзиклмнопрстуфхцчшыэюя'; return /\d/.test(ch)?D[(+ch+1+Math.random()*8|0)%10]:/[а-яё]/.test(ch)?A[Math.random()*A.length|0]:g1(); }
 function clockTxt(){ var d=new Date(); return pz(d.getHours())+':'+pz(d.getMinutes())+':'+pz(d.getSeconds())+'.'+pz(d.getMilliseconds(),3); }
 function mxLine(id){ var el=document.getElementById(id), L={el:el};
-  L.init=function(){ el.innerHTML='<b style="opacity:1">0</b>'; var cw=el.firstChild.getBoundingClientRect().width||12; L.N=Math.max(12,Math.floor(el.clientWidth/cw)); var h=''; for(var i=0;i<L.N;i++) h+='<b></b>'; el.innerHTML=h; L.c=[].slice.call(el.children); L.ch=[]; L.op=[]; L.cl=[]; for(i=0;i<L.N;i++){ L.ch.push(''); L.op.push(0); L.cl.push(''); } el.style.opacity=1; };
+  L.init=function(){ el.innerHTML='<b style="opacity:1">0</b>'; var cw=el.firstChild.getBoundingClientRect().width||12; L.cw=cw; L.sh=null; L.N=Math.max(12,Math.floor(el.clientWidth/cw)); var h=''; for(var i=0;i<L.N;i++) h+='<b></b>'; el.innerHTML=h; L.c=[].slice.call(el.children); L.ch=[]; L.op=[]; L.cl=[]; for(i=0;i<L.N;i++){ L.ch.push(''); L.op.push(0); L.cl.push(''); } el.style.opacity=1; };
   L.set=function(i,ch,op,cl){ op=Math.round(op*20)/20; if(L.ch[i]!==ch){ L.c[i].textContent=ch; L.ch[i]=ch; } if(L.op[i]!==op){ L.c[i].style.opacity=op; L.op[i]=op; } cl=cl||''; if(L.cl[i]!==cl){ L.c[i].className=cl; L.cl[i]=cl; } };
-  L.place=function(txt){ var o=Math.max(0,Math.floor(L.N/2-txt.length/2)+(L.dx||0)), t={}; for(var i=0;i<txt.length;i++) if(txt[i]!==' ') t[o+i]=txt[i]; return t; };
+  /* 08.11 владелец: строки ровно по центру экрана, под порталом. Знаки стоят в клетках, поэтому остаток меньше клетки добираем сдвигом строки;
+     core - сколько первых знаков держать по центру (у "Портал___" - само слово, "_" идут правее) */
+  L.place=function(txt){ var n=Math.min(L.core||txt.length,txt.length), o=Math.max(0,Math.floor(L.N/2-n/2)), t={}; for(var i=0;i<txt.length;i++) if(txt[i]!==' ') t[o+i]=txt[i];
+    var sh=Math.round((el.clientWidth/2-(o+n/2)*L.cw)*10)/10; if(L.sh!==sh){ L.sh=sh; el.style.transform='translateX('+sh+'px)'; } return t; };
   return L; }
-var mxA=mxLine('mxA'), mxB=mxLine('mxB'), mxM=mxLine('mxM'); mxA.dx=1; var mxR=document.getElementById('mxR'), ttl=document.getElementById('ttl'), live=false;
+var mxA=mxLine('mxA'), mxB=mxLine('mxB'), mxM=mxLine('mxM'); var mxR=document.getElementById('mxR'), ttl=document.getElementById('ttl'), live=false;
 /* фронт идёт слева направо: впереди - прежние знаки, в окне фронта - перебор, позади - нужные знаки встают (иногда на миг "ошибаются"), лишние тают */
 function scan(L,txt,id,cb,sp){ var tg=L.place(txt), N=L.N, W=4, SP=sp||(mob?44:50), pc=L.ch.slice(), po=L.op.slice(), gl={}, t0=performance.now(), endF=N+W+SP*.6;
   (function f(now){ if(id!==intro) return; var e=(now-t0)/1000, fr=e*SP-1;
@@ -1019,7 +1022,7 @@ function runIntro(){ var id=++intro, d=new Date(), w=function(ms,f){ setTimeout(
   hint.style.opacity=0; hint.style.pointerEvents='none';
   /* первый раз - тёмный экран и рост портала; при возврате из портала космос уже есть */
   if(!introSeen){ skyK=0; gateK=0; starK=0; } else { skyK=1; gateK=1; starK=1; }
-  var T='Портал', TT=T+'___', /* 01.11 владелец: без "Иртыш" */ fx=[], stopFx=function(){ fx.forEach(clearInterval); fx=[]; };
+  var T='Портал', TT=T+'___', /* 01.11 владелец: без "Иртыш" */ fx=[], stopFx=function(){ fx.forEach(clearInterval); fx=[]; }; mxB.core=T.length;
   /* надпись перепечатывается в глаз со счётчиком ещё во время подлёта портала */
   var rp=false, reprint=function(){ if(rp) return; rp=true; stopFx(); var n=dissolve(mxB,id,true); w(Math.round(n*35/2+100),visShow); };
   introEnd=function(){ introSeen=true; if(!rp) w(1300,reprint); };
