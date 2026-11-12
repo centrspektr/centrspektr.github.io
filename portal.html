@@ -138,6 +138,13 @@ body{background:var(--bg);color:var(--fg);font-family:var(--body);overflow:hidde
 .tb{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));z-index:6;height:40px;padding:0 14px;border-radius:99px;border:1px solid var(--line);background:var(--glass);color:var(--fg);font:700 13px var(--body);cursor:pointer;display:none;align-items:center;gap:6px}
 .tb.on{display:flex}
 #inst{display:none!important}
+/* первое открытие: предложение поставить Портал значком */
+#askM{background:rgba(2,3,10,.35);z-index:13}
+#askM .mp{border-color:rgba(167,139,250,.6);box-shadow:0 -10px 50px rgba(124,92,255,.35);animation:askUp .5s cubic-bezier(.2,.9,.3,1)}
+@keyframes askUp{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.ask-h{display:flex;gap:14px;align-items:center;margin:0 0 12px}.ask-h img{width:60px;height:60px;border-radius:16px;flex:none;box-shadow:0 0 20px rgba(167,139,250,.5)}
+.ask-h b{display:block;font:800 18px var(--body)}.ask-h span{color:var(--dim);font-size:13px;line-height:1.35}
+#askM .btn.pri{font-size:16px;padding:12px 20px}
 /* окна: установка, вход по PIN, правка планет */
 .mdl{position:fixed;inset:0;z-index:12;display:none;align-items:flex-end;justify-content:center;background:rgba(2,3,10,.6);padding:0}
 .mdl.on{display:flex}
@@ -233,6 +240,7 @@ body.kedit #cap,body.kedit #nav,body.kedit #back,body.kedit #side{display:none!i
 <div id="nav"><button id="nPrev" class="nb" type="button"></button><button id="nNext" class="nb" type="button"></button></div>
 <button id="inst" class="tb" type="button">📲 Установить</button>
 <div id="instM" class="mdl" role="dialog" aria-modal="true" aria-label="Установка"><div class="mp"><h3>Портал на телефон <button class="x" type="button" data-x>✕</button></h3><div id="instI"></div></div></div>
+<div id="askM" class="mdl" role="dialog" aria-modal="true" aria-label="Поставить Портал значком"><div class="mp" id="askP"></div></div>
 <div id="setM" class="mdl" role="dialog" aria-modal="true" aria-label="Настройки"><div class="mp" id="setP"></div></div>
 <div id="edM" class="mdl" role="dialog" aria-modal="true" aria-label="Правка портала"><div class="mp" id="edP"></div></div>
 <aside id="kd" hidden aria-label="Правка карты">
@@ -1142,16 +1150,35 @@ if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch
 window.__dpH=function(){ dp=window.__dp; };
 addEventListener('appinstalled',function(){ APP=true; dp=null; gateUI(); });
 function stepI(n,b,t){ return '<div class="stp"><i>'+n+'</i><div><b>'+b+'</b><br>'+(t||'')+'</div></div>'; }
-function instSteps(){ var URL0=location.origin+'/';
+function instSteps(){ var URL0=location.origin+location.pathname;
   if(APP) return '<p>✅ Уже установлено - вы открыли портал как приложение.</p>';
   if(!MOBI) return '<p>На компьютере: нажмите значок установки справа в адресной строке или меню ⋮ → "Установить".</p>';
   if(INAPP&&IOS) return stepI(1,'Откройте в Safari','Нажмите ⋯ → "Открыть в Safari".')+stepI(2,'Нажмите "Поделиться"','Квадрат со стрелкой.')+stepI(3,'"На экран "Домой""','И "Добавить".');
   if(IOS) return stepI(1,'Нажмите "Поделиться"','Квадрат со стрелкой внизу или в меню ⋯.')+stepI(2,'"На экран "Домой""','И "Добавить".');
-  if(INAPP||BRW==='ya') return '<p>Приложение ставится через Chrome.</p><div class="bar" style="justify-content:flex-start"><a class="btn pri" href="intent://'+location.host+'/#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url='+encodeURIComponent(URL0)+';end">Открыть в Chrome</a></div>'+stepI(1,'В Chrome нажмите ⋮','И выберите "Установить приложение".');
+  if(INAPP||BRW==='ya') return '<p>Приложение ставится через Chrome.</p><div class="bar" style="justify-content:flex-start"><a class="btn pri" href="intent://'+location.host+location.pathname+'#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url='+encodeURIComponent(URL0)+';end">Открыть в Chrome</a></div>'+stepI(1,'В Chrome нажмите ⋮','И выберите "Установить приложение".');
   if(BRW==='samsung') return stepI(1,'Нажмите ≡ внизу справа')+stepI(2,'"Добавить страницу на" → "Главный экран"');
   return stepI(1,'Нажмите ⋮ вверху справа')+stepI(2,'"Установить приложение"','Если такого пункта нет - "Добавить на гл. экран".'); }
 instB.onclick=function(){ if(dp&&BRW!=='ya'){ dp.prompt(); dp.userChoice.then(function(r){ if(r&&r.outcome==='accepted'){ APP=true; gateUI(); } dp=null; }).catch(function(){}); return; }
   document.getElementById('instI').innerHTML=instSteps(); instM.classList.add('on'); };
+/* ---- первое открытие: Портал сам предлагает поставить себя значком.
+   Android/Chrome: кнопка "Установить" открывает системное окно (beforeinstallprompt). iPhone/iPad: Safari не даёт кнопку - показываем шаги "Поделиться -> На экран Домой".
+   Спрашиваем один раз; "Позже" - снова через 3 дня. Ссылка с #ustanovit показывает окно всегда (для проверки) ---- */
+var askM=document.getElementById('askM'), askP=document.getElementById('askP'), ASK='portal_ask', ASKD=3*864e5;
+function askRender(){ var head='<div class="ask-h"><img src="irtysh-icon-192.png" alt="" width="60" height="60"><div><b>Поставить Портал значком?</b><span>Будет открываться с экрана телефона одним касанием, как приложение.</span></div></div>',
+    later='<button class="btn" type="button" id="askNo">Позже</button>', body;
+  if(dp&&BRW!=='ya') body=head+'<div class="bar">'+later+'<button class="btn pri" type="button" id="askGo">📲 Установить</button></div>';
+  else body=head+instSteps()+'<div class="bar">'+later+'<button class="btn pri" type="button" id="askOk">Понятно</button></div>';
+  askP.innerHTML=body;
+  var g=document.getElementById('askGo'); if(g) g.onclick=function(){ askClose(1); var d=dp; dp=null; d.prompt(); d.userChoice.then(function(r){ if(r&&r.outcome==='accepted'){ APP=true; gateUI(); } }).catch(function(){}); };
+  document.getElementById('askNo').onclick=function(){ askClose(0); };
+  var o=document.getElementById('askOk'); if(o) o.onclick=function(){ askClose(1); }; }
+function askClose(done){ askM.classList.remove('on'); try{ localStorage.setItem(ASK,done?'done':String(Date.now())); }catch(e){} }
+function askNeed(){ if(APP) return false; if(/ustanovit/.test(location.hash)) return true; if(!MOBI) return false;
+  var v=null; try{ v=localStorage.getItem(ASK); }catch(e){} if(v==='done') return false; return !v||Date.now()-(+v)>ASKD; }
+function askShow(){ if(!askNeed()||document.querySelector('.mdl.on')) return; askRender(); askM.classList.add('on'); }
+askM.addEventListener('click',function(e){ if(e.target===askM) askClose(0); });
+window.__dpH=function(){ dp=window.__dp; if(askM.classList.contains('on')) askRender(); }; /* кнопка Chrome пришла позже - сразу меняем шаги на "Установить" */
+setTimeout(askShow,2600); /* даём увидеть, как открывается портал, и сразу предлагаем значок */
 /* окно планеты Настройки: установка на телефон, правка карты, графика */
 var setM=document.getElementById('setM'), setP=document.getElementById('setP');
 function setPanel(){ var b=function(v,t){ return '<button class="btn'+(GQ===v?' pri':'')+'" type="button" data-q="'+v+'">'+t+'</button>'; };
