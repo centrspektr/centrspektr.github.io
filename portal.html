@@ -309,6 +309,8 @@ function cleanMap(x){ var M={v:2,nodes:[],links:[]}, seen={}; if(!x||!Array.isAr
   x.nodes.slice(0,150).forEach(function(n){ if(!n||typeof n!=='object') return; var id=String(n.id||'').replace(/[^\w\-]/g,'').slice(0,24); if(!id||seen[id]) return; seen[id]=1;
     var D=n.t==='s'?DEF_S:DEF_P, m={id:id,t:D.t,n:String(n.n==null?'Без названия':n.n).slice(0,48),from:n.from?String(n.from):null,url:movedUrl(safeUrl(n.url)),html:String(n.html||'').slice(0,20000),img:safeUrl(n.img),
       sz:num(n.sz,D.sz,.3,7),c:/^#[0-9a-f]{6}$/i.test(n.c)?n.c:D.c,glow:num(n.glow,D.glow,0,1.6),on:n.on!==false,shut:!!n.shut,bend:num(n.bend,D.bend,-1,1)};
+    if(!m.url&&/^\s*https:\/\/[^\s"'<>]+\s*$/.test(m.html)){ m.url=safeUrl(m.html); m.html=''; } /* адрес по ошибке вписан в "Свою страницу" - это ссылка */
+    if(id==='nmklcw65'&&m.n==='Новая планета'){ m.n='Среда разработки игры'; if(!m.url) m.url='https://glebbelov85.gitverse.site/sreda-razrabotki/'; } /* 12.11.2026 по просьбе владельца; после "Сохранить для всех" лежит уже в общей карте */
     if(n.say) m.say=String(n.say).slice(0,80);
     if(m.t==='s'){ m.dist=num(n.dist,8,1.5,80); m.ang=num(n.ang,0,-100,100); m.tilt=num(n.tilt,.35,-1.5,1.5); m.spd=0; }
     else { var o=Array.isArray(n.off)?n.off:[0,0,-30]; m.off=[num(o[0],0,-400,400),num(o[1],0,-200,200),num(o[2],-30,-400,400)]; }
