@@ -745,7 +745,7 @@ document.getElementById('moiS').onclick=function(){ moiSave(); };
 document.getElementById('moiX').onclick=function(){ toShared(); moiApply(); moiD=false; rebuild(); moiUI('Вернул, как было сохранено'); };
 moiApply();
 function placeN(n,dt,d){ if(PW[n.id]) return n.g.position; var m=n.m, par=m.from?byId[m.from]:null; d=d||0; var base=par&&d<40?placeN(par,dt,d+1):PJ;
-  var tgt=TUCK[n.id]?1:0; for(var x=par,i=0; x&&i<40&&!tgt; x=x.m.from?byId[x.m.from]:null,i++) if((SHUT[x.id]&&!isWorld(x))||TUCK[x.id]){ tgt=1; break; }
+  var tgt=TUCK[n.id]&&!(m0w(n))?1:0; for(var x=par,i=0; x&&i<40&&!tgt; x=x.m.from?byId[x.m.from]:null,i++) if((SHUT[x.id]&&!isWorld(x))||(TUCK[x.id]&&!m0w(x))){ tgt=1; break; }
   var wt=n.wait||0; for(var y=par,j=0; y&&j<40; y=y.m.from?byId[y.m.from]:null,j++) if(y.wait>wt) wt=y.wait; /* по очереди: ждёт своей очереди (и всё, что у него внутри) */
   if(dt<0) n.k=tgt; else if(tm>=wt){ n.k+=(tgt-n.k)*Math.min(1,dt*(red?20:3)); if(Math.abs(tgt-n.k)<.002) n.k=tgt; }
   var w=n.g.position, e=1-n.k*n.k*(3-2*n.k);
@@ -1056,7 +1056,8 @@ function nodeAt(x,y,lb){ var n=null;
   var r=new THREE.Raycaster(); r.setFromCamera(new THREE.Vector2(x/innerWidth*2-1,-(y/innerHeight)*2+1),C); var h=r.intersectObjects(hits,false).filter(function(q){ var m=byId[q.object.userData.id]; return m&&m.k<.5; })[0]; if(h) n=byId[h.object.userData.id];
   if(!n&&lb) NODES.forEach(function(m){ if(m.el===lb) n=m; }); /* палец на самой планете важнее, чем на чужой сноске рядом */
   return n; }
-function gather(n){ hl=n;
+function m0w(n){ return !!(n.m.from&&byId[n.m.from]&&isWorld(byId[n.m.from])); } /* планета мира (Взлёт у Спектра, Спектр у Иртыша) внутрь не уходит */
+function gather(n){ if(isWorld(n)||m0w(n)) return; hl=n;
   if(kidsOf(n.id).length) toggleBox(n);
   else if(n.m.from){ TUCK[n.id]=1; moiTouch(true); if(sel===n) unsel(); speak(n.n+'. Ушла внутрь.'); n=byId[n.m.from]; hl=n; n.bst=1; rip.n=n; rip.t=0; }
   else return;
