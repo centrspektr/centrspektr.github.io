@@ -745,7 +745,7 @@ document.getElementById('moiS').onclick=function(){ moiSave(); };
 document.getElementById('moiX').onclick=function(){ toShared(); moiApply(); moiD=false; rebuild(); moiUI('Вернул, как было сохранено'); };
 moiApply();
 function placeN(n,dt,d){ if(PW[n.id]) return n.g.position; var m=n.m, par=m.from?byId[m.from]:null; d=d||0; var base=par&&d<40?placeN(par,dt,d+1):PJ;
-  var tgt=TUCK[n.id]&&!(m0w(n))?1:0; for(var x=par,i=0; x&&i<40&&!tgt; x=x.m.from?byId[x.m.from]:null,i++) if((SHUT[x.id]&&!isWorld(x))||(TUCK[x.id]&&!m0w(x))){ tgt=1; break; }
+  var tgt=TUCK[n.id]?1:0; for(var x=par,i=0; x&&i<40&&!tgt; x=x.m.from?byId[x.m.from]:null,i++) if(SHUT[x.id]||TUCK[x.id]){ tgt=1; break; }
   var wt=n.wait||0; for(var y=par,j=0; y&&j<40; y=y.m.from?byId[y.m.from]:null,j++) if(y.wait>wt) wt=y.wait; /* по очереди: ждёт своей очереди (и всё, что у него внутри) */
   if(dt<0) n.k=tgt; else if(tm>=wt){ n.k+=(tgt-n.k)*Math.min(1,dt*(red?20:3)); if(Math.abs(tgt-n.k)<.002) n.k=tgt; }
   var w=n.g.position, e=1-n.k*n.k*(3-2*n.k);
@@ -845,7 +845,7 @@ function stepFly(dt){ var o=camP.clone(); fly.t=Math.min(1,fly.t+dt/fly.d); var 
 
 var hint=document.getElementById('hint'), backB=document.getElementById('back'), flash=document.getElementById('flash'), cap=document.getElementById('cap'), atmEl=document.getElementById('atm');
 function soon(n){ return (n.kind==='dash'||n.kind==='link')&&!n.u&&!n.html; } /* ссылка-заглушка: владелец добавит позже */
-function capText(n){ if(isWorld(n)) return 'Нажми ещё раз - <b>войти</b>: всё про '+esc(n.n)+' внутри'; if(n.kind==='idea') return 'Пиши нам - подключим к порталу'; if(n.kind==='off') return 'Скоро здесь зажжётся проект';
+function capText(n){ if(n.kind==='idea') return 'Пиши нам - подключим к порталу'; if(n.kind==='off') return 'Скоро здесь зажжётся проект';
   if(holds(n)){ var ks=kidsOf(n.id); return boxCap(n)+(mob?'':'<br>'+ks.filter(function(m){ return !inBox(n,m); }).map(function(m){ return '<b>'+esc(m.n)+'</b>'; }).join(', ')); }
 
   if(n.close) return '<b class="go">Войти</b>';
@@ -883,7 +883,7 @@ function sideUI(n){ var ks=n?kidsOf(n.id):[], key=n?n.id+':'+ks.map(function(m){
   if(!n){ sideEl.classList.remove('on'); sideN=null; return; } var re=sideN!==n||sideEl.children.length!==ks.length+1; sideN=n;
   if(re){ sideEl.innerHTML='<small>нажми - свернуть или развернуть</small>'; ks.forEach(function(m){ var b=document.createElement('button'); b.type='button'; b.style.setProperty('--pc',m.c); b.innerHTML='<i></i><span>'+esc(m.n)+(kidsOf(m.id).length?' ('+kidsOf(m.id).length+')':'')+'</span>'; b.onclick=function(){ if(sideN&&byId[m.id]) toggleKid(sideN,m); }; sideEl.appendChild(b); }); }
   ks.forEach(function(m,i){ var b=sideEl.children[i+1]; b.classList.toggle('in',inBox(n,m)); b.setAttribute('aria-pressed',inBox(n,m)?'false':'true'); b.title=inBox(n,m)?'Развернуть':'Свернуть'; }); sideEl.classList.add('on'); }
-function holds(n){ if(isWorld(n)) return false; return n.kind!=='off'&&n.kind!=='set'&&n.kind!=='support'&&kidsOf(n.id).length>0; } /* держит нити - нажатием собирает и выпускает (Спектр тоже) */
+function holds(n){ return n.kind!=='off'&&n.kind!=='set'&&n.kind!=='support'&&kidsOf(n.id).length>0; } /* держит нити - нажатием собирает и выпускает (Спектр тоже) */
 function inBox(p,k){ return !!(SHUT[p.id]||TUCK[k.id]); }
 function allIn(n){ return kidsOf(n.id).every(function(m){ return inBox(n,m); }); }
 function boxCap(n){ return 'Нажми ещё раз - <b class="go">'+(allIn(n)?'выпустить':'собрать')+' ('+kidsOf(n.id).length+')</b>'+(canEnter(n)?' · <b class="go in">'+(n.kind==='support'?'открыть':'войти')+'</b>':''); } /* куда можно провалиться сразу со второго нажатия */
@@ -1056,8 +1056,7 @@ function nodeAt(x,y,lb){ var n=null;
   var r=new THREE.Raycaster(); r.setFromCamera(new THREE.Vector2(x/innerWidth*2-1,-(y/innerHeight)*2+1),C); var h=r.intersectObjects(hits,false).filter(function(q){ var m=byId[q.object.userData.id]; return m&&m.k<.5; })[0]; if(h) n=byId[h.object.userData.id];
   if(!n&&lb) NODES.forEach(function(m){ if(m.el===lb) n=m; }); /* палец на самой планете важнее, чем на чужой сноске рядом */
   return n; }
-function m0w(n){ return !!(n.m.from&&byId[n.m.from]&&isWorld(byId[n.m.from])); } /* планета мира (Взлёт у Спектра, Спектр у Иртыша) внутрь не уходит */
-function gather(n){ if(isWorld(n)||m0w(n)) return; hl=n;
+function gather(n){ hl=n;
   if(kidsOf(n.id).length) toggleBox(n);
   else if(n.m.from){ TUCK[n.id]=1; moiTouch(true); if(sel===n) unsel(); speak(n.n+'. Ушла внутрь.'); n=byId[n.m.from]; hl=n; n.bst=1; rip.n=n; rip.t=0; }
   else return;
