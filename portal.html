@@ -355,6 +355,8 @@ function packMap(M){ return JSON.stringify({v:2,nodes:M.nodes.map(function(n){ v
    PROMO - кружки со своим сайтом становятся отдельными крупными планетами возле Спектра (держатся за него нитью).
    Карта на сервере от этого не портится: всё лежит как было, просто показывается иначе; в правке по PIN видно всё. */
 var WORLD={spektr:1,irtysh:1}, PROMO={vzlet:[-28,10,-26],studio:[-4,-12,-40],agro:[22,12,-34]}, PROMO_IMG={vzlet:'vzlet.webp',studio:'studio.webp'};
+/* планета Портфолио готова, но новая планета на портале появляется только по промту штаба - пока выключена (true - включить) */
+var PORTFOLIO=false;
 var PORTFOLIO_HTML='<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>'+
   'body{margin:0;font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#0b1020;color:#eef2ff;padding:18px}h1{font-size:22px;margin:0 0 4px}p{margin:0 0 14px;color:#c7d2fe}'+
   '.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}.c{border-radius:16px;padding:14px;background:linear-gradient(160deg,var(--a),#1e1b4b);min-height:96px;display:flex;flex-direction:column;justify-content:space-between}'+
@@ -370,10 +372,10 @@ var PORTFOLIO_HTML='<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8"><
 function simplify(M){ var by={}, mig=false; M.nodes.forEach(function(n){ by[n.id]=n; });
   Object.keys(PROMO).forEach(function(id){ var n=by[id]; if(!n||n.t!=='s'||n.from!=='kruzhki') return; /* только пока кружок висит спутником, как в старой карте */ mig=true;
     n.t='p'; n.from=by.spektr?'spektr':null; n.off=PROMO[id].slice(); n.sz=2; n.bend=.15; n.glow=.9; if(!n.img&&PROMO_IMG[id]) n.img=PROMO_IMG[id]; delete n.dist; delete n.ang; delete n.tilt; delete n.spd; });
-  /* один раз, при переходе со старой карты: новая раскладка дугой - Иртыш в центре, Спектр со своими тремя планетами слева, Среда и Портфолио справа. Дальше владелец двигает как хочет */
+  /* один раз, при переходе со старой карты: новая раскладка дугой - Иртыш в центре, Спектр со своими тремя планетами слева, Среда (и Портфолио, когда включат) справа. Дальше владелец двигает как хочет */
   if(mig){ if(by.irtysh&&!by.irtysh.from) by.irtysh.off=[0,9,-40]; if(by.spektr&&by.spektr.from==='irtysh') by.spektr.off=[-34,-6,-30]; if(by.nmklcw65&&!by.nmklcw65.from) by.nmklcw65.off=[26,3,-62]; }
   if(by.nmklcw65&&by.nmklcw65.sz===1.8) by.nmklcw65.sz=2.2; /* Среда разработки игры - тоже крупный мир */
-  if(!by.portfolio) M.nodes.push(Object.assign({},DEF_P,{id:'portfolio',n:'Портфолио',html:PORTFOLIO_HTML,c:'#f0abfc',sz:2,say:'Портфолио. Мои работы',off:[38,-1,-38]}));
+  if(PORTFOLIO&&!by.portfolio) M.nodes.push(Object.assign({},DEF_P,{id:'portfolio',n:'Портфолио',html:PORTFOLIO_HTML,c:'#f0abfc',sz:2,say:'Портфолио. Мои работы',off:[38,-1,-38]}));
   return M; }
 /* узел спрятан внутри мира: где-то выше по нитям есть мир, и он сам не мир и не вынесенная планета */
 function inner(m){ for(var y=m,i=0; y&&y.from&&i<60; i++){ var p=byIdM(y.from); if(!p) return false; if(WORLD[p.id]&&!WORLD[y.id]&&!PROMO[y.id]) return true; y=p; } return false; }
