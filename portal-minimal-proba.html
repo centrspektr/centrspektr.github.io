@@ -492,6 +492,27 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:2;back
 }
 #mir .big{white-space:normal;line-height:1.7!important;padding:8px 2px 14px!important;text-align:center}
 #mir .big::after{bottom:4px}
+/* ===== Доработка 24.11 вечер: две полоски вместо шестерёнки; своё название на заставке; счётчик просмотров виден ===== */
+#mnGear{position:relative}
+#mnGear span{position:absolute;left:11px;right:11px;height:1px;background:currentColor;transition:transform .55s var(--e)}
+#mnGear .b1{top:18px}#mnGear .b2{top:25px;transform-origin:100% 50%}
+#mnGear:hover .b2{transform:scaleX(.6)}
+#mnGear[aria-expanded="true"] .b1{transform:translateY(3.5px) rotate(45deg)}
+#mnGear[aria-expanded="true"] .b2{transform:translateY(-3.5px) rotate(-45deg)}
+#mxB{display:none!important}
+#mnT{position:fixed;left:0;right:0;top:calc(74% - .2em);z-index:4;text-align:center;pointer-events:none;opacity:0;transition:opacity .6s}
+#mnT.on{opacity:1}
+#mnT .mn-h{font:400 clamp(40px,11vw,64px)/1.08 var(--serif);letter-spacing:.01em;color:var(--fg);text-shadow:0 2px 20px rgba(0,0,0,.8)}
+#mnT .tl{display:inline-block;overflow:hidden;padding:.12em .03em .1em;margin:-.12em -.03em -.1em;vertical-align:top}
+#mnT .tl span{display:block;transform:translateY(112%)}
+#mnT.on .tl span{animation:up 1.1s var(--e) both;animation-delay:calc(var(--i)*80ms + .1s)}
+@keyframes up{to{transform:none}}
+#mnT .mn-r{display:block;width:56px;height:1px;margin:16px auto 0;background:var(--a);transform:scaleX(0)}
+#mnT.on .mn-r{animation:mnLine 1s var(--e) .65s forwards}
+#visB{top:calc(74% + clamp(78px,17vw,104px))}
+#visB.on{opacity:1}
+@media (orientation:landscape){#mnT{top:calc(76% - .2em)}#visB{top:calc(76% + 92px)}}
+@media (prefers-reduced-motion:reduce){#mnT .tl span{transform:none;animation:none!important}#mnT .mn-r{transform:none;animation:none!important}}
 
 </style>
 
@@ -505,7 +526,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:2;back
 <text class="tw t1" x="150" y="66" textLength="300" lengthAdjust="spacingAndGlyphs">Портал</text>
 <circle id="nib" r="2.4" fill="#fff" opacity="0" style="filter:drop-shadow(0 0 5px #fff)"/></svg></div>
 <div id="say" aria-live="polite"></div>
-<div id="visB" aria-live="polite"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span id="visBN">-</span></div>
+<div id="mnT" aria-hidden="true"><div class="mn-h"></div><i class="mn-r"></i></div><div id="visB" aria-live="polite"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span id="visBN">-</span></div>
 <button id="hint" type="button">Полетели вперёд <b>↓</b></button>
 <div id="vis" title="Посещения сайтов"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span id="visN">-</span></div>
 <button id="back" type="button" aria-label="Назад">←</button>
@@ -1434,7 +1455,7 @@ function scan(L,txt,id,cb,sp){ var tg=L.place(txt), N=L.N, W=4, SP=sp||(mob?44:5
 /* старт: посередине печатается дата с годом и тает перебором знаков; ещё в темноте над центром встают часы, под ним "Иртыш-портал" и не спеша три "_";
    знаки иногда быстро перебираются на месте, "_" на миг становятся иероглифами; потом рост портала, и надпись перепечатывается в глаз со счётчиком */
 function runIntro(){ var id=++intro, d=new Date(), w=function(ms,f){ setTimeout(function(){ if(id===intro) f(); },ms); };
-  live=false; mxA.init(); mxB.init(); mxM.init(); mxB.el.style.transition=''; penSet(-200); nib.setAttribute('opacity',0); ttl.style.opacity=0; clearInterval(neonT); NT.forEach(function(e){ e.style.opacity=0; }); visB.classList.remove('on');
+  document.getElementById('mnT').classList.remove('on'); live=false; mxA.init(); mxB.init(); mxM.init(); mxB.el.style.transition=''; penSet(-200); nib.setAttribute('opacity',0); ttl.style.opacity=0; clearInterval(neonT); NT.forEach(function(e){ e.style.opacity=0; }); visB.classList.remove('on');
   hint.style.opacity=0; hint.style.pointerEvents='none';
   /* первый раз - тёмный экран и рост портала; при возврате из портала космос уже есть */
   if(!introSeen){ skyK=0; gateK=0; starK=0; } else { skyK=1; gateK=1; starK=1; }
@@ -1444,7 +1465,7 @@ function runIntro(){ var id=++intro, d=new Date(), w=function(ms,f){ setTimeout(
   introEnd=function(){ introSeen=true; if(!rp) w(1300,reprint); };
   scan(mxM,String(d.getDate())+' '+MON[d.getMonth()]+' '+d.getFullYear(),id,function(){ w(900,function(){ dissolve(mxM,id);
     w(900,function(){ scan(mxA,clockTxt(),id,function(){ live=true; tick(id); });
-      w(250,function(){ scan(mxB,TT.replace(/_/g,' '),id,function(){ var o=mxB.place(TT), u=[]; for(var c in o) if(o[c]==='_') u.push(+c);
+      w(250,function(){ mnTitle(id); scan(mxB,TT.replace(/_/g,' '),id,function(){ var o=mxB.place(TT), u=[]; for(var c in o) if(o[c]==='_') u.push(+c);
         u.forEach(function(k,j){ w(700+j*800,function(){ mxB.set(k,'_',1); }); });
         fx.push(setInterval(function(){ if(id!==intro){ stopFx(); return; } if(Math.random()<.7) flick(mxB,id); },480));
         fx.push(setInterval(function(){ if(id!==intro){ stopFx(); return; } var k=u[Math.random()*3|0]; if(mxB.ch[k]!=='_') return; return; mxB.set(k,g1(),1,'h'); setTimeout(function(){ if(id===intro&&mxB.ch[k]!=='_'&&mxB.op[k]>0) mxB.set(k,'_',1); },140+Math.random()*120); },650));
@@ -1472,7 +1493,8 @@ var mgA=document.getElementById('mgA'), nib=document.getElementById('nib');
 function penSet(x){ mgA.setAttribute('x1',x-30); mgA.setAttribute('x2',x); }
 function penWrite(id,dur){ var t0=performance.now(), X0=50, X1=530, F=2.5, A=.72; (function f(now){ if(id!==intro) return; var k=Math.min(1,(now-t0)/1000/dur), u=k-A*Math.sin(2*Math.PI*F*k)/(2*Math.PI*F), x=X0+(X1-X0)*u;
   penSet(k>=1?900:x); nib.setAttribute('cx',x); nib.setAttribute('cy',60+Math.sin(now/80)*14+Math.sin(now/27)*5); nib.setAttribute('opacity',k<1?.9:0); if(k<1) requestAnimationFrame(f); })(t0); }
-function hideIntro(){ intro++; live=false; ttl.style.opacity=0; visB.classList.remove('on'); mxM.el.style.opacity=0; mxA.el.style.opacity=0; mxB.el.style.opacity=0; mxR.style.opacity=0; }
+function mnTitle(id){ var T=document.getElementById('mnT'), h=T.querySelector('.mn-h'); h.innerHTML='Портал'.split('').map(function(c,i){ return '<span class="tl"><span style="--i:'+i+'">'+c+'</span></span>'; }).join(''); T.classList.remove('on'); void T.offsetWidth; if(id===intro) T.classList.add('on'); }
+function hideIntro(){ document.getElementById('mnT').classList.remove('on'); intro++; live=false; ttl.style.opacity=0; visB.classList.remove('on'); mxM.el.style.opacity=0; mxA.el.style.opacity=0; mxB.el.style.opacity=0; mxR.style.opacity=0; }
 /* редкий цифровой дождь сверху, пару секунд */
 function rain(id){ return; /* минимализм: без цифрового дождя */ var x=mxR.getContext('2d'), dp=Math.min(devicePixelRatio||1,mob?1.5:2), W=innerWidth, H=innerHeight*.3, fs=mob?10:12, cols=[], t0=performance.now();
   mxR.width=W*dp; mxR.height=H*dp; mxR.style.transition='none'; mxR.style.opacity=1;
@@ -1506,14 +1528,14 @@ var SAY=window.SAY||['Здесь начинается путь','Выбирай 
 /* счётчик внизу старта: сначала прежнее число, потом изменившиеся цифры быстро перебираются и встают на новое (+1) */
 var visB=document.getElementById('visB'), visBN=document.getElementById('visBN'), VIS_N=null;
 function visShow(){ visB.classList.add('on'); var n=VIS_N; if(n==null){ visBN.textContent='-'; return; }
-  var from=(n-1).toLocaleString('ru-RU'), to=n.toLocaleString('ru-RU'), D=1100; visBN.textContent=from;
+  var from=(n-1).toLocaleString('ru-RU'), to=n.toLocaleString('ru-RU'), D=1100; visBN.textContent=to; return;
   setTimeout(function(){ var t0=performance.now(), last=0; (function f(now){ var k=(now-t0)/D, out='';
       if(now-last>55){ last=now; for(var i=0;i<to.length;i++){ var ch=to[i]; out+=(ch===from[i]&&from.length===to.length)||!/\d/.test(ch)?ch:String(Math.random()*10|0); } visBN.textContent=out; }
       if(k<1) requestAnimationFrame(f); else visBN.textContent=to; })(t0); },900); }
 /* счётчик посещений: общий для сайтов СПЕКТРа, как на портале */
 (function(page){ try{ var el=document.getElementById('visN'), k='irtysh_hit_'+page, ss=sessionStorage, ls=localStorage, f=function(n){ el.textContent=(+n).toLocaleString('ru-RU'); VIS_N=+n||null; };
   if(ss.getItem(k)){ f(ss.getItem(k)); return; } var d=new Date().toDateString(), fresh=!ls.getItem('irtysh_new_'+page), today=ls.getItem('irtysh_day_'+page)!==d;
-  if(page==='proba-off'){ if(!SITE) VIS_N=1234; return; } /* в превью счётчик не считает - показываем образец числа, чтобы был виден эффект */ fetch(API,{method:'POST',body:JSON.stringify({op:'hit',page:page,fresh:fresh,today:today})}).then(function(r){return r.json();}).then(function(j){ if(!j.ok) return;
+  if(!SITE){ VIS_N=1234; return; } /* проба в превью: сервер недоступен - образец числа */ if(page==='proba-off'){ return; } /* в превью счётчик не считает - показываем образец числа, чтобы был виден эффект */ fetch(API,{method:'POST',body:JSON.stringify({op:'hit',page:page,fresh:fresh,today:today})}).then(function(r){return r.json();}).then(function(j){ if(!j.ok) return;
     ls.setItem('irtysh_new_'+page,'1'); ls.setItem('irtysh_day_'+page,d); ss.setItem(k,String(j.total||'')); f(j.total); }).catch(function(){}); }catch(e){} })('portal');
 
 /* ---- кометы в три слоя: вдали - тонкие быстрые чёрточки; медленная звезда, что сгорает (сначала гаснет голова, потом хвост);
@@ -1861,7 +1883,7 @@ if(/[?&]dbg/.test(location.search)) window.__dbg={camP:camP,S:S,gate:gate,tap:fu
 
 /* ===== ПРОБА: меню-шестерёнка (п.8 стиля): линия справа налево, пункты по очереди сверху вниз, закрытие в обратную сторону ===== */
 (function(){ var veil=document.createElement('div'); veil.className='mn-veil'; document.body.appendChild(veil);
-  var box=document.createElement('div'); box.id='mnBox'; box.innerHTML='<button id="mnGear" type="button" aria-label="Меню" aria-expanded="false" aria-controls="mnMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><nav id="mnMenu" class="mn-menu" hidden aria-label="Меню"></nav>';
+  var box=document.createElement('div'); box.id='mnBox'; box.innerHTML='<button id="mnGear" type="button" aria-label="Меню" aria-expanded="false" aria-controls="mnMenu"><span class="b1"></span><span class="b2"></span></button><nav id="mnMenu" class="mn-menu" hidden aria-label="Меню"></nav>';
   document.body.appendChild(box); var g=box.querySelector('#mnGear'), m=box.querySelector('#mnMenu'), open=false, tOut=0;
   function items(){ var L=[]; if(!APP) L.push(['Установить',function(){ instB.onclick(); }]);
     if(inside.visible&&st!=='falling') L.push([st==='top'?'В объём':'Вид сверху',function(){ topB.onclick(); }]);
