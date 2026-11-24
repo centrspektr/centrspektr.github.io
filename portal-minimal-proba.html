@@ -382,6 +382,117 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:2;back
   .btn.pri::before{transition:none}
 }
 
+/* ===== Доработка 24.11 (владелец): никаких рамок и прямоугольников. Кнопка - тонкий шрифт капслоком, под ним линия:
+   у главной горит латунью, у тихой прорисовывается слева направо при наведении. Больше линий и поочерёдных появлений. ===== */
+.btn,.nb,#topB,.tb,#moi button,#cap .go,#mir .big,#warpA,#zm button,.turn,#back,.mp .x,#kd .x,#side button,.lb:not(.co){border:0!important;background:none!important;box-shadow:none!important;border-radius:0!important}
+.btn,.nb,#topB,.tb,#moi button,#cap .go,#mir .big,#warpA{position:relative;min-height:44px;padding:0 2px!important;margin:0 10px;display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  font:400 11px/1 var(--sans)!important;letter-spacing:.22em!important;text-transform:uppercase;color:var(--fg);text-shadow:0 1px 8px rgba(0,0,0,.9);cursor:pointer;
+  transition:color .35s,letter-spacing .6s var(--e)!important;overflow:visible!important}
+.btn::after,.nb::after,#topB::after,.tb::after,#moi button::after,#cap .go::after,#mir .big::after,#warpA::after{content:"";position:absolute;left:0;right:0;bottom:9px;height:1px;background:currentColor;opacity:.6;transform:scaleX(0);transform-origin:left;transition:transform .55s var(--e),opacity .3s}
+.btn:hover::after,.nb:hover::after,#topB:hover::after,.tb:hover::after,#moi button:hover::after,#cap .go:hover::after,#mir .big:hover::after,#warpA:hover::after{transform:scaleX(1)}
+.btn:hover,.nb:hover,#topB:hover,#moi button:hover{color:var(--a2)}
+/* главная: латунная линия видна всегда, при наведении разрядка растёт */
+.btn.pri,.mp .pri,#kd .pri,#nNext,#cap .go,#mir .big,#warpA,#moi #moiS,#topB[aria-pressed=true],#kd .btn.on,#setM .btn[data-q].pri{color:var(--a2)!important;background:none!important}
+.btn.pri::after,.mp .pri::after,#kd .pri::after,#nNext::after,#cap .go::after,#mir .big::after,#warpA::after,#moi #moiS::after,#topB[aria-pressed=true]::after,#kd .btn.on::after,#setM .btn[data-q].pri::after{background:var(--a);opacity:1;transform:scaleX(1);animation:mnLine .9s var(--e) both}
+.btn.pri:hover,#nNext:hover,#cap .go:hover,#mir .big:hover,#warpA:hover{letter-spacing:.3em!important;color:var(--a2)!important}
+.btn.pri::before,.mp .pri::before,#kd .pri::before{display:none!important}
+@keyframes mnLine{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+#cap .go{display:inline-flex;margin:4px 10px 0;line-height:44px}
+#nav{gap:20px}.nb{max-width:46%;overflow:hidden!important;text-overflow:ellipsis}
+#nPrev{color:var(--dim)}
+.kdel{color:#d9a38f!important}
+/* значки без рамки: тонкие знаки */
+#back{width:44px;height:44px;color:var(--fg)}
+#back::before{width:11px;height:11px}
+#zm{gap:0}#zm button{width:44px;height:44px;font:200 26px/1 var(--sans)!important;color:var(--fg);text-shadow:0 1px 8px #000;transition:color .3s,transform .45s var(--e)}
+#zm button:hover{color:var(--a2);transform:scale(1.12)}
+.turn{font:200 34px var(--sans)!important;color:var(--dim);text-shadow:0 1px 8px #000;transition:color .3s,transform .45s var(--e)}
+.turn:hover{color:var(--a2)}#tL:hover{transform:translate(-4px,-50%)}#tR:hover{transform:translate(4px,-50%)}
+.mp .x,#kd .x{color:var(--dim);font:200 22px/1 var(--sans)!important;transition:color .3s,transform .6s var(--e)}
+.mp .x:hover,#kd .x:hover{color:var(--a2);transform:rotate(90deg)}
+.lb:not(.co){font:400 11px var(--sans)!important;letter-spacing:.22em;color:var(--sub);text-shadow:0 1px 8px #000}
+#topB{left:calc(max(16px,env(safe-area-inset-left,0px)) + 52px);padding:0 2px!important}
+#topB svg{width:14px;height:14px}
+#moi{gap:4px}
+/* список справа: слова с чёрточкой, без подложки; над ним линия бежит справа налево, слова выезжают сверху по очереди */
+#side{gap:0;padding:6px 0 4px;transition:opacity .35s}
+#side::before{content:"";display:block;align-self:stretch;height:1px;margin:0 0 6px;background:linear-gradient(270deg,var(--a),rgba(200,168,118,.12));transform:scaleX(0);transform-origin:100% 50%}
+#side.on::before{animation:mnLine .6s var(--e) forwards}
+#side button{min-height:40px;padding:0 0 0 10px!important;font:300 12px/1.2 var(--sans)!important;letter-spacing:.16em;text-shadow:0 1px 8px #000,0 0 2px #000}
+#side.on button,#side.on small{opacity:0;animation:mnWord .55s var(--e) forwards}
+#side.on small{animation-delay:.35s}
+#side.on button:nth-child(2){animation-delay:.42s}#side.on button:nth-child(3){animation-delay:.49s}#side.on button:nth-child(4){animation-delay:.56s}#side.on button:nth-child(5){animation-delay:.63s}#side.on button:nth-child(6){animation-delay:.7s}#side.on button:nth-child(7){animation-delay:.77s}#side.on button:nth-child(8){animation-delay:.84s}#side.on button:nth-child(n+9){animation-delay:.91s}
+#side button:hover{transform:translateX(-8px)}
+#side button.in{opacity:.55}
+#side small{text-shadow:0 1px 6px #000}
+@keyframes mnWord{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+@keyframes mnWordOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(-6px)}}
+/* окна без коробки: затемнение, сверху линия справа налево, строки появляются сверху вниз по очереди */
+.mdl{background:rgba(14,14,13,.9);-webkit-backdrop-filter:none;backdrop-filter:none}
+.mp,#askM .mp,#setM .mp{background:none!important;border:0!important;box-shadow:none!important;animation:none!important;position:relative;padding-top:30px}
+.mp::before{content:"";position:absolute;left:16px;right:16px;top:0;height:1px;background:linear-gradient(270deg,var(--a),rgba(200,168,118,.12));transform:scaleX(0);transform-origin:100% 50%;animation:mnLine .65s var(--e) .05s forwards}
+.mdl.on .mp>*{opacity:0;animation:mnWord .55s var(--e) forwards;animation-delay:.42s}
+.mdl.on .mp>*:nth-child(2){animation-delay:.49s}.mdl.on .mp>*:nth-child(3){animation-delay:.56s}.mdl.on .mp>*:nth-child(4){animation-delay:.63s}.mdl.on .mp>*:nth-child(5){animation-delay:.7s}.mdl.on .mp>*:nth-child(6){animation-delay:.77s}.mdl.on .mp>*:nth-child(7){animation-delay:.84s}.mdl.on .mp>*:nth-child(8){animation-delay:.91s}.mdl.on .mp>*:nth-child(9){animation-delay:.98s}.mdl.on .mp>*:nth-child(10){animation-delay:1.05s}.mdl.on .mp>*:nth-child(11){animation-delay:1.12s}.mdl.on .mp>*:nth-child(n+12){animation-delay:1.19s}
+#setM{background:rgba(14,14,13,.9)}
+#askM{background:linear-gradient(180deg,rgba(14,14,13,.15),rgba(14,14,13,.92) 55%)}
+.mp .bar{gap:6px 4px;margin-top:14px}
+.mp .bar .btn:first-child{margin-left:0}
+#setM .bar{justify-content:flex-start!important}
+#setM .btn[data-q]{color:var(--dim)}#setM .btn[data-q].pri{min-height:44px;padding:0 2px!important}
+.ask-h img{border:0}
+.stp i{border:0;width:auto;height:auto;min-width:22px;font:400 20px/1 var(--serif);color:var(--a2);display:block;padding-top:2px}
+/* поля: только линия снизу */
+.mp input[type=password],.mp input[type=text],#kd input[type=text],#kd input[type=url],#kd select,#kd textarea,.ksel,.kjs{background:transparent!important;border:0!important;border-bottom:1px solid var(--line-btn)!important;padding:10px 2px!important;transition:border-color .3s}
+.mp input:focus,#kd input:focus,#kd select:focus,#kd textarea:focus{border-bottom-color:var(--a-ln)!important}
+#kd textarea,.kjs{border:1px solid var(--line)!important}
+#kd input[type=color]{border:0;height:32px}
+#kd{border-top:0;box-shadow:none}#kd::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(270deg,var(--a),rgba(200,168,118,.12))}
+@media (min-width:760px){#kd::before{left:0;right:auto;top:0;bottom:0;width:1px;height:auto;background:linear-gradient(180deg,var(--a),rgba(200,168,118,.12))}}
+.kd-row{gap:2px 0}.kd-row .btn,#kdHint .btn{margin:0 12px 0 0;font-size:10px!important;letter-spacing:.16em!important}
+/* внутри планеты: буквы без кружков и квадратов, под ними короткая линия */
+.av i{width:auto;min-width:40px;height:40px;border:0!important;border-bottom:1px solid var(--line-btn)!important;font:400 22px/40px var(--serif);transition:color .3s,border-color .3s,transform .45s var(--e)}
+.av:hover i{transform:translateY(-3px)}
+#mir .av.soon i{border-bottom-style:dashed!important}
+.mir-in .shelf,.mir-in .av{opacity:0;animation:mnWord .6s var(--e) forwards}
+#mir.on .shelf,#atm.on .shelf{opacity:0;animation:mnWord .6s var(--e) forwards;animation-delay:.35s}
+#mir.on .shelf:nth-child(2),#atm.on .shelf:nth-child(2){animation-delay:.45s}#mir.on .shelf:nth-child(3),#atm.on .shelf:nth-child(3){animation-delay:.55s}#mir.on .shelf:nth-child(n+4),#atm.on .shelf:nth-child(n+4){animation-delay:.65s}
+.shelf{position:relative;border-top:0}
+.shelf::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:var(--line);transform:scaleX(0);transform-origin:100% 50%}
+#mir.on .shelf::before,#atm.on .shelf::before{animation:mnLine .7s var(--e) .4s forwards}
+.coop{border-top:1px solid var(--line)}
+.sbox img{border:0}
+/* меню-шестерёнка (п.8 стиля): линия справа налево, пункты тонкой антиквой сверху вниз; закрытие - в обратную сторону */
+.mn-veil{position:fixed;inset:0;z-index:25;background:rgba(14,14,13,.9);opacity:0;pointer-events:none;transition:opacity .45s var(--e)}
+.mn-veil.on{opacity:1;pointer-events:auto}
+#mnBox{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));right:max(12px,env(safe-area-inset-right,0px));z-index:26}
+#mnGear{width:44px;height:44px;border:0;background:none;color:var(--fg);display:grid;place-items:center;cursor:pointer;padding:0;transition:color .3s;filter:drop-shadow(0 1px 4px #000)}
+#mnGear svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.2;transition:transform .7s var(--e)}
+#mnGear:hover,#mnGear[aria-expanded="true"]{color:var(--a2)}
+#mnGear:hover svg,#mnGear[aria-expanded="true"] svg{transform:rotate(90deg)}
+#mnGear:focus-visible{outline:1px solid var(--a);outline-offset:3px}
+.mn-menu{position:absolute;right:0;top:calc(100% + 16px);width:min(340px,calc(100vw - 40px));text-align:right}
+.mn-menu[hidden]{display:none}
+.mn-menu::before{content:"";display:block;height:1px;margin:0 0 10px;background:linear-gradient(270deg,var(--a),rgba(200,168,118,.15));transform-origin:100% 50%;transform:scaleX(0);animation:mnLine .6s var(--e) forwards}
+.mn-menu button{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:row-reverse;align-items:center;gap:14px;width:100%;min-height:52px;
+  font:400 clamp(22px,6vw,26px)/1.1 var(--serif);color:var(--fg);opacity:0;animation:mnWord .55s var(--e) forwards;animation-delay:calc(var(--k,0)*70ms + .42s);transition:color .3s,transform .45s var(--e)}
+.mn-menu button::after{content:"";width:18px;height:1px;background:currentColor;opacity:.35;transition:width .35s var(--e),opacity .3s}
+.mn-menu button:hover{color:var(--a2);transform:translateX(-8px)}
+.mn-menu button:hover::after{width:28px;opacity:.9}
+.mn-menu button:focus-visible{outline:1px solid var(--a);outline-offset:3px}
+.mn-menu small{display:block;margin:14px 0 0;font:400 10px var(--sans);letter-spacing:.3em;text-transform:uppercase;color:var(--dim);opacity:0;animation:mnWord .55s var(--e) forwards;animation-delay:calc(var(--k,0)*70ms + .42s)}
+.mn-menu.out::before{transform:scaleX(1);animation:mnLineOut .4s var(--e) .05s forwards}
+.mn-menu.out button,.mn-menu.out small{opacity:1;animation:mnWordOut .25s ease-in forwards;animation-delay:0s}
+@keyframes mnLineOut{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+#zm{top:calc(64px + env(safe-area-inset-top,0px))!important}
+@media (max-width:600px){.mn-menu button{font-size:22px}.btn,.nb,#topB,#moi button,#cap .go,#mir .big,#warpA{letter-spacing:.16em!important}}
+@media (prefers-reduced-motion:reduce){
+  .mn-menu::before,#side::before,.mp::before,.shelf::before{transform:none!important;animation:none!important}
+  .mn-menu button,.mn-menu small,#side.on button,#side.on small,.mdl.on .mp>*,#mir.on .shelf,#atm.on .shelf{opacity:1!important;animation:none!important}
+  .btn::after{transition:none}
+}
+#mir .big{white-space:normal;line-height:1.7!important;padding:8px 2px 14px!important;text-align:center}
+#mir .big::after{bottom:4px}
+
 </style>
 
 <canvas id="c" aria-label="Портал: полёт сквозь звёзды к направлениям"></canvas>
@@ -1747,6 +1858,23 @@ function frame(){ if(document.hidden){ asleep=true; return; } var rdt=clock.getD
   requestAnimationFrame(frame); }
 if(/[?&]dbg/.test(location.search)) window.__dbg={camP:camP,S:S,gate:gate,tap:function(id){ tapNode(id); },st:function(){ return st; },map:function(){ return MAP; },info:function(){ return {st:st,cur:cur&&cur.id,sel:sel&&sel.id,aim:aim&&aim.id,kind:byId.kursy&&byId.kursy.kind}; },cam:function(){ return [camP.x,camP.y,camP.z,ovR]; },ks:function(){ return kSel; },mv:function(id,x,y){ kMove(byId[id],x,y); },kd:function(){ return !!kdrag; },k:function(id){ return byId[id]&&byId[id].k; },
   scr:function(id){ var n=byId[id]; if(!n) return null; n.g.getWorldPosition(v); v.project(C); return [(v.x*.5+.5)*innerWidth,(-v.y*.5+.5)*innerHeight,v.z]; }};
+
+/* ===== ПРОБА: меню-шестерёнка (п.8 стиля): линия справа налево, пункты по очереди сверху вниз, закрытие в обратную сторону ===== */
+(function(){ var veil=document.createElement('div'); veil.className='mn-veil'; document.body.appendChild(veil);
+  var box=document.createElement('div'); box.id='mnBox'; box.innerHTML='<button id="mnGear" type="button" aria-label="Меню" aria-expanded="false" aria-controls="mnMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><nav id="mnMenu" class="mn-menu" hidden aria-label="Меню"></nav>';
+  document.body.appendChild(box); var g=box.querySelector('#mnGear'), m=box.querySelector('#mnMenu'), open=false, tOut=0;
+  function items(){ var L=[]; if(!APP) L.push(['Установить',function(){ instB.onclick(); }]);
+    if(inside.visible&&st!=='falling') L.push([st==='top'?'В объём':'Вид сверху',function(){ topB.onclick(); }]);
+    L.push(['Настройки',function(){ setPanel(); }]); L.push(['Правка карты',function(){ startEdit(); }]); return L; }
+  function show(){ clearTimeout(tOut); open=true; m.classList.remove('out'); m.innerHTML=''; var L=items();
+    L.forEach(function(it,i){ var b=document.createElement('button'); b.type='button'; b.textContent=it[0]; b.style.setProperty('--k',i); b.onclick=function(){ hide(it[1]); }; m.appendChild(b); });
+    var sm=document.createElement('small'); sm.textContent='Портал'; sm.style.setProperty('--k',L.length); m.appendChild(sm);
+    m.hidden=false; void m.offsetWidth; veil.classList.add('on'); g.setAttribute('aria-expanded','true'); }
+  function hide(after){ if(!open) return; open=false; m.classList.add('out'); g.setAttribute('aria-expanded','false');
+    tOut=setTimeout(function(){ veil.classList.remove('on'); setTimeout(function(){ m.hidden=true; m.classList.remove('out'); if(after) after(); },after?200:0); },420); }
+  g.onclick=function(){ open?hide():show(); }; veil.onclick=function(){ hide(); };
+  addEventListener('keydown',function(e){ if(e.key==='Escape') hide(); });
+  window.__mn={show:show,hide:hide,open:function(){ return open; }}; })();
 try{ inside.visible=true; R.compile(S,C); }catch(e){} inside.visible=false;
 frame();
 };
